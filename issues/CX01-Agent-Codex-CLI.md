@@ -110,6 +110,23 @@ credential extractor remain unimplemented.
   and `item.completed` with `item.type: agent_message` for `item.text`. Four adapter extraction
   guards fail on the previous definition. The complete Porelo continuation path still needs VM
   acceptance; this replay is not an end-to-end pass. Packages require Porelo 0.5.1~snapshot.317.
+- Exact implementation commit `48d748244c9e032055711dda8b6cad373bfb70d1` passes the complete
+  provider-independent workflow in a real Porelo task on Core `bf0a07f1`, local snapshot 933,
+  using the published agent API snapshot `0.5.1-20261022.121950-17`: 46 unit, three native,
+  four package and five document tests, all five shared checks, both publisher pins and the
+  actual scheduled artifact-check steps. Six provider-free VM acceptance scenarios pass.
+  Four credential scenarios are excluded: "An unattended task remembers across a stop and
+  restart", "A message to an idle task obtains a computed answer", "A message arriving during
+  work is handled after the turn", and "The model picker requires input and closing it restores
+  readiness". The whole run takes 593.9 seconds; no model request or sign-in occurs. Independent
+  readback confirms no task, container, image or private run/wrapper remains, only the default
+  project, with the original adapter restored. Host and VM artifact hashes agree. Sanitized
+  logs and artifacts live in the exact commit's handover directory.
+- The changed definition, package compatibility guards and tests were read against `graal`
+  2026.910.3, and `java-code-review`, `test-quality`, `security-audit`, `concurrency-review`,
+  `clean-code` and `solid-principles` 2026.906.3. Extraction uses the published API rather than
+  duplicating its parser; the slice adds no credential storage or concurrent state. The native
+  and package checks verify the resulting executable and packages, not configuration alone.
 - The published ChatGPT provider's adapter login and credential extraction, then attended acceptance.
 - The complete startup and first-run dialogs in the packaged task environment; a noninteractive
   model turn does not measure those dialogs.
