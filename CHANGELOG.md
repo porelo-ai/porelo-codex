@@ -11,6 +11,9 @@
   incomplete endpoints and task tokens refused before launch.
 - Task-scoped workspace trust and measured startup, selection-dialog and safe wake boundaries
   that exclude a working turn even when its composer remains visible.
+- ChatGPT device-code login and bounded OAuth credential collection for host-side renewal,
+  with account routing preserved and malformed credentials refused without echoing tokens.
+  ChatGPT is the default provider; API keys continue through the explicit OpenAI provider.
 
 ### Fixed
 

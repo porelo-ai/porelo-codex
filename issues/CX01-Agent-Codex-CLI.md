@@ -1,6 +1,6 @@
 # CX01 — Agent Codex CLI
 
-**Status:** Implementing; API-key setup and shell-task broker containment verified; unattended/interactive acceptance and adapter ChatGPT integration pending; the provider from porelo [P11](https://github.com/porelo-ai/porelo/blob/main/issues/providers/README.md#p11) is published.
+**Status:** Implementing; API-key setup and shell-task broker containment verified; ChatGPT adapter login/extraction wired, full attended login and unattended/interactive acceptance pending; the provider from porelo [P11](https://github.com/porelo-ai/porelo/blob/main/issues/providers/README.md#p11) is published.
 **Size:** L - a new packaged agent, provider-specific broker acceptance and a separate ChatGPT sign-in/refresh integration.
 
 **What must be true.** Codex CLI runs in a task as a packaged agent, signed in and brokered like the
@@ -16,8 +16,8 @@ supported ones, with its real credential never in the container.
 
 **Can it be brokered?** Yes for the measured Responses-over-HTTP path: a container holding only a
 dummy token receives a real model response through a host relay, and the CLI refreshes the real login
-in the host keyring. The separate ChatGPT provider contract is published; the adapter login and
-credential extractor remain unimplemented.
+in the host keyring. The separate ChatGPT provider contract is published; the adapter declares
+device-code file login and bounded credential extraction, with complete attended acceptance pending.
 
 ## Plan
 
@@ -45,7 +45,8 @@ credential extractor remain unimplemented.
 - **API-key stage first:** use the built OpenAI provider contract from porelo
   [P05](https://github.com/porelo-ai/porelo/blob/main/issues/providers/README.md#p05), with its
   verified provider-data handover where the installed snapshot needs it. Declare the OpenAI
-  dialect, URL endpoint and OpenAI default in `agent/codex.yaml`. Add `CodexContainerSetup` to
+  dialect and URL endpoint in `agent/codex.yaml`. API-key runs explicitly select OpenAI; the
+  subscription login defaults to ChatGPT. Add `CodexContainerSetup` to
   write owner-only task-profile TOML from `SetupContext.endpoint()` and its phantom token, with
   no upstream URL, real credential, provider token-variable name or extra dialect path in Java.
 - **Red first:** the default empty setup must fail the missing-routing-file guard. Reproduce
@@ -62,9 +63,8 @@ credential extractor remain unimplemented.
   [P11](https://github.com/porelo-ai/porelo/blob/main/issues/providers/README.md#p11) for adapter
   sign-in and extraction, then verify refresh and complete attended first-run acceptance.
   An API-key success does not complete that part or permit a guessed credential extractor.
-  Before declaring `login` or implementing `CodexCredentialExtractor`, settle the transient
-  plaintext-file exposure below: the existing collector requires file storage rather than
-  the measured encrypted keyring. Once that risk is decided, first guard
+  Use the existing file collector and the accepted [login-only exposure](../doc/decisions.md#login-collection)
+  instead of the measured encrypted keyring. First guard
   incomplete OAuth records, missing account routing, lost renewal metadata and secrets in
   parse failures; read access, refresh, account and expiry data from the measured login shape,
   using the published `Credential` attributes rather than another renewal implementation.
@@ -141,10 +141,24 @@ credential extractor remain unimplemented.
   adapter to the standard file route: login writes `auth.json`, it is copied to an owner-only
   host temporary directory, read into the encrypted vault and deleted. Both the container's
   writable layer and the host copy may be on disk or swapped. Removal does not establish
-  secure erasure. This is a confirmed design exposure, not a reproduced exploit. A hardening
-  idea in the owning repository does not establish encrypted transient storage. No new sign-in
-  is started while the explicit encryption rule and this exposure await a risk decision.
-- The published ChatGPT provider's adapter login and credential extraction, then attended acceptance.
+  secure erasure. The login-only exposure is accepted in the
+  [collection decision](../doc/decisions.md#login-collection); ordinary tasks remain phantom-only.
+  Hardening in the owning repository is not a prerequisite and does not establish encrypted
+  transient storage. The adapter can implement the existing route without a new interface.
+- ChatGPT adapter code now declares device-code file login and preserves access, refresh,
+  account and expiry metadata through `CodexCredentialExtractor`. The pinned CLI archive's
+  publisher digest is verified before reading its public client ID, token endpoint and login
+  options. Twenty extraction cases and the login/provider wiring guard compile; the unchanged
+  adapter fails nineteen extraction cases and the default-provider guard. Two further token
+  control-character cases fail before their guard. The missing-login and parser-cause guards
+  also fail under deliberate compiling mutations. All use synthetic tokens, never a real login.
+  The complete host gate passes 69 unit, four native and four package checks with no skipped
+  tests; the native protocol check reads the actual extraction result and all five renewal/account
+  attributes, and fails against the retained pre-extractor native binary before passing against
+  this implementation. Five document tests and all five shared checks pass. Full VM validation
+  waits for the assigned heavy-run slot, then attended login remains required. No real sign-in
+  or model request occurs in these checks. The changed scope is read against `graal` 2026.910.3
+  and the six Java review skills 2026.906.3; token-control input was fixed only after its test failed.
 - The complete startup and first-run dialogs in the packaged task environment; a noninteractive
   model turn does not measure those dialogs.
 - The unattended Porelo launch path. The real-key broker
@@ -153,14 +167,6 @@ credential extractor remain unimplemented.
   computed-answer wake acceptance, and standing instruction delivery. The fresh native-generated
   profile reaches the composer, but the observed
   composer and selection markers do not establish end-to-end mailbox delivery.
-
-## Open questions
-
-- May ChatGPT login use the existing file-collection route despite its temporary plaintext
-  `auth.json` in the login container and owner-only host temporary directory, both potentially
-  on disk or swapped, before encrypted vault storage and deletion? Otherwise the adapter waits
-  for a collection route that preserves encrypted-only storage. This exception concerns login
-  collection only; normal tasks must still receive only phantom tokens.
 
 ## Live wake acceptance
 

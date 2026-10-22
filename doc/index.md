@@ -6,10 +6,16 @@ host archives and verifies each digest before extraction.
 
 The adapter builds and is discovered by Porelo. Its OpenAI API-key setup points Codex at the task's
 broker using only a phantom token. A real model reply and credential containment are verified in
-a shell task; unattended launch and interactive session/wake acceptance remain pending. It does
-not import credentials. The ChatGPT provider contract is published; its adapter sign-in and
-credential extraction remain unimplemented. The adapter requires Porelo 0.5.1~snapshot.317 or
+a shell task; unattended launch and interactive session/wake acceptance remain pending. ChatGPT
+is the default provider. The adapter declares device-code login and collects its OAuth record
+for host-side vault storage, account routing and renewal; the complete attended login still
+needs acceptance. API keys use the explicit OpenAI provider. The adapter requires Porelo 0.5.1~snapshot.317 or
 newer to read attended session metadata and unattended final replies through the published selectors.
+
+`porelo vault login codex --dry-run` previews login without starting it. A real
+`porelo vault login codex` asks for the browser/device-code step. Its temporary plaintext-file
+exposure is limited to the [accepted login collection route](decisions.md#login-collection), not
+ordinary tasks. Store API keys under `openai` and select `--provider openai` for API-key tasks.
 
 Build with GraalVM and `./mvnw -U -B -s settings.xml verify`. The native executable and Debian/RPM
 packages are built by `./mvnw -U -B -s settings.xml -Pnative,dist verify`. Main dependencies are the

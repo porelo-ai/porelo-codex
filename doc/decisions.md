@@ -2,7 +2,8 @@
 
 | Subject | What holds | Detail |
 |---|---|---|
-| Provider boundary | API-key routing uses the OpenAI contract; ChatGPT sign-in remains separate | [Provider boundary](#provider-boundary) |
+| Provider boundary | ChatGPT is the sign-in default; API-key routing remains explicitly OpenAI | [Provider boundary](#provider-boundary) |
+| Login collection exposure | Temporary plaintext files are accepted only while transferring a sign-in to the vault | [Login collection](#login-collection) |
 | Two upstream artifacts | The task image verifies and installs both the CLI and code-mode host | [Installation](#installation) |
 | Command grammar | Java assembles exec and exec resume commands | [Commands](#commands) |
 | Conversation records | Published selectors distinguish run output from session metadata | [Conversation records](#conversation-records) |
@@ -15,11 +16,41 @@
 
 The ChatGPT provider decision and accepted exposure belong to porelo-project's
 [provider issue](https://github.com/porelo-ai/porelo-project/blob/main/issues/README.md#pj54).
-The adapter defaults to OpenAI and speaks the Responses dialect through a URL broker. Its setup
-writes only the supplied endpoint and task token into owner-only user-profile TOML. It neither
-imports a real credential nor implements ChatGPT sign-in or refresh. The provider contract is
-published; adapter sign-in and credential extraction remain separate pending implementation.
+The adapter defaults to ChatGPT and speaks the Responses dialect through a URL broker. API keys
+use the explicit OpenAI provider. Task setup writes only the supplied endpoint and phantom token
+into owner-only user-profile TOML. Login collection is separate: a device-code login writes
+Codex's `auth.json`, and the extractor returns its access token, account ID and renewal metadata
+through the published credential contract. Porelo owns vault storage and renewal, not the adapter.
 The API-key acceptance must use Porelo's broker; a standalone relay does not establish it.
+
+## Login collection
+
+Sign-in uses the standard throwaway login container and file collector. The CLI writes
+`auth.json`, Porelo copies the configuration into an owner-only host temporary directory,
+extracts the credential into the encrypted vault and deletes the copy. The container's writable
+layer and the host copy can reach disk or swap; deletion does not establish secure erasure.
+
+This login-only plaintext exposure is an accepted risk so the existing collection contract can
+be used without a separate keyring or handoff protocol. It does not permit real credentials in
+ordinary tasks, logs or build artifacts: tasks retain only phantom tokens. Runtime-backed
+collection can narrow the exposure later, but only a route without plaintext filesystem copies
+would remove it. The acceptance must be reconsidered if the collector retains copies beyond
+login, permits other users to read them, or a safer supported route becomes available.
+
+Login explicitly selects file storage and device authentication; it does not depend on a host
+keyring, browser or loopback callback reaching the container. The extractor accepts only a
+ChatGPT OAuth record, not an API key. It retains `account_id`, refresh token, access-token expiry
+in epoch milliseconds, and the pinned CLI's token endpoint and public client ID. It does not
+retain the unused ID token. Reading JWT expiry is metadata extraction, not signature validation
+or proof of authentication; the provider validates the access token.
+
+The credential file is a regular non-symlink, bounded to one mebibyte before parsing. Missing
+files report no sign-in; existing malformed records fail. Errors never echo credential-bearing
+JSON or nested parser/decoder diagnostics. The extractor follows the existing adapter pattern
+of a small `CredentialExtractor` override because the nested token fields and JWT expiry cannot
+be expressed by the shared YAML reader. Its token endpoint and public client ID were read in
+the digest-verified pinned CLI; a pin change requires rechecking that sign-in and renewal identity.
+Live device-code collection and actual broker renewal still require attended acceptance.
 
 ## Conversation records
 
@@ -93,8 +124,9 @@ delivery remains required; these screen guards alone do not establish end-to-end
 
 The Java and resource layout follows the existing adapters: a small `YamlAgent` subclass, a
 stateless JSON formatter and container setup, service registration and a null-marked main package.
-The setup consumes only the published agent contract; provider upstreams, headers and credential
-handling remain outside the adapter. A credential extractor for ChatGPT is not implemented.
+The setup consumes only the published agent contract; provider upstreams, header substitution
+and credential renewal remain outside the adapter. The credential extractor reads only the
+CLI-specific login representation.
 
 Unlike the complete adapters, CI only checks the existing pins and builds packages. It neither
 publishes an incomplete adapter nor proposes CLI upgrades without a live-provider gate. Shared

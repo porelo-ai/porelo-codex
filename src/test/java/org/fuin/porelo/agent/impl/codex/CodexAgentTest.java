@@ -96,6 +96,23 @@ class CodexAgentTest {
     }
 
     @Test
+    void aSignInIsCollectedForItsSubscriptionProviderRatherThanTheApiProvider() {
+        assertThat(agent.definition().provider())
+                .as("the sign-in needs an unambiguous vault destination")
+                .isNotNull();
+        assertThat(agent.definition().provider().defaultProvider())
+                .as("a ChatGPT OAuth token must not be stored under the API-key provider")
+                .isEqualTo("chatgpt");
+        assertThat(agent.definition().configDirectory())
+                .as("the collector reads the same explicit profile as the login container")
+                .isEqualTo("~/.codex");
+        assertThat(agent.definition().loginArguments())
+                .as("remote login uses a device code and the agreed file collector, not a keyring")
+                .containsExactly(
+                        "-c", "cli_auth_credentials_store=\"file\"", "login", "--device-auth");
+    }
+
+    @Test
     void bothArtifactsArePinnedAndVerifiedBeforeExtraction() {
         assertThat(agent.definition().artifacts()).as("CLI and code-mode host archives").hasSize(2);
         assertThat(agent.definition().artifacts())

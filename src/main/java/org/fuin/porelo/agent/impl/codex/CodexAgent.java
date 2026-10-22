@@ -6,6 +6,7 @@ import org.fuin.porelo.agent.api.AgentEnd;
 import org.fuin.porelo.agent.api.AgentException;
 import org.fuin.porelo.agent.api.AgentMain;
 import org.fuin.porelo.agent.api.ContainerSetup;
+import org.fuin.porelo.agent.api.CredentialExtractor;
 import org.fuin.porelo.agent.api.LogFormatter;
 import org.fuin.porelo.agent.api.RunRequest;
 import org.fuin.porelo.agent.api.YamlAgent;
@@ -17,6 +18,12 @@ public final class CodexAgent extends YamlAgent {
     /** Loads the packaged Codex definition. */
     public CodexAgent() {
         super("codex");
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public CredentialExtractor credentialExtractor() {
+        return new CodexCredentialExtractor();
     }
 
     /** {@inheritDoc} */

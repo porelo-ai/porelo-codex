@@ -3,9 +3,10 @@ Feature: Safe refusals before a task has a credential
     Background:
         Given the suite runs as an unprivileged user
 
-    Scenario: An undeclared login cannot run a guessed authentication command
-        When logging in to the "codex" agent is attempted
-        Then it exits non-zero
+    Scenario: Previewing a login does not start authentication
+        When a script runs "porelo vault login codex --dry-run"
+        Then it exits zero
+        And its output contains "previewed nothing was built or run"
 
     Scenario: The deliberately refused telemetry host is visible
         Given a terminal on the machine
@@ -15,10 +16,10 @@ Feature: Safe refusals before a task has a credential
     Scenario: Missing authentication is refused before building a task
         Given a project called "nocred" of class "guarded" with a file in it
         And a vault of this scenario's own, unlocked with the passphrase "scenario-vault-passphrase"
-        And the vault holds no credential for "openai"
+        And the vault holds no credential for "chatgpt"
         When a task nobody is watching is started in "nocred" for the "codex" agent
         Then its output mentions one of "no credential, is locked, cannot authenticate"
-        And its output contains "openai"
+        And its output contains "chatgpt"
 
     Scenario: A script is not asked an interactive launch question
         Given a project called "noask" of class "guarded" with a file in it

@@ -2,8 +2,13 @@ name: codex
 label: Codex CLI
 binary: codex
 
+config_dir: "~/.codex"
+login:
+    arguments: ["-c", 'cli_auth_credentials_store="file"', "login", "--device-auth"]
+    documentation: "https://learn.chatgpt.com/docs/auth"
+
 provider:
-    default: openai
+    default: chatgpt
     dialect: openai
     endpoint: url
 
