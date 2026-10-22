@@ -6,3 +6,4 @@
 
 - A provider-independent Codex CLI adapter with task-local profiles, structured turn outcomes and
   pinned, verified CLI and code-mode host installation artifacts.
+- A draft task-build image declaration with pinned build tools and native package prerequisites.
