@@ -155,9 +155,19 @@ device-code file login and bounded credential extraction, with complete attended
   The complete host gate passes 69 unit, four native and four package checks with no skipped
   tests; the native protocol check reads the actual extraction result and all five renewal/account
   attributes, and fails against the retained pre-extractor native binary before passing against
-  this implementation. Five document tests and all five shared checks pass. Full VM validation
-  waits for the assigned heavy-run slot, then attended login remains required. No real sign-in
-  or model request occurs in these checks. The changed scope is read against `graal` 2026.910.3
+  this implementation. Five document tests and all five shared checks pass. On exact implementation
+  `1141b3bc483fe72fe651b8f110dd139bf39b1e95`, the VM task passes 69 unit tests, four native checks,
+  four package checks, five document tests, all shared and pin checks and the scheduled artifact-check
+  steps, with no skipped tests in those gates. Provider-free acceptance passes five scenarios and
+  fails the missing-authentication scenario; the four credential scenarios listed above remain
+  excluded. With a newly created empty vault, Core's credential selection defaults an absent entry
+  to `api-key` and refuses that kind for ChatGPT before reporting the missing credential. The test
+  is not broadened to accept the misleading stored-key refusal; the owning repository has the
+  reproduction and must confirm the fix or interim contract. The complete controller exits non-zero
+  after 386.4 seconds. Independent cleanup finds no tasks, containers or images, only the default
+  project, no temporary wrappers/provider definition or run/build/upstream directories, and the
+  original adapter restored. Attended login remains required. No real sign-in or model request
+  occurs in these checks. The changed scope is read against `graal` 2026.910.3
   and the six Java review skills 2026.906.3; token-control input was fixed only after its test failed.
 - The complete startup and first-run dialogs in the packaged task environment; a noninteractive
   model turn does not measure those dialogs.
