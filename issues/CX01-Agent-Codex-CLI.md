@@ -1,6 +1,6 @@
 # CX01 — Agent Codex CLI
 
-**Status:** Implementing; API-key setup and shell-task broker containment verified; ChatGPT adapter login/extraction wired, full attended login and unattended/interactive acceptance pending; the provider from porelo [P11](https://github.com/porelo-ai/porelo/blob/main/issues/providers/README.md#p11) is published.
+**Status:** Implementing; missing-authentication acceptance blocked by porelo [B255](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b255); API-key setup and shell-task broker containment verified; ChatGPT adapter login/extraction wired, full attended login and unattended/interactive acceptance pending; the provider from porelo [P11](https://github.com/porelo-ai/porelo/blob/main/issues/providers/README.md#p11) is published.
 **Size:** L - a new packaged agent, provider-specific broker acceptance and a separate ChatGPT sign-in/refresh integration.
 
 **What must be true.** Codex CLI runs in a task as a packaged agent, signed in and brokered like the
@@ -162,8 +162,10 @@ device-code file login and bounded credential extraction, with complete attended
   fails the missing-authentication scenario; the four credential scenarios listed above remain
   excluded. With a newly created empty vault, Core's credential selection defaults an absent entry
   to `api-key` and refuses that kind for ChatGPT before reporting the missing credential. The test
-  is not broadened to accept the misleading stored-key refusal; the owning repository has the
-  reproduction and must confirm the fix or interim contract. The complete controller exits non-zero
+  is not broadened to accept the misleading stored-key refusal. The owning repository confirms
+  the defect as porelo [B255](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b255);
+  the scenario waits for its correction. An explicit `--credential-type=oauth` would hide the defect
+  by testing a different start and is not an interim workaround. The complete controller exits non-zero
   after 386.4 seconds. Independent cleanup finds no tasks, containers or images, only the default
   project, no temporary wrappers/provider definition or run/build/upstream directories, and the
   original adapter restored. Attended login remains required. No real sign-in or model request
