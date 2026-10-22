@@ -14,5 +14,8 @@
 
 ### Fixed
 
+- Session-file lookup reads the conversation ID from its metadata instead of the rollout name,
+  and unattended summaries use the final assistant message rather than tool output. Packages
+  require Porelo 0.5.1~snapshot.317 or newer for these selectors.
 - Standalone task invocations avoid the shared background server so interactive resume does not
   require an uninstalled full CLI package.

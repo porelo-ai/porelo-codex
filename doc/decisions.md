@@ -5,6 +5,7 @@
 | Provider boundary | API-key routing uses the OpenAI contract; ChatGPT sign-in remains separate | [Provider boundary](#provider-boundary) |
 | Two upstream artifacts | The task image verifies and installs both the CLI and code-mode host | [Installation](#installation) |
 | Command grammar | Java assembles exec and exec resume commands | [Commands](#commands) |
+| Conversation records | Published selectors distinguish run output from session metadata | [Conversation records](#conversation-records) |
 | Task-local profile | The image sets CODEX_HOME explicitly | [Profile](#profile) |
 | Terminal state | Measured composer, busy and selection boundaries gate wake input | [Terminal state](#terminal-state) |
 | Artifact checks | Shared named-pin calls check and record both fetched components | [Artifact checks](#artifact-checks) |
@@ -16,8 +17,22 @@ The ChatGPT provider decision and accepted exposure belong to porelo-project's
 [provider issue](https://github.com/porelo-ai/porelo-project/blob/main/issues/README.md#pj54).
 The adapter defaults to OpenAI and speaks the Responses dialect through a URL broker. Its setup
 writes only the supplied endpoint and task token into owner-only user-profile TOML. It neither
-imports a real credential nor implements ChatGPT sign-in or refresh before that contract exists.
+imports a real credential nor implements ChatGPT sign-in or refresh. The provider contract is
+published; adapter sign-in and credential extraction remain separate pending implementation.
 The API-key acceptance must use Porelo's broker; a standalone relay does not establish it.
+
+## Conversation records
+
+Unattended output names the conversation in `thread.started/thread_id`. Attended transcripts
+live below `.codex/sessions`, with dated directories and a timestamp in each rollout name;
+their `session_meta/payload.id` is the ID that resume takes, not the filename stem. The
+definition declares these separately through the published `file_record` and `file_key`
+selectors. It selects the last `item.completed` whose `item.type` is `agent_message` and reads
+`item.text`, so command output and unfinished messages cannot replace the final reply.
+
+The Debian and RPM packages require Porelo 0.5.1~snapshot.317 or newer, the first published
+host with these selectors. Definition-level replay establishes extraction, not a successful
+live conversation continuation; unattended and attended end-to-end acceptance remain separate.
 
 ## Installation
 

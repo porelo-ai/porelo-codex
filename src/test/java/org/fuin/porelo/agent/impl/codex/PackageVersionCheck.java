@@ -40,6 +40,9 @@ class PackageVersionCheck {
         assertThat(run("dpkg-deb", "-f", deb.toString(), "Version").strip())
                 .as("the Version of %s", deb)
                 .isEqualTo(expected());
+        assertThat(run("dpkg-deb", "-f", deb.toString(), "Depends"))
+                .as("older hosts cannot read the conversation selectors this adapter declares")
+                .contains("porelo (>= " + minimumPorelo() + ")");
     }
 
     @Test
@@ -56,6 +59,15 @@ class PackageVersionCheck {
                                 rpm.toString()))
                 .as("the name, version and release of %s", rpm)
                 .isEqualTo(NAME + " " + expected() + " 1");
+        assertThat(run("rpm", "-qp", "--requires", rpm.toString()).lines().toList())
+                .as("rpm must refuse a host that cannot read the conversation selectors")
+                .contains("porelo >= " + minimumPorelo());
+    }
+
+    private static String minimumPorelo() {
+        final String version = System.getProperty("porelo.minimum.version", "");
+        assertThat(version).as("the host compatibility floor is passed by the build").isNotBlank();
+        return version;
     }
 
     @Test

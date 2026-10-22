@@ -31,6 +31,9 @@ session:
         shows: ["› ", "? for shortcuts"]
         lacks: ["esc to interrupt", "enter continue · esc quit", "enter select · esc back"]
     waiting:
+        last_message:
+            record: {type: item.completed, item.type: agent_message}
+            text: item.text
         screen:
             - contains: "enter continue · esc quit"
               in_last_lines: 5
@@ -41,6 +44,10 @@ session:
     session_id:
         record: {type: thread.started}
         key: thread_id
+        directory: .codex/sessions
+        suffix: .jsonl
+        file_record: {type: session_meta}
+        file_key: payload.id
 
 install:
     version: "${agent.cli.version}"

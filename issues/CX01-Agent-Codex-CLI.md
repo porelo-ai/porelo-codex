@@ -1,6 +1,6 @@
 # CX01 — Agent Codex CLI
 
-**Status:** Implementing; API-key setup and shell-task broker containment verified; unattended/interactive acceptance pending; ChatGPT integration awaits the published provider from porelo-project [PJ54](https://github.com/porelo-ai/porelo-project/blob/main/issues/README.md#pj54).
+**Status:** Implementing; API-key setup and shell-task broker containment verified; unattended/interactive acceptance and adapter ChatGPT integration pending; the provider from porelo [P11](https://github.com/porelo-ai/porelo/blob/main/issues/providers/README.md#p11) is published.
 **Size:** L - a new packaged agent, provider-specific broker acceptance and a separate ChatGPT sign-in/refresh integration.
 
 **What must be true.** Codex CLI runs in a task as a packaged agent, signed in and brokered like the
@@ -16,7 +16,8 @@ supported ones, with its real credential never in the container.
 
 **Can it be brokered?** Yes for the measured Responses-over-HTTP path: a container holding only a
 dummy token receives a real model response through a host relay, and the CLI refreshes the real login
-in the host keyring. A separate ChatGPT provider is accepted; its published contract is pending.
+in the host keyring. The separate ChatGPT provider contract is published; the adapter login and
+credential extractor remain unimplemented.
 
 ## Plan
 
@@ -57,9 +58,9 @@ in the host keyring. A separate ChatGPT provider is accepted; its published cont
   Recheck the least-cost compatible available model; target one minimal reply, zero CLI retries
   and a one-minute bound. Refuse `ab.chatgpt.com`, record whether it is queried, and clean up only
   run-owned tasks, provider/adapter overrides and vault state. Start only in the assigned VM slot.
-- **ChatGPT remains separate:** its provider/sign-in/refresh and complete attended first-run
-  acceptance await the published contract from porelo-project
-  [PJ54](https://github.com/porelo-ai/porelo-project/blob/main/issues/README.md#pj54).
+- **ChatGPT remains separate:** use the published provider contract from porelo
+  [P11](https://github.com/porelo-ai/porelo/blob/main/issues/providers/README.md#p11) for adapter
+  sign-in and extraction, then verify refresh and complete attended first-run acceptance.
   An API-key success does not complete that part or permit a guessed credential extractor.
 - The GitHub live-test credential binding follows the [build boundary](../doc/decisions.md#build-boundary);
   adding that future step must not expose the key to the provider-independent build or untrusted code.
@@ -104,12 +105,12 @@ in the host keyring. A separate ChatGPT provider is accepted; its published cont
 
 ## To be checked
 
-- **Blocked on porelo [B242](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b242):** attended session extraction needs a
-  file-specific `session_meta` matcher and nested `payload.id`, distinct from unattended
-  `thread.started/thread_id`. The unattended last message needs nested `item.text` with an
-  `item.type` match. The contract direction is agreed, but the change awaits acceptance and
-  publication. The current contract supports only top-level fields, so neither is guessed.
-- The published ChatGPT provider contract from porelo-project [PJ54](https://github.com/porelo-ai/porelo-project/blob/main/issues/README.md#pj54).
+- **Published contract available from porelo [B242](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b242):** the definition now uses
+  `session_meta/payload.id` for attended files, distinct from unattended `thread.started/thread_id`,
+  and `item.completed` with `item.type: agent_message` for `item.text`. Four adapter extraction
+  guards fail on the previous definition. The complete Porelo continuation path still needs VM
+  acceptance; this replay is not an end-to-end pass. Packages require Porelo 0.5.1~snapshot.317.
+- The published ChatGPT provider's adapter login and credential extraction, then attended acceptance.
 - The complete startup and first-run dialogs in the packaged task environment; a noninteractive
   model turn does not measure those dialogs.
 - The unattended Porelo launch path. The real-key broker
@@ -154,19 +155,19 @@ in the host keyring. A separate ChatGPT provider is accepted; its published cont
   and run directories are absent. The interrupted scenario's remaining encrypted vault is
   attributed by account, kit layout and recorded run window, locked, then its exact two files
   and empty directory are removed. No process environment or credential content is inspected.
-- One further idle attempt is prepared with available `gpt-6-luna`, reasoning `none`, zero
-  retries and no web search, against verified Core snapshot 927. Execution review blocks it
-  before the runner starts, pending explicit approval of the payload and destination below.
-  No additional paid request or test state is created. Test programs and sanitized evidence
-  live in the source commit's handover; staged inputs alone are not a completed test.
-
-## Open questions
-
-- May the bounded idle-wake test send the CLI instructions/tool schemas, arithmetic mailbox
-  message and resulting task/tool messages to `https://api.openai.com/v1/responses`, using the
-  supplied API key through the real broker? The fixture has an empty workspace and does not
-  check out repository sources. It uses `gpt-6-luna` with reasoning `none`, at most the seven
-  remaining requests of the existing sixteen-request cap, and a 120-second paid window.
+- The bounded `gpt-6-luna` attempt ran after payload approval, against verified Core snapshot
+  928, with reasoning `none`, zero retries, no web search and no repository sources. Five more
+  Responses requests returned HTTP 200 through the actual broker: 53,343 input tokens, including
+  33,006 cached, and 430 output tokens, none reasoning. Admission remains fourteen of sixteen;
+  a further attempt must not reset that budget.
+- The daemon delivered the wake and the real assistant's `response_item/message`, with role
+  `assistant` and phase `final_answer`, said "Sent the direct reply: 5555." The CLI returned to
+  its composer. This is a computed model answer, but the strict driver still exited 1: it
+  inspected only `event_msg/agent_message` and required digits-only output. Its failed predicate
+  is retained, not rewritten into a pass. Return delivery, busy wake, session continuation and
+  selection acceptance remain unproven. Cleanup restored the original adapter and left no
+  owned task, daemon, wrapper, vault or run directory. No further paid request is authorized
+  by the definition-only replay.
 
 ## Build tooling gap
 

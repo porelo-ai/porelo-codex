@@ -7,8 +7,9 @@ host archives and verifies each digest before extraction.
 The adapter builds and is discovered by Porelo. Its OpenAI API-key setup points Codex at the task's
 broker using only a phantom token. A real model reply and credential containment are verified in
 a shell task; unattended launch and interactive session/wake acceptance remain pending. It does
-not import credentials. ChatGPT provider integration depends on the
-published contract tracked in porelo-project's [issue index](https://github.com/porelo-ai/porelo-project/blob/main/issues/README.md#pj54).
+not import credentials. The ChatGPT provider contract is published; its adapter sign-in and
+credential extraction remain unimplemented. The adapter requires Porelo 0.5.1~snapshot.317 or
+newer to read attended session metadata and unattended final replies through the published selectors.
 
 Build with GraalVM and `./mvnw -U -B -s settings.xml verify`. The native executable and Debian/RPM
 packages are built by `./mvnw -U -B -s settings.xml -Pnative,dist verify`. Main dependencies are the

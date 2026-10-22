@@ -8,5 +8,5 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
-| <a id="cx01"></a>[CX01](CX01-Agent-Codex-CLI.md) | L | porelo-project [PJ54](https://github.com/porelo-ai/porelo-project/blob/main/issues/README.md#pj54) for ChatGPT; updated shared tooling; porelo [B242](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b242) for attended session extraction and unattended last message; live payload approval | Build and six provider-free scenarios green on VM; nano idle wake fails on shell arguments; one bounded Luna attempt awaits explicit payload approval; session, selection and busy wake remain unmeasured |
-| <a id="cx02"></a>[CX02](CX02-Build-In-A-Porelo-Task.md) | M | — | Complete applicable Build green in a real task with an equivalent project file, no skipped tests and verified cleanup; awaiting push/publication; automatic discovery is outside this issue |
+| <a id="cx01"></a>[CX01](CX01-Agent-Codex-CLI.md) | L | — | Published nested-record contract wired; new extraction guards red on the previous definition; full continuation and ChatGPT integration remain pending; earlier live results below do not establish complete acceptance |
+| <a id="cx02"></a>[CX02](CX02-Build-In-A-Porelo-Task.md) | M | — | Complete applicable Build green in a real task with an equivalent project file; pushed and first GitHub Build green with uploaded package artifacts, not an indexed snapshot; automatic discovery is outside this issue |

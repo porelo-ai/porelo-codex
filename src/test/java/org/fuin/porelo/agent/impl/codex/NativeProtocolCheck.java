@@ -42,7 +42,12 @@ class NativeProtocolCheck {
                     .isEqualTo("codex");
             assertThat(definition.get("provider"))
                     .as("Porelo must create a URL broker for the Responses dialect")
-                    .isEqualTo(Map.of("default", "openai", "dialect", "openai", "endpoint", "url"));
+                    .isEqualTo(
+                            Map.of(
+                                    "default", "openai",
+                                    "dialect", "openai",
+                                    "endpoint", "url",
+                                    "addsPath", false));
             assertThat(definition.get("refusedDomains"))
                     .as("the configured refusal must survive native resource inclusion")
                     .isEqualTo(List.of("ab.chatgpt.com"));
