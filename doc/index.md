@@ -4,8 +4,10 @@ The adapter is discovered through Porelo's published agent protocol. Its package
 adapter executable and bill of materials; a task image downloads the pinned Codex CLI and code-mode
 host archives and verifies each digest before extraction.
 
-The provider-independent adapter builds and is discovered by Porelo. It does not declare a provider, import
-credentials or claim that a task can authenticate. ChatGPT provider integration depends on the
+The adapter builds and is discovered by Porelo. Its OpenAI API-key setup points Codex at the task's
+broker using only a phantom token. A real model reply and credential containment are verified in
+a shell task; unattended launch and interactive session/wake acceptance remain pending. It does
+not import credentials. ChatGPT provider integration depends on the
 published contract tracked in porelo-project's [issue index](https://github.com/porelo-ai/porelo-project/blob/main/issues/README.md#pj54).
 
 Build with GraalVM and `./mvnw -U -B -s settings.xml verify`. The native executable and Debian/RPM

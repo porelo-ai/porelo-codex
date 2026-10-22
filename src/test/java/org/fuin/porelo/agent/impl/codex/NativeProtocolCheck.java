@@ -40,7 +40,12 @@ class NativeProtocolCheck {
             assertThat(definition.get("name"))
                     .as("the installed adapter identifies itself")
                     .isEqualTo("codex");
-            assertThat(definition.get("provider")).as("no guessed provider contract").isNull();
+            assertThat(definition.get("provider"))
+                    .as("Porelo must create a URL broker for the Responses dialect")
+                    .isEqualTo(Map.of("default", "openai", "dialect", "openai", "endpoint", "url"));
+            assertThat(definition.get("refusedDomains"))
+                    .as("the configured refusal must survive native resource inclusion")
+                    .isEqualTo(List.of("ab.chatgpt.com"));
         } finally {
             process.destroyForcibly();
             process.waitFor();

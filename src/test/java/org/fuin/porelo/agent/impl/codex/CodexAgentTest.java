@@ -43,6 +43,7 @@ class CodexAgentTest {
                 .containsExactly(
                         "codex",
                         "--dangerously-bypass-approvals-and-sandbox",
+                        "--no-daemon",
                         "exec",
                         "--model",
                         "chosen-model",
@@ -61,6 +62,7 @@ class CodexAgentTest {
                 .containsExactly(
                         "codex",
                         "--dangerously-bypass-approvals-and-sandbox",
+                        "--no-daemon",
                         "exec",
                         "resume",
                         "--json",
@@ -91,9 +93,6 @@ class CodexAgentTest {
         assertThat(AgentRegistry.discover().require("codex").definition().binary())
                 .as("the service descriptor makes the adapter discoverable")
                 .isEqualTo("codex");
-        assertThat(agent.definition().provider())
-                .as("the unpublished provider contract must not be guessed")
-                .isNull();
     }
 
     @Test

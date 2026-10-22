@@ -2,8 +2,16 @@ name: codex
 label: Codex CLI
 binary: codex
 
+provider:
+    default: openai
+    dialect: openai
+    endpoint: url
+
+refused_domains:
+    - ab.chatgpt.com
+
 sandboxed:
-    arguments: ["--dangerously-bypass-approvals-and-sandbox"]
+    arguments: ["--dangerously-bypass-approvals-and-sandbox", "--no-daemon"]
 
 git_identity:
     name: Codex
@@ -17,6 +25,19 @@ headless:
 session:
     supports_resume: true
     resume_flag: resume
+    ready_marker: "? for shortcuts"
+    # The composer remains visible during work, so its footer alone cannot permit wake input.
+    at_rest:
+        shows: ["› ", "? for shortcuts"]
+        lacks: ["esc to interrupt", "enter continue · esc quit", "enter select · esc back"]
+    waiting:
+        screen:
+            - contains: "enter continue · esc quit"
+              in_last_lines: 5
+              for: "workspace trust"
+            - contains: "enter select · esc back"
+              in_last_lines: 5
+              for: "a selection"
     session_id:
         record: {type: thread.started}
         key: thread_id

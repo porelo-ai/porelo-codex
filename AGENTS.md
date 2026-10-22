@@ -390,4 +390,5 @@ like the shared block; what is one adapter's alone stays outside.
 
 The Codex CLI adapter: an agent definition, the Java that shapes what the CLI cannot express as data,
 and the packaging that ships it. Its provider-independent parts build against the latest published
-Porelo snapshot; provider integration waits for the published ChatGPT provider contract.
+Porelo snapshot. API-key routing uses the OpenAI provider contract; ChatGPT sign-in integration
+waits for its published provider contract.
