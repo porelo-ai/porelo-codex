@@ -1,0 +1,51 @@
+name: codex
+label: Codex CLI
+binary: codex
+
+sandboxed:
+    arguments: ["--dangerously-bypass-approvals-and-sandbox"]
+
+git_identity:
+    name: Codex
+    email: codex@users.noreply.github.com
+
+headless:
+    prompt_flag: ""
+    model_flag: "--model"
+    output_format_flags: ["--json"]
+
+session:
+    supports_resume: true
+    resume_flag: resume
+    session_id:
+        record: {type: thread.started}
+        key: thread_id
+
+install:
+    version: "${agent.cli.version}"
+    artifacts:
+        - url: https://github.com/openai/codex/releases/download/rust-v${agent.cli.version}/codex-x86_64-unknown-linux-musl.tar.gz
+          sha256: "${agent.cli.sha256}"
+          license: Apache-2.0
+          target: /home/agent/.cache/porelo/codex/cli.tar.gz
+          mode: "0644"
+        - url: https://github.com/openai/codex/releases/download/rust-v${agent.cli.version}/codex-code-mode-host-x86_64-unknown-linux-musl.tar.gz
+          sha256: "${agent.helper.sha256}"
+          license: Apache-2.0
+          target: /home/agent/.cache/porelo/codex/helper.tar.gz
+          mode: "0644"
+    as_agent:
+        - ENV CODEX_HOME=/home/agent/.codex
+        - >-
+          RUN set -eux;
+          mkdir -p /home/agent/.codex;
+          chmod 0700 /home/agent/.codex;
+          staging=$(mktemp -d);
+          trap 'rm -rf "$staging"' EXIT;
+          test "$(tar -tzf /home/agent/.cache/porelo/codex/cli.tar.gz)" = codex-x86_64-unknown-linux-musl;
+          test "$(tar -tzf /home/agent/.cache/porelo/codex/helper.tar.gz)" = codex-code-mode-host-x86_64-unknown-linux-musl;
+          tar -xzf /home/agent/.cache/porelo/codex/cli.tar.gz -C "$staging" --no-same-owner;
+          tar -xzf /home/agent/.cache/porelo/codex/helper.tar.gz -C "$staging" --no-same-owner;
+          install -D -m 0755 "$staging/codex-x86_64-unknown-linux-musl" /home/agent/.local/bin/codex;
+          install -D -m 0755 "$staging/codex-code-mode-host-x86_64-unknown-linux-musl" /home/agent/.local/bin/codex-code-mode-host;
+          rm /home/agent/.cache/porelo/codex/cli.tar.gz /home/agent/.cache/porelo/codex/helper.tar.gz
