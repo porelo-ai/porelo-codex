@@ -62,6 +62,12 @@ credential extractor remain unimplemented.
   [P11](https://github.com/porelo-ai/porelo/blob/main/issues/providers/README.md#p11) for adapter
   sign-in and extraction, then verify refresh and complete attended first-run acceptance.
   An API-key success does not complete that part or permit a guessed credential extractor.
+  Before declaring `login` or implementing `CodexCredentialExtractor`, settle the transient
+  plaintext-file exposure below: the existing collector requires file storage rather than
+  the measured encrypted keyring. Once that risk is decided, first guard
+  incomplete OAuth records, missing account routing, lost renewal metadata and secrets in
+  parse failures; read access, refresh, account and expiry data from the measured login shape,
+  using the published `Credential` attributes rather than another renewal implementation.
 - The GitHub live-test credential binding follows the [build boundary](../doc/decisions.md#build-boundary);
   adding that future step must not expose the key to the provider-independent build or untrusted code.
 - **Complete adapter acceptance:** extend `src/acceptance/resources/.../acceptance/` beyond
@@ -127,6 +133,17 @@ credential extractor remain unimplemented.
   `clean-code` and `solid-principles` 2026.906.3. Extraction uses the published API rather than
   duplicating its parser; the slice adds no credential storage or concurrent state. The native
   and package checks verify the resulting executable and packages, not configuration alone.
+- **ChatGPT collection route confirmed:** reading `AgentLogin.run` and `watchFor` finds `podman.copyOut`
+  into host temporary directories before extraction; independently, the published
+  `CredentialExtractor` and `ExtractCredential` protocol accept only `configDirectory`. The
+  measured Codex login uses an encrypted Secret Service rather than `auth.json`. The owning
+  repository confirms that no encrypted/in-memory collection route exists and directs the
+  adapter to the standard file route: login writes `auth.json`, it is copied to an owner-only
+  host temporary directory, read into the encrypted vault and deleted. Both the container's
+  writable layer and the host copy may be on disk or swapped. Removal does not establish
+  secure erasure. This is a confirmed design exposure, not a reproduced exploit. A hardening
+  idea in the owning repository does not establish encrypted transient storage. No new sign-in
+  is started while the explicit encryption rule and this exposure await a risk decision.
 - The published ChatGPT provider's adapter login and credential extraction, then attended acceptance.
 - The complete startup and first-run dialogs in the packaged task environment; a noninteractive
   model turn does not measure those dialogs.
@@ -136,6 +153,14 @@ credential extractor remain unimplemented.
   computed-answer wake acceptance, and standing instruction delivery. The fresh native-generated
   profile reaches the composer, but the observed
   composer and selection markers do not establish end-to-end mailbox delivery.
+
+## Open questions
+
+- May ChatGPT login use the existing file-collection route despite its temporary plaintext
+  `auth.json` in the login container and owner-only host temporary directory, both potentially
+  on disk or swapped, before encrypted vault storage and deletion? Otherwise the adapter waits
+  for a collection route that preserves encrypted-only storage. This exception concerns login
+  collection only; normal tasks must still receive only phantom tokens.
 
 ## Live wake acceptance
 
