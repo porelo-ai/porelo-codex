@@ -17,6 +17,56 @@ newer to read attended session metadata and unattended final replies through the
 exposure is limited to the [accepted login collection route](decisions.md#login-collection), not
 ordinary tasks. Store API keys under `openai` and select `--provider openai` for API-key tasks.
 
+## Attended ChatGPT login acceptance
+
+This walk checks the packaged login and vault collection. It is prepared for an attended test;
+the browser steps have not passed acceptance. A successful login alone does not establish a
+brokered model turn, renewal, session continuation or wake delivery.
+
+1. Before arranging the walk, the test maintainer prepares a dedicated account with the exact
+   verified Porelo package, this adapter and its ChatGPT provider definition. Record their versions
+   and digests. Use the pinned Codex CLI and code-mode host from the adapter definition. Check
+   that no other test uses the account and that its tasks are stopped. Use a version with the
+   empty-vault startup correction, published in snapshot 320 and verified here against snapshot 323.
+2. Open a private terminal on that account, using an SSH connection with a terminal if remote.
+   Run `porelo --version`, `porelo agents` and `porelo providers`. Check the prepared versions,
+   that `codex` is discovered, and that `chatgpt` is available. Stop if a version or definition
+   differs from the prepared test. Do not record the terminal during sign-in.
+3. In that same terminal, create a new private directory and select its vault:
+
+       umask 077
+       codex_login_dir=$(mktemp -d "$HOME/codex-login.XXXXXXXX")
+       export PORELO_VAULT="$codex_login_dir/vault.bin"
+       porelo vault init
+
+   Choose a test passphrase at the hidden prompts and enter it again when asked. Expect creation
+   and caching to succeed. Keep this shell open so every remaining command uses this same vault;
+   the account's ordinary vault is not the test vault.
+4. Run `porelo vault login codex --dry-run`. It must preview the Codex login without building or
+   starting authentication. The definition requests device-code login with file credential
+   collection. Its [temporary plaintext exposure](decisions.md#login-collection) applies during
+   the real login.
+5. Run `porelo vault login codex`. If it asks for the vault passphrase, enter it at the hidden
+   prompt. In the private terminal, wait for the device-code page and one-time code. If the command
+   refuses, hangs or asks an unexpected question, stop and report only the nonsecret error.
+6. Open the displayed page in a browser, sign into the intended ChatGPT account and enter the
+   one-time code there. Device-code login must be enabled in the account's security settings or
+   allowed by its workspace. Keep the code, browser credentials and terminal transcript private.
+   Return to the terminal and wait for the login command to finish successfully. Do not run a
+   second login while the first is pending.
+7. Run `porelo vault list` and `porelo agents --json` in the same shell. Expect a `chatgpt` OAuth
+   entry and Codex's signed-in state. The test maintainer checks that expiry and renewal settings
+   are present without printing access, refresh or ID tokens or opening `auth.json`. Record only
+   pass/fail and nonsecret diagnostics. The maintainer also checks removal of the login container
+   and temporary collection directories. A failed collection is not a successful packaged login.
+8. Stop here. A model request or forced renewal needs its own bounded test and approved budget;
+   this walk starts neither. Run `porelo vault lock`, then `unset PORELO_VAULT` before leaving the
+   shell. The maintainer retains or removes exactly this test's encrypted vault as agreed, verifies
+   no login process/container or temporary plaintext copy remains, and restores the account's
+   prepared overrides. Deleting a local copy does not revoke the sign-in or prove secure erasure.
+
+## Building
+
 Build with GraalVM and `./mvnw -U -B -s settings.xml verify`. The native executable and Debian/RPM
 packages are built by `./mvnw -U -B -s settings.xml -Pnative,dist verify`. Main dependencies are the
 latest published Porelo agent API and wire snapshot selected by the imported BOM; no Porelo

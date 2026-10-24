@@ -1,6 +1,6 @@
 # CX01 — Agent Codex CLI
 
-**Status:** Implementing; missing-authentication acceptance blocked by porelo [B255](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b255); API-key setup and shell-task broker containment verified; ChatGPT adapter login/extraction wired, full attended login and unattended/interactive acceptance pending; the provider from porelo [P11](https://github.com/porelo-ai/porelo/blob/main/issues/providers/README.md#p11) is published.
+**Status:** Implementing; missing-authentication acceptance passes against published Porelo snapshot 323 without a type override; API-key setup and shell-task broker containment verified; ChatGPT adapter login/extraction wired, full attended login and unattended/interactive acceptance pending; the provider from porelo [P11](https://github.com/porelo-ai/porelo/blob/main/issues/providers/README.md#p11) is published.
 **Size:** L - a new packaged agent, provider-specific broker acceptance and a separate ChatGPT sign-in/refresh integration.
 
 **What must be true.** Codex CLI runs in a task as a packaged agent, signed in and brokered like the
@@ -111,6 +111,40 @@ device-code file login and bounded credential extraction, with complete attended
 
 ## To be checked
 
+- **Published-snapshot recheck:** source `9ad9973` runs the unchanged missing-authentication
+  scenario in the VM's own account against published Porelo `0.5.1~snapshot.318`, with package
+  SHA-256 `5cbcd36f541eb0d078f84cc84ab9c900374681d79ea233c51ecb6af0b5d31359`
+  verified against its published index. The native adapter has the previously verified SHA-256
+  `d04907c57d0070b0c193dc9b66b5ba24cb068ce1da73e442f0a4b51c3103a375`.
+  The kit creates and unlocks its own empty vault and removes `chatgpt` before starting the task.
+  The CLI still reports an `api-key` stored for `codex`, rather than missing authentication;
+  the unchanged assertion fails. No credential-type override, real credential, sign-in or model
+  request is used. All 69 unit tests pass; this one acceptance scenario fails. The other nine are
+  filtered out: "Porelo discovers the separately installed adapter", "A terminal lists the adapter
+  by its label", "Previewing a login does not start authentication", "The deliberately refused
+  telemetry host is visible", "A script is not asked an interactive launch question", "An unattended
+  task remembers across a stop and restart", "The model picker requires input and closing it
+  restores readiness", "A message to an idle task obtains a computed answer" and "A message
+  arriving during work is handled after the turn". The nine are not acceptance passes. The
+  controller measures 24.3 seconds from installing the overrides through restoration, excluding
+  artifact transfer. It restores every temporary override and verifies its hash; readback sees
+  the original snapshot 307, no tasks, no containers, only the default project and no scenario
+  fixture. Evidence is retained in the source commit's handover directory under
+  `cx01-missing-auth-318`.
+- **Corrected-snapshot recheck:** the unchanged scenario passes against published Porelo
+  `0.5.1~snapshot.323`, package SHA-256
+  `9c6c3f4bef5df3b7d464235ea6eb61c4ee3eae89402c138c243f96d91ee54a75`, verified
+  against its published index. Source, native adapter and procedure are the same as the 318
+  measurement. The correction from porelo [B255](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b255)
+  is verified: the empty vault is no longer classified as a stored API key, the unchanged
+  missing-authentication assertion passes and the refusal names `chatgpt`. All 69 unit tests pass;
+  one acceptance scenario passes and the same nine named above are filtered out. Restoration and
+  independent cleanup readback pass again, with 37.8 seconds measured by the controller on the
+  same basis. Evidence is retained separately under
+  `cx01-missing-auth-323`. This removes the upstream blocker; it is not complete provider-free or
+  live acceptance. The [attended login walk](../doc/index.md#attended-chatgpt-login-acceptance)
+  is prepared but not scheduled or executed; complete brokered login/renewal acceptance and the
+  four credential scenarios remain pending.
 - **Published contract available from porelo [B242](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b242):** the definition now uses
   `session_meta/payload.id` for attended files, distinct from unattended `thread.started/thread_id`,
   and `item.completed` with `item.type: agent_message` for `item.text`. Four adapter extraction
@@ -164,7 +198,7 @@ device-code file login and bounded credential extraction, with complete attended
   to `api-key` and refuses that kind for ChatGPT before reporting the missing credential. The test
   is not broadened to accept the misleading stored-key refusal. The owning repository confirms
   the defect as porelo [B255](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b255);
-  the scenario waits for its correction. An explicit `--credential-type=oauth` would hide the defect
+  its correction passes the published-snapshot recheck above. An explicit `--credential-type=oauth` would hide the defect
   by testing a different start and is not an interim workaround. The complete controller exits non-zero
   after 386.4 seconds. Independent cleanup finds no tasks, containers or images, only the default
   project, no temporary wrappers/provider definition or run/build/upstream directories, and the
