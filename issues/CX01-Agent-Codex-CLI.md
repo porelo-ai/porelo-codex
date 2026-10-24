@@ -1,6 +1,6 @@
 # CX01 — Agent Codex CLI
 
-**Status:** Implementing; missing-authentication acceptance passes against published Porelo snapshot 323 without a type override; API-key setup and shell-task broker containment verified; ChatGPT adapter login/extraction wired, full attended login and unattended/interactive acceptance pending; the provider from porelo [P11](https://github.com/porelo-ai/porelo/blob/main/issues/providers/README.md#p11) is published.
+**Status:** Implementing; attended ChatGPT device-code login, OAuth vault collection and signed-in readback pass; missing-authentication acceptance passes against published Porelo snapshot 323 without a type override; API-key setup and shell-task broker containment verified; ChatGPT brokered model turn, renewal and unattended/interactive acceptance pending; the provider from porelo [P11](https://github.com/porelo-ai/porelo/blob/main/issues/providers/README.md#p11) is published.
 **Size:** L - a new packaged agent, provider-specific broker acceptance and a separate ChatGPT sign-in/refresh integration.
 
 **What must be true.** Codex CLI runs in a task as a packaged agent, signed in and brokered like the
@@ -17,7 +17,8 @@ supported ones, with its real credential never in the container.
 **Can it be brokered?** Yes for the measured Responses-over-HTTP path: a container holding only a
 dummy token receives a real model response through a host relay, and the CLI refreshes the real login
 in the host keyring. The separate ChatGPT provider contract is published; the adapter declares
-device-code file login and bounded credential extraction, with complete attended acceptance pending.
+device-code file login and bounded credential extraction, with attended collection verified and
+brokered ChatGPT model/renewal acceptance pending.
 
 ## Plan
 
@@ -88,6 +89,18 @@ device-code file login and bounded credential extraction, with complete attended
 - Record Codex-specific differences in `doc/decisions.md` and link the accepted risk in its owning
   provider issue rather than repeating it; add shipped behavior to the changelog. Diagnose and
   remove the previous measurement's default-profile helper directory before handing over.
+- **Proposed next live budget, not approved:** run the four API-key scenarios with `gpt-6-luna`
+  and reasoning `none`, after an unpaid replay verifies the test-only admission guard. Preserve
+  the fourteen spent requests; raise the cumulative ceiling from sixteen to thirty only on
+  approval, allowing sixteen further requests, zero CLI retries and a USD 0.25 working budget.
+  Reject bodies over 32 KiB and cap output at 1,024 tokens. A planning allowance of 64,000 input
+  tokens per request at USD 0.125 per million, treating all input as cache writes, plus output
+  at USD 0.50 per million gives USD 0.136192 for sixteen requests. This is an estimate, not a
+  provider-enforced monetary limit; stop if usage invalidates the allowance or a failure repeats.
+  The separate ChatGPT proposal needs a fresh attended scratch login, at most two short model
+  requests and one host-side refresh attempt agreed through the published provider contract;
+  each model turn has a 90-second bound and no retries or hosted tools. It consumes subscription
+  allowance; its marginal credit cost cannot be established without the account's billing terms.
 
 ## Acceptance
 
@@ -108,6 +121,13 @@ device-code file login and bounded credential extraction, with complete attended
   real-credential reference set absent from output, metadata, profile and exported rootfs.
 - API-key and ChatGPT authentication/refresh results are reported separately; an API-key success
   does not satisfy the ChatGPT cases. Provider-free checks must not require a paid credential.
+
+## Open questions
+
+- Approve the four API-key scenarios with the proposed cumulative ceiling of thirty requests
+  and USD 0.25 working budget, or choose a smaller scope?
+- Approve the separate fresh ChatGPT login, two model requests and one renewal attempt against
+  the account's subscription allowance, or defer it?
 
 ## To be checked
 
@@ -148,9 +168,9 @@ device-code file login and bounded credential extraction, with complete attended
   the login; stopping only its own container with `podman stop --time 5` returned control with
   exit 137, removed the container and left an empty vault with Codex signed out. The scratch
   vault was locked and removed. The cancellation finding is handed to the owning Porelo agent;
-  the account-local verified binaries remain prepared for the attended walk. Successful collection,
-  complete brokered login/renewal acceptance and the four credential scenarios remain pending.
-- **Attended collection remains unverified:** the attended walk reached the device-code page,
+  the account-local verified binaries were used for the attended walk. Complete brokered
+  ChatGPT model/renewal acceptance and the four credential scenarios remain pending.
+- **Transient failure diagnosis:** the first attended walk reached the device-code page,
   but the CLI exited with `device auth failed with status 503 Service Unavailable` before
   browser approval completed. Porelo reported exit 1 and no credential; the run's container
   exited 1 and was removed, confirmed by Podman's events and an absent-container log lookup.
@@ -164,7 +184,17 @@ device-code file login and bounded credential extraction, with complete attended
   Porelo egress refusal; it does not prove the original 503's origin or a successful retry.
   The pinned CLI retries poll responses 403 and 404 but treats 503 as terminal. No second login
   or model request was made during diagnosis. Disposable probes were removed; the attended
-  scratch vault remains available for a fresh login code without reinitializing the vault.
+  scratch vault was reused for a fresh login code without reinitializing the vault.
+- **Attended login passes on retry:** terminal readback confirms that the device-code login
+  completed and Porelo stored `chatgpt` as `oauth`. The vault list includes `client_id`,
+  `expires_at` and `token_url = https://auth.openai.com/oauth/token`. The account-local adapter
+  is discovered with `credential: chatgpt` and `signed_in: true`, with the vault open. This is
+  attended terminal evidence, not an independently repeated browser approval. No token or account
+  identifier is retained in the issue. Cleanup readback confirms the scratch vault is absent,
+  no login container/process or temporary collection directory remains, and all eight recorded
+  account overrides are restored with matching backup hashes. Independent commands report the
+  original Porelo snapshot 307, no tasks and only the default project. Successful collection
+  does not establish a ChatGPT brokered model response, renewal or the four live scenarios.
 - **Published contract available from porelo [B242](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b242):** the definition now uses
   `session_meta/payload.id` for attended files, distinct from unattended `thread.started/thread_id`,
   and `item.completed` with `item.type: agent_message` for `item.text`. Four adapter extraction
@@ -222,7 +252,7 @@ device-code file login and bounded credential extraction, with complete attended
   by testing a different start and is not an interim workaround. The complete controller exits non-zero
   after 386.4 seconds. Independent cleanup finds no tasks, containers or images, only the default
   project, no temporary wrappers/provider definition or run/build/upstream directories, and the
-  original adapter restored. Attended login remains required. No real sign-in or model request
+  original adapter restored. ChatGPT brokered model and renewal acceptance remain pending. No real sign-in or model request
   occurs in these checks. The changed scope is read against `graal` 2026.910.3
   and the six Java review skills 2026.906.3; token-control input was fixed only after its test failed.
 - The complete startup and first-run dialogs in the packaged task environment; a noninteractive

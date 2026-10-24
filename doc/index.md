@@ -8,8 +8,9 @@ The adapter builds and is discovered by Porelo. Its OpenAI API-key setup points 
 broker using only a phantom token. A real model reply and credential containment are verified in
 a shell task; unattended launch and interactive session/wake acceptance remain pending. ChatGPT
 is the default provider. The adapter declares device-code login and collects its OAuth record
-for host-side vault storage, account routing and renewal; the complete attended login still
-needs acceptance. API keys use the explicit OpenAI provider. The adapter requires Porelo 0.5.1~snapshot.317 or
+for host-side vault storage, account routing and renewal. Attended device-code login and OAuth
+vault collection pass; a brokered ChatGPT model turn and renewal still need acceptance.
+API keys use the explicit OpenAI provider. The adapter requires Porelo 0.5.1~snapshot.317 or
 newer to read attended session metadata and unattended final replies through the published selectors.
 
 `porelo vault login codex --dry-run` previews login without starting it. A real
@@ -21,8 +22,9 @@ ordinary tasks. Store API keys under `openai` and select `--provider openai` for
 
 This walk checks the packaged login and vault collection. SSH access, account-local snapshot 323,
 adapter discovery, scratch-vault creation, login preview and the device-code page have been run.
-Browser approval and successful credential collection have not been run. A successful login alone
-does not establish a brokered model turn, renewal, session continuation or wake delivery.
+Attended terminal readback confirms browser approval, OAuth credential collection and Codex's
+signed-in state. A successful login alone does not establish a brokered model turn, renewal,
+session continuation or wake delivery.
 
 1. Before arranging the walk, the test maintainer prepares a dedicated account with the exact
    verified Porelo package, this adapter and its ChatGPT provider definition. Record their versions
@@ -58,19 +60,20 @@ does not establish a brokered model turn, renewal, session continuation or wake 
    with `podman ps --format '{{.Names}}'`, then run `podman stop --time 5 <that-login-container>`.
    Porelo reports exit 137 with no credential and removes its container. Stop only this run's
    container; read back that it is absent.
-6. **Not run:** open the displayed page in a browser, sign into the intended ChatGPT account and enter the
+6. **Passed attended acceptance:** open the displayed page in a browser, sign into the intended ChatGPT account and enter the
    one-time code there. Device-code login must be enabled in the account's security settings or
    allowed by its workspace. Keep the code, browser credentials and terminal transcript private.
    Return to the terminal and wait for the login command to finish successfully. Do not run a
    second login while the first is pending.
-7. **Run after cancellation; successful-login results not run:** execute `porelo vault list` and
-   `porelo agents --json` in the same shell. Cancellation left an empty vault and `signed_in: false`.
-   After successful approval, expect a `chatgpt` OAuth
-   entry and Codex's signed-in state. The test maintainer checks that expiry and renewal settings
+7. **Passed attended acceptance:** execute `porelo vault list` and `porelo agents --json` in the
+   same shell. The login reports that `chatgpt` is stored as `oauth`. The list shows `client_id`,
+   `expires_at` and `token_url = https://auth.openai.com/oauth/token`; Codex reports
+   `credential: chatgpt` and `signed_in: true`, with the vault open.
+   The test maintainer checks that expiry and renewal settings
    are present without printing access, refresh or ID tokens or opening `auth.json`. Record only
    pass/fail and nonsecret diagnostics. The maintainer also checks removal of the login container
    and temporary collection directories. A failed collection is not a successful packaged login.
-8. **Cancellation cleanup run:** stop here. A model request or forced renewal needs its own bounded test and approved budget;
+8. **Passed cleanup readback:** stop here. A model request or forced renewal needs its own bounded test and approved budget;
    this walk starts neither. Run `porelo vault lock`, then `unset PORELO_VAULT` before leaving the
    shell. The maintainer retains or removes exactly this test's encrypted vault as agreed, verifies
    no login process/container or temporary plaintext copy remains, and restores the account's
