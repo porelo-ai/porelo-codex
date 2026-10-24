@@ -150,6 +150,21 @@ device-code file login and bounded credential extraction, with complete attended
   vault was locked and removed. The cancellation finding is handed to the owning Porelo agent;
   the account-local verified binaries remain prepared for the attended walk. Successful collection,
   complete brokered login/renewal acceptance and the four credential scenarios remain pending.
+- **Attended collection remains unverified:** the attended walk reached the device-code page,
+  but the CLI exited with `device auth failed with status 503 Service Unavailable` before
+  browser approval completed. Porelo reported exit 1 and no credential; the run's container
+  exited 1 and was removed, confirmed by Podman's events and an absent-container log lookup.
+  Its response headers and body were not retained, so the original 503's exact origin is unknown.
+  An unauthenticated POST with invalid dummy values to
+  `https://auth.openai.com/api/accounts/deviceauth/token`, from the same login image on the
+  host network, returned HTTP 530 with `cf_route_error` from Cloudflare and no proxy variables.
+  Subsequent direct-VM and same-image curl probes returned HTTP 404; the latter's application
+  error was `deviceauth_not_found`. The direct connection verified a TLS 1.3 certificate for
+  `auth.openai.com`. This suggests a transient provider-facing routing failure, rather than a
+  Porelo egress refusal; it does not prove the original 503's origin or a successful retry.
+  The pinned CLI retries poll responses 403 and 404 but treats 503 as terminal. No second login
+  or model request was made during diagnosis. Disposable probes were removed; the attended
+  scratch vault remains available for a fresh login code without reinitializing the vault.
 - **Published contract available from porelo [B242](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b242):** the definition now uses
   `session_meta/payload.id` for attended files, distinct from unattended `thread.started/thread_id`,
   and `item.completed` with `item.type: agent_message` for `item.text`. Four adapter extraction
