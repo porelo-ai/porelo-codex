@@ -64,7 +64,10 @@ class WorkflowTimeLimitTest {
         assertThat(jobs)
                 .as("the jobs read from the workflows")
                 .containsExactlyInAnyOrder(
-                        "build.yml build", "shared-rules.yml check-shared", "update.yml update");
+                        "build.yml build",
+                        "shared-rules.yml check-shared",
+                        "update.yml update",
+                        "workflows.yml check");
         assertThat(unlimited).as("jobs without timeout-minutes").isEmpty();
     }
 }

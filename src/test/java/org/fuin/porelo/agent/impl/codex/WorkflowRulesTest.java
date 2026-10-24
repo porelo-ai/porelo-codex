@@ -28,7 +28,7 @@ class WorkflowRulesTest {
         try (Stream<Path> paths = Files.list(Path.of(".github/workflows"))) {
             workflows = paths.filter(path -> path.toString().endsWith(".yml")).sorted().toList();
         }
-        assertThat(workflows).as("all provider-independent workflows").hasSize(3);
+        assertThat(workflows).as("all provider-independent workflows").hasSize(4);
         for (final Path workflow : workflows) {
             assertThat(Files.readString(workflow))
                     .as("no live leg before a provider contract: %s", workflow)

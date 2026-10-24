@@ -1,10 +1,11 @@
+# A workflow-only pull request uses the light Workflow check, so action moves build nothing.
 name: Build
 on:
     push:
         branches: ['**']
         paths-ignore: ['**/*.md', 'mkdocs.yml', 'doc/**', 'issues/**', '.github/**']
     pull_request:
-        paths-ignore: ['**/*.md', 'mkdocs.yml', 'doc/**', 'issues/**']
+        paths-ignore: ['**/*.md', 'mkdocs.yml', 'doc/**', 'issues/**', '.github/**']
     workflow_dispatch:
 
 env:
