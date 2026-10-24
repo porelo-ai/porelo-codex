@@ -143,8 +143,13 @@ device-code file login and bounded credential extraction, with complete attended
   same basis. Evidence is retained separately under
   `cx01-missing-auth-323`. This removes the upstream blocker; it is not complete provider-free or
   live acceptance. The [attended login walk](../doc/index.md#attended-chatgpt-login-acceptance)
-  is prepared but not scheduled or executed; complete brokered login/renewal acceptance and the
-  four credential scenarios remain pending.
+  has been checked through scratch-vault creation, preview and the real device-code page on
+  snapshot 323, without browser approval or a model request. Two Ctrl+C attempts did not cancel
+  the login; stopping only its own container with `podman stop --time 5` returned control with
+  exit 137, removed the container and left an empty vault with Codex signed out. The scratch
+  vault was locked and removed. The cancellation finding is handed to the owning Porelo agent;
+  the account-local verified binaries remain prepared for the attended walk. Successful collection,
+  complete brokered login/renewal acceptance and the four credential scenarios remain pending.
 - **Published contract available from porelo [B242](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b242):** the definition now uses
   `session_meta/payload.id` for attended files, distinct from unattended `thread.started/thread_id`,
   and `item.completed` with `item.type: agent_message` for `item.text`. Four adapter extraction

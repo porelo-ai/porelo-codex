@@ -8,5 +8,5 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
-| <a id="cx01"></a>[CX01](CX01-Agent-Codex-CLI.md) | L | — | ChatGPT login/extraction VM build green: 69 unit, four native and four package checks; unchanged empty-vault scenario passes against published snapshot 323 without a type override; attended login guide prepared, login and four credential scenarios remain pending |
+| <a id="cx01"></a>[CX01](CX01-Agent-Codex-CLI.md) | L | — | ChatGPT login/extraction VM build green: 69 unit, four native and four package checks; empty-vault scenario passes against snapshot 323; attended walk verified through device-code display and cancellation cleanup, browser approval and four credential scenarios pending |
 | <a id="cx02"></a>[CX02](CX02-Build-In-A-Porelo-Task.md) | M | — | Complete applicable Build green in a real task with an equivalent project file; pushed and first GitHub Build green with uploaded package artifacts, not an indexed snapshot; automatic discovery is outside this issue |
