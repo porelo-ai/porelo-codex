@@ -89,18 +89,20 @@ brokered ChatGPT model/renewal acceptance pending.
 - Record Codex-specific differences in `doc/decisions.md` and link the accepted risk in its owning
   provider issue rather than repeating it; add shipped behavior to the changelog. Diagnose and
   remove the previous measurement's default-profile helper directory before handing over.
-- **Proposed next live budget, not approved:** run the four API-key scenarios with `gpt-6-luna`
+- **Approved next live budget:** run the four API-key scenarios with `gpt-6-luna`
   and reasoning `none`, after an unpaid replay verifies the test-only admission guard. Preserve
-  the fourteen spent requests; raise the cumulative ceiling from sixteen to thirty only on
-  approval, allowing sixteen further requests, zero CLI retries and a USD 0.25 working budget.
+  the fourteen spent requests; the approved cumulative ceiling is thirty, allowing sixteen
+  further requests, zero CLI retries and a USD 0.25 working budget.
   Reject bodies over 32 KiB and cap output at 1,024 tokens. A planning allowance of 64,000 input
   tokens per request at USD 0.125 per million, treating all input as cache writes, plus output
   at USD 0.50 per million gives USD 0.136192 for sixteen requests. This is an estimate, not a
   provider-enforced monetary limit; stop if usage invalidates the allowance or a failure repeats.
-  The separate ChatGPT proposal needs a fresh attended scratch login, at most two short model
+  The separately approved ChatGPT stage follows the four API-key scenarios and needs a fresh attended scratch login, at most two short model
   requests and one host-side refresh attempt agreed through the published provider contract;
   each model turn has a 90-second bound and no retries or hosted tools. It consumes subscription
   allowance; its marginal credit cost cannot be established without the account's billing terms.
+  There is no supported forced-refresh trigger yet; that stage waits on porelo's host-renewal
+  capability, with its contract agreed before the fresh login is scheduled.
 
 ## Acceptance
 
@@ -121,13 +123,6 @@ brokered ChatGPT model/renewal acceptance pending.
   real-credential reference set absent from output, metadata, profile and exported rootfs.
 - API-key and ChatGPT authentication/refresh results are reported separately; an API-key success
   does not satisfy the ChatGPT cases. Provider-free checks must not require a paid credential.
-
-## Open questions
-
-- Approve the four API-key scenarios with the proposed cumulative ceiling of thirty requests
-  and USD 0.25 working budget, or choose a smaller scope?
-- Approve the separate fresh ChatGPT login, two model requests and one renewal attempt against
-  the account's subscription allowance, or defer it?
 
 ## To be checked
 

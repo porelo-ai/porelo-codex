@@ -24,7 +24,7 @@ Feature: An observed selection is not mistaken for an idle composer
             sed -i 's|^  base_image: "ubuntu:24.04"$|  base_image: "docker.io/library/ubuntu:24.04@sha256:68ee22004a9109b44973313b02ff7b1de250f1de0f5ecb628d73f579aaff33ac"|' "$fixture/project.yml"
             printf '%s\n' \
               '  snippet: |' \
-              "    RUN mkdir -p /etc/codex && printf '%s\\n' 'model_reasoning_effort = \"minimal\"' 'web_search = \"disabled\"' '[model_providers.broker]' 'request_max_retries = 0' 'stream_max_retries = 0' > /etc/codex/config.toml" \
+              "    RUN mkdir -p /etc/codex && printf '%s\\n' 'model_reasoning_effort = \"none\"' 'web_search = \"disabled\"' '[model_providers.broker]' 'request_max_retries = 0' 'stream_max_retries = 0' > /etc/codex/config.toml" \
               'limits:' '  memory: 2g' '  cpus: "1.0"' '  pids: 2048' >> "$fixture/project.yml"
             env GIT_CONFIG_GLOBAL=/dev/null git -C "$fixture" add project.yml
             env GIT_CONFIG_GLOBAL=/dev/null git -C "$fixture" commit -m 'Configure the bounded model fixture'
