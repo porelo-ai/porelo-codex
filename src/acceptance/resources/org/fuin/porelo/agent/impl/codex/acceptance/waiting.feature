@@ -38,7 +38,7 @@ Feature: An observed selection is not mistaken for an idle composer
         When I type "/model"
         And I press Enter
         Then porelo shows the "codex" agent in task "select" of "select" waiting for a person
-        When I press the key "Escape"
+        When I press the key "Esc"
         Then porelo shows the "codex" agent in task "select" of "select" not waiting for a person
         When a script runs "porelo project unfollow select --force"
         Then it exits zero

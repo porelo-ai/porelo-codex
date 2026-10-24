@@ -126,6 +126,17 @@ brokered ChatGPT model/renewal acceptance pending.
 
 ## To be checked
 
+- **Approved live-run preflight:** on `1b41511`, the model-picker fixture reaches the real
+  composer, opens `/model` and is correctly reported as waiting. The published acceptance kit
+  then refuses the fixture's `Escape` key name; its supported name is `Esc`. This is corrected
+  in the fixture, with the failed selected case retested before the three unrun cases. The
+  test-only guard is observed on the task's actual broker socket; inspected limits are 2 GiB,
+  one CPU and 2,048 pids. Fifteen unpaid guard replays pass, with five spend-bound mutations
+  seen red; a stale local admission snapshot is refused against a durable cumulative ledger.
+  A separate unpaid cleanup replay refuses a different run's ownership before any action.
+  Both additional guards were seen red first. No new paid request occurs: cumulative admissions remain fourteen of thirty.
+  Independent cleanup restores snapshot 307 and matching override backups, with no task,
+  container or attributed scenario vault left. The four live scenarios remain pending.
 - **Published-snapshot recheck:** source `9ad9973` runs the unchanged missing-authentication
   scenario in the VM's own account against published Porelo `0.5.1~snapshot.318`, with package
   SHA-256 `5cbcd36f541eb0d078f84cc84ab9c900374681d79ea233c51ecb6af0b5d31359`
