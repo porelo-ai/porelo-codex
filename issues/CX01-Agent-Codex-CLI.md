@@ -17,8 +17,8 @@ supported ones, with its real credential never in the container.
 **Can it be brokered?** Yes for the measured Responses-over-HTTP path: a container holding only a
 dummy token receives a real model response through a host relay, and the CLI refreshes the real login
 in the host keyring. The separate ChatGPT provider contract is published; the adapter declares
-device-code file login and bounded credential extraction, with attended collection verified and
-brokered ChatGPT model/renewal acceptance pending.
+device-code file login and bounded credential extraction, with attended collection, a brokered
+ChatGPT model turn and host renewal verified.
 
 ## Plan
 
@@ -245,6 +245,10 @@ brokered ChatGPT model/renewal acceptance pending.
   [B244](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b244). The walk used
   five of its ten admissions: an earlier attempt stopped after two, because its scan could not
   archive a single-file mount. Cleanup leaves no task, container, new image or scratch vault.
+- **The operator's own walk passes** on 2026-10-27 at 18:24Z, with the same snapshot, adapter and walk
+  (`run-20261027T182403Z`): task A two admissions, both 200, with the answer after 44.3 s; task B one, 200,
+  after 17.4 s; no real token in either container; renewal one broker line, `expires_at` from 18:24:30Z
+  to 18:25:38Z; nothing left.
 
 - **Approved live-run preflight:** on `1b41511`, the model-picker fixture reaches the real
   composer, opens `/model` and is correctly reported as waiting. The published acceptance kit
