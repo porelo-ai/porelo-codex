@@ -39,6 +39,11 @@ Feature: An observed selection is not mistaken for an idle composer
         And I press Enter
         Then porelo shows the "codex" agent in task "select" of "select" waiting for a person
         When I press the key "Esc"
-        Then porelo shows the "codex" agent in task "select" of "select" not waiting for a person
+        # Porelo's reading may still be the one taken before the key; wait for it to change first.
+        Then within 30 seconds this script exits zero:
+            """
+            porelo task status porelo-select-select | grep -Eq '^screen +reads as not waiting'
+            """
+        And porelo shows the "codex" agent in task "select" of "select" not waiting for a person
         When a script runs "porelo project unfollow select --force"
         Then it exits zero
