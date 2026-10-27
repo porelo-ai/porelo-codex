@@ -215,6 +215,23 @@ brokered ChatGPT model/renewal acceptance pending.
   zero-admission ledger must be preserved before the approved repeat; any used allowance or
   changed ledger is refused. A new attended login is needed because its disposable vault is gone.
 
+- **Untyped subscription answers are withheld by the broker:** an attended walk through Porelo's own
+  unattended start, on account-local Porelo `0.5.1~snapshot.341` with adapter SHA-256
+  `d0ed3445d62f6a597bfcec230deb024a703a974d5174db743c6ca3225821adca`, signs in and stores
+  `chatgpt` as `oauth`. Task A holds only a phantom token. The task's `vault.log` records 30
+  `POST /backend-api/codex/responses -> 200 from the provider`, each followed by `answer withheld:
+  no content-type`, and the CLI receives 502 each time. No answer reaches the container, and the
+  repeated test's single 502 has the same cause. The same endpoint's 401 carries `application/json`.
+  The container scan, reply, renewal and the porelo
+  [B244](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b244) session
+  record did not run. The cleanup readback finds no task, container, image or scratch vault left.
+- **Retries multiply a withheld answer:** offline, the pinned CLI with the adapter's profile and
+  default retries sends 30 requests for a 502, 6 for a 403 or 422 and 1 for a 400, against a local
+  stand-in; none starts a sign-in. The 30 admissions above exceed the earlier ten-admission
+  allowance; the walk now stops its task at the broker's first withheld or error line. A broker
+  correction that reads an untyped body opening as JSON or server-sent events, and answers a
+  withheld one with a non-retried status, belongs to porelo; the next live run waits for it.
+
 - **Approved live-run preflight:** on `1b41511`, the model-picker fixture reaches the real
   composer, opens `/model` and is correctly reported as waiting. The published acceptance kit
   then refuses the fixture's `Escape` key name; its supported name is `Esc`. This is corrected
