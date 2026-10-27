@@ -9,7 +9,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
 | <a id="cx03"></a>[CX03](CX03-Forge-Pull-Requests.md) | S | — | Carry the approved forge pull-request rule and guard its DCO boundary |
-| <a id="cx01"></a>[CX01](CX01-Agent-Codex-CLI.md) | L | — | Attended ChatGPT login and collection pass; host-renewal route and ten-admission loop-record run agreed; live run awaits timing and VM slot; four API-key live scenarios remain pending |
+| <a id="cx01"></a>[CX01](CX01-Agent-Codex-CLI.md) | L | — | Attended ChatGPT login and collection pass; unpaid native collector and published-broker rehearsal pass; ten-admission attended model/renewal run and four API-key live scenarios remain pending |
 
 ## Finished
 

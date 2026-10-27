@@ -159,10 +159,10 @@ brokered ChatGPT model/renewal acceptance pending.
 
 ## To be checked
 
-- Arrange the run timing and the next local VM slot after the current acceptance run releases it.
-  Integrate the controller, memory-only collector reference capture and owned cleanup, then replay
-  the guard on the actual broker socket before arranging a fresh attended login. No admitted
-  request resets the cumulative limit for this run.
+- Complete the final added-diff reading and arrange the attended login timing. Native adapter
+  discovery, device-auth login preview and the shell-task command preview pass on the local VM
+  without starting a login or container. No admitted request resets the cumulative limit for this
+  run; the live subscription ledger remains separate from unpaid replay accounting.
 - **Unpaid ChatGPT admission replay:** 21 host cases pass against local fake UNIX-socket brokers,
   with no sign-in or upstream request. They cover the ten-admission ceiling, renewal reservation,
   actual broker-phase binding, restart/concurrency accounting, the ninety-second armed window,
@@ -171,8 +171,35 @@ brokered ChatGPT model/renewal acceptance pending.
   window, malformed reasoning block and missing broker-phase binding fail before their guards
   are added. Review also reproduces and removes inherited API-key output/usage constraints:
   absent subscription usage does not hide a successful reply or disable the ten-admission cap.
-  This is standalone guard coverage; controller wiring, collector capture, cleanup and actual
-  broker rehearsal remain unverified. The API-key admission ledger is unchanged.
+  The replay uses the published provider's `/backend-api/codex/responses` path; the inherited
+  API-key path is seen failing before correction. The API-key admission ledger is unchanged.
+- **Unpaid integration evidence:** nine host cases guard nonempty initial access/refresh
+  references, protocol framing and cross-block leak detection; six guard run ownership and
+  restoration of original override bytes and modes. Runtime mutations fail for missing references,
+  dropped block overlap, replacement of initial references, partial frames, wrong run ownership,
+  changed overrides and changed backups. A renewed access token in retained turn output, a
+  stopped task without a container and a cleanup-command failure stranding overrides are
+  reproduced before correction. Current access is collected before checking or retaining turn
+  output; the task scan includes mounted directories and both log streams. An authenticated
+  catalogue redirect is seen forwarding a fixture token before the probe refuses redirects; its
+  original-authority positive control still selects a supported model. The unmodified native
+  adapter forwards synthetic
+  `ExtractCredential` values through the test-only collector; both references remain in the
+  supervising process's RAM, neither reaches stdout/stderr, and interruption removes its sockets.
+  A runtime parent with mode `0775` beneath a private `0700` ancestor is also reproduced and
+  accepted without relaxing the socket's `0600` mode or its owner/peer checks.
+  On the local VM, published Porelo `0.5.1~snapshot.339` serves ten fixture requests to a loopback
+  stand-in through its actual broker. Task A's ninth-admission ceiling preserves task B's one,
+  the eleventh is refused, and the host alone substitutes the fixture credential. A reproduced
+  interrupt leaves the Core child's internal socket; the guard now removes only the recorded
+  socket after reaping that child, and porelo
+  [B302](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b302) records the
+  confirmed host defect and its proposed signal-cleanup fix.
+  The intermediate fixture omits the expected bearer prefix; the final launch supplies the
+  provider's prefix and passes. Cleanup restores Porelo `0.5.1~snapshot.307`, original override
+  hashes and modes, with no task, container, scratch vault or runtime socket left. Neither live
+  ledger changes. No real login, real token or subscription/model endpoint is involved. This
+  does not establish the attended controller's model, renewal or full task-level acceptance.
 
 - **Approved live-run preflight:** on `1b41511`, the model-picker fixture reaches the real
   composer, opens `/model` and is correctly reported as waiting. The published acceptance kit
