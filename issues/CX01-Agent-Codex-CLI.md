@@ -1,6 +1,6 @@
 # CX01 — Agent Codex CLI
 
-**Status:** Implementing; attended ChatGPT device-code login, OAuth vault collection and signed-in readback pass; missing-authentication acceptance passes against published Porelo snapshot 323 without a type override; API-key setup and shell-task broker containment verified; ChatGPT brokered model turn, renewal and unattended/interactive acceptance pending; the provider from porelo [P11](https://github.com/porelo-ai/porelo/blob/main/issues/providers/README.md#p11) is published.
+**Status:** Implementing; attended ChatGPT device-code login, OAuth vault collection and signed-in readback pass; missing-authentication acceptance passes against published Porelo snapshot 323 without a type override; API-key setup and shell-task broker containment verified; ChatGPT brokered model turn, container containment and host renewal pass against snapshot 343; the four API-key live scenarios and unattended/interactive acceptance pending; the provider from porelo [P11](https://github.com/porelo-ai/porelo/blob/main/issues/providers/README.md#p11) is published.
 **Size:** L - a new packaged agent, provider-specific broker acceptance and a separate ChatGPT sign-in/refresh integration.
 
 **What must be true.** Codex CLI runs in a task as a packaged agent, signed in and brokered like the
@@ -231,6 +231,18 @@ brokered ChatGPT model/renewal acceptance pending.
   allowance; the walk now stops its task at the broker's first withheld or error line. A broker
   correction that reads an untyped body opening as JSON or server-sent events, and answers a
   withheld one with a non-retried status, belongs to porelo; the next live run waits for it.
+- **Brokered ChatGPT turn and host renewal pass** on account-local Porelo `0.5.1~snapshot.343`,
+  which carries porelo [B303](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b303),
+  with the same adapter SHA-256 and a fresh attended login. Task A's two admissions are both
+  `-> 200 from the provider` with no withheld line, and Codex replies in 38 s; `bash -c` exits 2 and
+  `bash` exits 0. No real access token is found in the exported root filesystem or in the
+  task's mounts, and the profile holds only the phantom token, with no `auth.json`. After
+  `porelo vault renew chatgpt`, task B's broker logs exactly one host renewal, then one admission
+  returns 200, and `expires_at` advances. The scanned session record holds the refused
+  `bash -c` call for porelo
+  [B244](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b244). The walk used
+  five of its ten admissions: an earlier attempt stopped after two, because its scan could not
+  archive a single-file mount. Cleanup leaves no task, container, new image or scratch vault.
 
 - **Approved live-run preflight:** on `1b41511`, the model-picker fixture reaches the real
   composer, opens `/model` and is correctly reported as waiting. The published acceptance kit
