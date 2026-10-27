@@ -97,12 +97,29 @@ brokered ChatGPT model/renewal acceptance pending.
   tokens per request at USD 0.125 per million, treating all input as cache writes, plus output
   at USD 0.50 per million gives USD 0.136192 for sixteen requests. This is an estimate, not a
   provider-enforced monetary limit; stop if usage invalidates the allowance or a failure repeats.
-  The separately approved ChatGPT stage follows the four API-key scenarios and needs a fresh attended scratch login, at most two short model
-  requests and one host-side refresh attempt agreed through the published provider contract;
-  each model turn has a 90-second bound and no retries or hosted tools. It consumes subscription
-  allowance; its marginal credit cost cannot be established without the account's billing terms.
-  There is no supported forced-refresh trigger yet; that stage waits on porelo's host-renewal
-  capability, with its contract agreed before the fresh login is scheduled.
+  The next ChatGPT stage uses a fresh attended scratch login and published Porelo
+  `0.5.1~snapshot.339` or later. Its ceiling is two upstream Responses admissions in total and
+  one host-side renewal attempt; each model turn has a 90-second bound, no retries and no hosted
+  tools. It consumes subscription allowance; its marginal credit cost cannot be established
+  without the account's billing terms. A visible turn can make several model requests, so the
+  gate counts upstream admissions rather than completed turns. The API-key ledger stays separate.
+- **Agreed host-renewal route:** task A uses the first admission for a brokered reply and a
+  containment scan against the nonempty real access/refresh-token reference set. Stop task A,
+  run `porelo vault renew chatgpt`, then start a new task B. The command marks the vault entry
+  due without making a request; task B's first broker request performs the host-side renewal.
+  Require the second reply, one renewal line in `vault.log` and an advanced `expires_at` in
+  `vault list`. An already running broker retains its token, so reusing task A does not test this
+  route. Rotated-token storage before use is covered by the host's renewal tests; a third live
+  request to reuse it is outside the current allowance.
+- **Expiry contract:** `Credential.EXPIRES_AT` is epoch milliseconds, as supplied by
+  `CodexCredentialExtractor`; host collection converts it to the ISO instant stored in the
+  vault's `expires_at` setting. The host renewal reads and updates that setting. These two
+  representations do not require an adapter change.
+- **Additional loop-record capture:** porelo
+  [B244](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b244) may need a real
+  refused-tool record. Whether that prompt belongs in this run, and whether it changes the
+  two-admission ceiling, is pending a scope decision. Keep the existing ceiling until that is
+  settled; no login or model request starts before the run and its VM slot are arranged.
 
 ## Acceptance
 
@@ -123,6 +140,13 @@ brokered ChatGPT model/renewal acceptance pending.
   real-credential reference set absent from output, metadata, profile and exported rootfs.
 - API-key and ChatGPT authentication/refresh results are reported separately; an API-key success
   does not satisfy the ChatGPT cases. Provider-free checks must not require a paid credential.
+
+## Open questions
+
+- Whether the bounded ChatGPT run also requests a refused-tool record for porelo
+  [B244](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b244), and whether
+  that changes the current two-admission ceiling. Timing and the local VM slot must be arranged
+  before the fresh attended login.
 
 ## To be checked
 
