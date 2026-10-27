@@ -98,28 +98,44 @@ brokered ChatGPT model/renewal acceptance pending.
   at USD 0.50 per million gives USD 0.136192 for sixteen requests. This is an estimate, not a
   provider-enforced monetary limit; stop if usage invalidates the allowance or a failure repeats.
   The next ChatGPT stage uses a fresh attended scratch login and published Porelo
-  `0.5.1~snapshot.339` or later. Its ceiling is two upstream Responses admissions in total and
+  `0.5.1~snapshot.339` or later. Its ceiling is ten upstream Responses admissions in total and
   one host-side renewal attempt; each model turn has a 90-second bound, no retries and no hosted
   tools. It consumes subscription allowance; its marginal credit cost cannot be established
   without the account's billing terms. A visible turn can make several model requests, so the
   gate counts upstream admissions rather than completed turns. The API-key ledger stays separate.
-- **Agreed host-renewal route:** task A uses the first admission for a brokered reply and a
+- **Agreed host-renewal route:** task A starts with a brokered turn and a
   containment scan against the nonempty real access/refresh-token reference set. Stop task A,
   run `porelo vault renew chatgpt`, then start a new task B. The command marks the vault entry
   due without making a request; task B's first broker request performs the host-side renewal.
-  Require the second reply, one renewal line in `vault.log` and an advanced `expires_at` in
-  `vault list`. An already running broker retains its token, so reusing task A does not test this
-  route. Rotated-token storage before use is covered by the host's renewal tests; a third live
-  request to reuse it is outside the current allowance.
+  Reserve at least one of the ten admissions for task B. Require its reply, one renewal line in
+  `vault.log` and an advanced `expires_at` in `vault list`. An already running broker retains its
+  token, so reusing task A does not test this
+  route. Rotated-token storage before use is covered by the host's renewal tests; an additional
+  live renewal is outside this run's scope.
 - **Expiry contract:** `Credential.EXPIRES_AT` is epoch milliseconds, as supplied by
   `CodexCredentialExtractor`; host collection converts it to the ISO instant stored in the
   vault's `expires_at` setting. The host renewal reads and updates that setting. These two
   representations do not require an adapter change.
-- **Additional loop-record capture:** porelo
+- **Containment evidence boundary:** retain the initial access/refresh-token references only in
+  the supervising process's memory through the accepted login collector route. The public
+  credential helper can supply the current access token on a pipe, including after renewal.
+  A rotated refresh token is deliberately not readable through a public command. Task B can be
+  scanned against the new access token and the retained initial references, but absence of the
+  rotated refresh token is a host-code finding, not a live search result. Do not add a command
+  that reveals hidden refresh grants for this test.
+- **Request shape:** the broker forwards the Responses body without adding or stripping
+  `max_output_tokens`; its acceptance by the subscription endpoint is not established. The
+  ChatGPT admission guard preserves the CLI's body and does not inject that unverified field.
+  The subscription run is bounded by admission count and turn time, separately from the
+  API-key gate's output-token and monetary planning limits.
+- **Decided loop-record capture:** porelo
   [B244](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b244) may need a real
-  refused-tool record. Whether that prompt belongs in this run, and whether it changes the
-  two-admission ceiling, is pending a scope decision. Keep the existing ceiling until that is
-  settled; no login or model request starts before the run and its VM slot are arranged.
+  refused-tool record. The first task A prompt asks for `bash -c` without an argument, then
+  `bash` alone, and both outputs. The approved allowance is ten upstream admissions across both
+  tasks, including renewal in task B, with the same 90-second turn bound and no retries or hosted
+  tools. Copy the newest `.codex/sessions/**/*.jsonl` into the handover only after a scan against
+  nonempty phantom- and real-token reference sets finds neither. Stop on a repeated failure.
+  No login or model request starts before the run timing and its VM slot are arranged.
 
 ## Acceptance
 
@@ -141,14 +157,22 @@ brokered ChatGPT model/renewal acceptance pending.
 - API-key and ChatGPT authentication/refresh results are reported separately; an API-key success
   does not satisfy the ChatGPT cases. Provider-free checks must not require a paid credential.
 
-## Open questions
-
-- Whether the bounded ChatGPT run also requests a refused-tool record for porelo
-  [B244](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b244), and whether
-  that changes the current two-admission ceiling. Timing and the local VM slot must be arranged
-  before the fresh attended login.
-
 ## To be checked
+
+- Arrange the run timing and the next local VM slot after the current acceptance run releases it.
+  Integrate the controller, memory-only collector reference capture and owned cleanup, then replay
+  the guard on the actual broker socket before arranging a fresh attended login. No admitted
+  request resets the cumulative limit for this run.
+- **Unpaid ChatGPT admission replay:** 21 host cases pass against local fake UNIX-socket brokers,
+  with no sign-in or upstream request. They cover the ten-admission ceiling, renewal reservation,
+  actual broker-phase binding, restart/concurrency accounting, the ninety-second armed window,
+  preserved request bodies, refused tools and repeated failures. Runtime mutations make the
+  spending, reservation, phase, ledger, body, clock and repeated-error guards fail. An overlong
+  window, malformed reasoning block and missing broker-phase binding fail before their guards
+  are added. Review also reproduces and removes inherited API-key output/usage constraints:
+  absent subscription usage does not hide a successful reply or disable the ten-admission cap.
+  This is standalone guard coverage; controller wiring, collector capture, cleanup and actual
+  broker rehearsal remain unverified. The API-key admission ledger is unchanged.
 
 - **Approved live-run preflight:** on `1b41511`, the model-picker fixture reaches the real
   composer, opens `/model` and is correctly reported as waiting. The published acceptance kit
