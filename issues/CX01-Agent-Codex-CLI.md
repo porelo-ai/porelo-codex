@@ -1,6 +1,6 @@
 # CX01 — Agent Codex CLI
 
-**Status:** Implementing; attended ChatGPT device-code login, OAuth vault collection and signed-in readback pass; missing-authentication acceptance passes against published Porelo snapshot 323 without a type override; API-key setup and shell-task broker containment verified; ChatGPT brokered model turn, container containment and host renewal pass against snapshot 343; the four API-key live scenarios and unattended/interactive acceptance pending; the provider from porelo [P11](https://github.com/porelo-ai/porelo/blob/main/issues/providers/README.md#p11) is published.
+**Status:** Implementing; attended ChatGPT device-code login, OAuth vault collection and signed-in readback pass; missing-authentication acceptance passes against published Porelo snapshot 323 without a type override; API-key setup and shell-task broker containment verified; ChatGPT brokered model turn, container containment and host renewal pass against snapshot 343; the four API-key scenarios (session continuation, model-picker waiting, idle and busy wake) pass against snapshot 343; the provider from porelo [P11](https://github.com/porelo-ai/porelo/blob/main/issues/providers/README.md#p11) is published.
 **Size:** L - a new packaged agent, provider-specific broker acceptance and a separate ChatGPT sign-in/refresh integration.
 
 **What must be true.** Codex CLI runs in a task as a packaged agent, signed in and brokered like the
@@ -93,10 +93,12 @@ brokered ChatGPT model/renewal acceptance pending.
   and reasoning `none`, after an unpaid replay verifies the test-only admission guard. Preserve
   the fourteen spent requests; the approved cumulative ceiling is thirty, allowing sixteen
   further requests, zero CLI retries and a USD 0.25 working budget.
-  Reject bodies over 32 KiB and cap output at 1,024 tokens. A planning allowance of 64,000 input
+  Reject bodies over 128 KiB, approved in place of 32 KiB since the pinned CLI sends about 55,865 bytes with a fresh
+  profile, and cap output at 1,024 tokens. A planning allowance of 64,000 input
   tokens per request at USD 0.125 per million, treating all input as cache writes, plus output
   at USD 0.50 per million gives USD 0.136192 for sixteen requests. This is an estimate, not a
   provider-enforced monetary limit; stop if usage invalidates the allowance or a failure repeats.
+  Twenty-seven of the thirty are spent; a further paid API-key run needs a new approval.
   The next ChatGPT stage uses a fresh attended scratch login and published Porelo
   `0.5.1~snapshot.339` or later. Its ceiling is ten upstream Responses admissions in total and
   one host-side renewal attempt; each model turn has a 90-second bound, no retries and no hosted
@@ -254,7 +256,26 @@ brokered ChatGPT model/renewal acceptance pending.
   A separate unpaid cleanup replay refuses a different run's ownership before any action.
   Both additional guards were seen red first. No new paid request occurs: cumulative admissions remain fourteen of thirty.
   Independent cleanup restores snapshot 307 and matching override backups, with no task,
-  container or attributed scenario vault left. The four live scenarios remain pending.
+  container or attributed scenario vault left.
+- **The four API-key scenarios pass** on `c6356be`, whose tree is `634df1a`'s, against account-local Porelo
+  `0.5.1~snapshot.343`, adapter SHA-256 `d0ed3445d62f6a597bfcec230deb024a703a974d5174db743c6ca3225821adca` and
+  acceptance kit `0.5.1-20261027.160227-39`, with `gpt-6-luna`, reasoning `none`, zero CLI retries and the test-only
+  gate on each task's actual broker socket. The model picker spends no admission, session continuation across a stop
+  and restart two, idle wake five and busy wake six, the last of them admitted while busy wake's task was being
+  removed after the scenario had passed; it recorded no status and is counted as spent: twenty-seven of thirty. The
+  twelve recorded requests report 123,603 input tokens, 73,268 of them cached, and 728 output tokens; none exceeds
+  11,851 input. Cleanup restores the account's CLI by hash, with no task, container, scenario vault or new image left.
+- **Porelo's waiting reading trails the screen by up to one poll.** With a fixture key and no gate, so that no model
+  request can be made, `Esc` closes the picker every time; a capture shows the picker on screen while
+  `porelo task status` still reads not waiting, and the reverse after `Esc`. The kit's "not waiting" step judges its
+  first poll, so the earlier fixture failed in two of three runs, after zero admissions. The fixture now waits up to
+  30 seconds for `porelo task status` to read not waiting before the kit's step must hold it for eight; three runs
+  pass. The kit's step itself belongs to porelo.
+- **The API-key gate's unpaid replay:** 26 host cases and one cleanup-ownership case pass. Every guard added for this
+  run was seen red by mutation: the 128 KiB cap, both socket option forms under the account's runtime directory only,
+  a broker started after leading options refused, a missing or linked ledger refusing the run instead of restarting
+  from a seed, a persistent stop holding at equal counts, a non-object `reasoning` and deeply nested JSON refused with
+  a stop, and the inherited zero-admission size refusal released exactly once. A refusal keeps only a code and sizes.
 - **Published-snapshot recheck:** source `9ad9973` runs the unchanged missing-authentication
   scenario in the VM's own account against published Porelo `0.5.1~snapshot.318`, with package
   SHA-256 `5cbcd36f541eb0d078f84cc84ab9c900374681d79ea233c51ecb6af0b5d31359`
