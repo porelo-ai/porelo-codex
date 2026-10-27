@@ -99,6 +99,16 @@ automatic repository-image discovery. GitHub checkout/cache/upload actions and `
 are runner-specific: use a commit-scoped handover checkout, the image's pinned JDK and local
 package inspection instead. No Maven verification or shared check is exempted.
 
+Use a shell-only task with no model credential. The measured task limits are 5 GiB of memory,
+two CPUs and 4,096 processes. Run `./mvnw -B -s settings.xml verify`, resolve `-Pci-tools`,
+run the shared document checks and `exec:java@check-codex-artifacts`, then run
+`-Pnative,dist verify` with an explicit local snapshot counter and the documents profile.
+Keep packaging online so the bill of materials is produced, inspect both native packages and
+the fetched components, and remove only the test's task, project, images and checkout.
+The real-task build and retained GitHub package artifacts establish the build-image acceptance;
+indexed adapter publication remains gated on provider acceptance by the
+[build boundary](decisions.md#build-boundary).
+
 Task profiles use `CODEX_HOME=/home/agent/.codex`. This includes Codex's temporary helper aliases,
 so help and startup paths stay in the same task profile. Provider integration and any credential
 store selection remain separate from this task-local path.
