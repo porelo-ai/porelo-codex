@@ -50,7 +50,6 @@ JSON or nested parser/decoder diagnostics. The extractor follows the existing ad
 of a small `CredentialExtractor` override because the nested token fields and JWT expiry cannot
 be expressed by the shared YAML reader. Its token endpoint and public client ID were read in
 the digest-verified pinned CLI; a pin change requires rechecking that sign-in and renewal identity.
-Live device-code collection and actual broker renewal still require attended acceptance.
 
 ## Conversation records
 

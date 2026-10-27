@@ -5,11 +5,11 @@ adapter executable and bill of materials; a task image downloads the pinned Code
 host archives and verifies each digest before extraction.
 
 The adapter builds and is discovered by Porelo. Its OpenAI API-key setup points Codex at the task's
-broker using only a phantom token. A real model reply and credential containment are verified in
-a shell task; unattended launch and interactive session/wake acceptance remain pending. ChatGPT
+broker using only a phantom token; session continuation across a stop and restart, the model
+picker's waiting screen, and idle and busy wake pass against Porelo 0.5.1~snapshot.343. ChatGPT
 is the default provider. The adapter declares device-code login and collects its OAuth record
-for host-side vault storage, account routing and renewal. Attended device-code login and OAuth
-vault collection pass; a brokered ChatGPT model turn and renewal still need acceptance.
+for host-side vault storage, account routing and renewal. Attended device-code login, a brokered
+ChatGPT model turn with no real token in the container, and host renewal pass.
 API keys use the explicit OpenAI provider. The adapter requires Porelo 0.5.1~snapshot.317 or
 newer to read attended session metadata and unattended final replies through the published selectors.
 

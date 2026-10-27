@@ -17,6 +17,6 @@ From porelo-project [PJ59](https://github.com/porelo-ai/porelo-project/blob/main
 - Its build runs on the local forge as on the central one.
 - The room shows it as `Agent Codex`, from the nickname `Codex` in porelo-project's `project.yml`, set once porelo
   [B298](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b298) is published.
-- Codex CLI answers in the task with its ChatGPT sign-in from the vault (porelo [P11](https://github.com/porelo-ai/porelo/blob/main/issues/providers/README.md#p11), [CX01](README.md#cx01)).
+- Codex CLI answers in the task with its ChatGPT sign-in from the vault (porelo [P11](https://github.com/porelo-ai/porelo/blob/main/issues/providers/README.md#p11)).
 - [PJ59](https://github.com/porelo-ai/porelo-project/blob/main/issues/README.md#pj59)'s move check is red for `porelo-codex` before the move and green after it; the agent's session on this machine and its
   VM accounts are no longer used, and the way back [PJ59](https://github.com/porelo-ai/porelo-project/blob/main/issues/README.md#pj59) describes is open.
