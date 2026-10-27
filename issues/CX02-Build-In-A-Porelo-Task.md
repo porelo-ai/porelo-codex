@@ -1,6 +1,6 @@
 # CX02 — Build in a Porelo task
 
-**Status:** Implementing; complete applicable Build green in a task, awaiting push and publication.
+**Status:** Implementing; task build and pushed GitHub Builds pass, package artifacts are available; final acceptance decision pending.
 **Size:** M - one pinned build-image declaration, documentation and a real task-level acceptance run covering the native packages and shared checks through an equivalent disposable project file.
 
 **What must be true.** The repository carries its build tools in `porelo.yml`, and its build passes
@@ -64,6 +64,12 @@ it does not require Codex to be the task's agent or the ChatGPT provider to exis
   production provider acceptance stays in [CX01](README.md#cx01). No provider key or host SSH key
   enters the task or its image. No push, rented machine, restart or shared VM install is needed.
 
+## Open questions
+
+- Whether the completed real-task build and retained GitHub package artifacts complete this
+  issue's acceptance, with indexed adapter publication remaining separate until provider
+  acceptance, or an indexed snapshot is also required here.
+
 ## VM run
 
 - Only `codex` on the Ubuntu VM, `/usr/bin/porelo` measured as `0.5.1~snapshot.307`; run-owned
@@ -108,3 +114,11 @@ it does not require Codex to be the task's agent or the ChatGPT provider to exis
 - Cleanup is independently read back: no tasks, only the default project; the followed project,
   run directory, task container, generated image and pulled base image are absent. No machine-wide
   install, account reset, restart, rented machine or paid model is used.
+- The implementation is already on `main` as `8e9c9aa35b1b69799b71ee8bf82ee66b8bec178a`.
+  Its [GitHub Build](https://github.com/porelo-ai/porelo-codex/actions/runs/39730780306)
+  passes and retains the `packages` artifact. The
+  [current Build](https://github.com/porelo-ai/porelo-codex/actions/runs/40475112768) on
+  `a53a8f97c3215a30abb0577571303cdd3a087638` also passes with a retained `packages` artifact.
+  These are uploaded build artifacts, not an indexed adapter snapshot: the
+  [build boundary](../doc/decisions.md#build-boundary) keeps indexed publication separate until
+  provider acceptance is complete. No implementation commit remains to be pushed for this issue.
