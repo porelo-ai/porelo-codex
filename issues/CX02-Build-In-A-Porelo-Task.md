@@ -1,6 +1,6 @@
 # CX02 — Build in a Porelo task
 
-**Status:** Implementing; task build and pushed GitHub Builds pass, package artifacts are available; final acceptance decision pending.
+**Status:** Review; task build and retained GitHub package artifacts are the agreed acceptance evidence; indexed adapter publication remains with [CX01](README.md#cx01).
 **Size:** M - one pinned build-image declaration, documentation and a real task-level acceptance run covering the native packages and shared checks through an equivalent disposable project file.
 
 **What must be true.** The repository carries its build tools in `porelo.yml`, and its build passes
@@ -64,11 +64,11 @@ it does not require Codex to be the task's agent or the ChatGPT provider to exis
   production provider acceptance stays in [CX01](README.md#cx01). No provider key or host SSH key
   enters the task or its image. No push, rented machine, restart or shared VM install is needed.
 
-## Open questions
+## Decided
 
-- Whether the completed real-task build and retained GitHub package artifacts complete this
-  issue's acceptance, with indexed adapter publication remaining separate until provider
-  acceptance, or an indexed snapshot is also required here.
+- The completed real-task build and retained GitHub package artifacts are this issue's acceptance
+  evidence. An indexed adapter snapshot is not required here; publication belongs to
+  [CX01](README.md#cx01). Automatic repository-image discovery remains outside this issue.
 
 ## VM run
 
