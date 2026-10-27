@@ -163,7 +163,7 @@ brokered ChatGPT model/renewal acceptance pending.
   discovery, device-auth login preview and the shell-task command preview pass on the local VM
   without starting a login or container. No admitted request resets the cumulative limit for this
   run; the live subscription ledger remains separate from unpaid replay accounting.
-- **Unpaid ChatGPT admission replay:** 21 host cases pass against local fake UNIX-socket brokers,
+- **Unpaid ChatGPT admission replay:** 23 host cases pass against local fake UNIX-socket brokers,
   with no sign-in or upstream request. They cover the ten-admission ceiling, renewal reservation,
   actual broker-phase binding, restart/concurrency accounting, the ninety-second armed window,
   preserved request bodies, refused tools and repeated failures. Runtime mutations make the
@@ -200,6 +200,20 @@ brokered ChatGPT model/renewal acceptance pending.
   hashes and modes, with no task, container, scratch vault or runtime socket left. Neither live
   ledger changes. No real login, real token or subscription/model endpoint is involved. This
   does not establish the attended controller's model, renewal or full task-level acceptance.
+
+- **Attended first-turn refusal:** device-code login and OAuth collection complete, but the
+  first model turn is stopped locally with zero upstream admissions. Cleanup restores snapshot
+  307, the original adapter hash and all account overrides, leaving no task or container.
+  The failed CLI record was not retained, so its exact body size is not measured. A credential-free
+  replay of pinned CLI `0.163.0` emits 55,865 bytes with a fresh normal profile, exceeding the
+  guard's inherited 32,768-byte cap. The same CLI through that cap is refused before admission;
+  with the corrected 128 KiB cap it reaches a local stand-in unchanged and exits successfully.
+  Neither observation is a real provider reply. The ten-admission, ninety-second, local-tool and
+  renewal-reservation guards remain unchanged. Refusals retain only a fixed code and numeric
+  size bounds, never request paths, headers or bodies. A failed turn now retains private CLI
+  diagnostics only after current real-token and phantom-token scans pass. The exact failed
+  zero-admission ledger must be preserved before the approved repeat; any used allowance or
+  changed ledger is refused. A new attended login is needed because its disposable vault is gone.
 
 - **Approved live-run preflight:** on `1b41511`, the model-picker fixture reaches the real
   composer, opens `/model` and is correctly reported as waiting. The published acceptance kit
