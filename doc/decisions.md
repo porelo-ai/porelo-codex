@@ -10,7 +10,7 @@
 | Task-local profile | The image sets CODEX_HOME explicitly | [Profile](#profile) |
 | Terminal state | Measured composer, busy and selection boundaries gate wake input | [Terminal state](#terminal-state) |
 | Artifact checks | Shared named-pin calls check and record both fetched components | [Artifact checks](#artifact-checks) |
-| Build boundary | CI verifies packages without publishing or live credentials | [Build boundary](#build-boundary) |
+| Build boundary | A push to main publishes the snapshot package; CI uses no live credentials or rented machines | [Build boundary](#build-boundary) |
 
 ## Provider boundary
 
@@ -127,15 +127,18 @@ The setup consumes only the published agent contract; provider upstreams, header
 and credential renewal remain outside the adapter. The credential extractor reads only the
 CLI-specific login representation.
 
-Unlike the complete adapters, CI only checks the existing pins and builds packages. It neither
-publishes an incomplete adapter nor proposes CLI upgrades without a live-provider gate. Shared
-release tooling remains the source of pin metadata and bill recording. Provider acceptance,
-publishing and automated updates require the provider contract and its acceptance coverage.
+CI checks the pins, builds the packages and, on a push to main, publishes them to the snapshot
+channel with `artifactory.sh`, the helper every adapter carries byte for byte; the package is
+believed only once the snapshot index lists its exact file. A release version on main is refused
+before the upload, and there is no tag release yet. The publish step alone receives a secret, the
+publish token. The session, waiting and wake acceptance runs attended on a local VM, not on a
+rented machine in CI; a rented acceptance leg, releases and automated CLI updates follow as their
+own issue. Shared release tooling remains the source of pin metadata and bill recording.
 
 The credential name reserved for GitHub live tests is `OPEN_AI_API`: a live-test step receives it
 as an environment variable from the GitHub Actions secret of the same name. The binding belongs
 only on that step, never at workflow or job scope, and is unavailable to untrusted pull-request
-code. The current provider-independent workflow has no live-test step and requests no secret.
+code. The workflow has no live-test step yet and requests no provider secret.
 
 The published acceptance kit creates its own base-image mapping before appending extra YAML.
 The live fixtures therefore replace exactly its known initial base-image line in the owned Git

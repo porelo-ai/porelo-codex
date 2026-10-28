@@ -14,6 +14,7 @@
 - ChatGPT device-code login and bounded OAuth credential collection for host-side renewal,
   with account routing preserved and malformed credentials refused without echoing tokens.
   ChatGPT is the default provider; API keys continue through the explicit OpenAI provider.
+- The Debian and RPM packages are published to the snapshot channel on every push to main.
 
 ### Fixed
 
