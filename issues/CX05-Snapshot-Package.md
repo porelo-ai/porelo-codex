@@ -1,6 +1,6 @@
 # CX05 — Snapshot Package
 
-**Status:** Implementing.
+**Status:** Review; published as `0.1.0~snapshot.5`.
 **Size:** M - one workflow change with its helper, three guards run against stubs, and a decision changed.
 
 **What must be true.** Every push to main publishes `porelo-agent-codex` to the snapshot channel, so a
@@ -25,7 +25,3 @@ sign-in can start from the published package.
 
 - The Build of the pushed commit passes every job, and its publish step names the uploaded files.
 - The snapshot index lists `porelo-agent-codex` with the run's version, read after the Build.
-
-## To be checked
-
-- After the push, read the snapshot index for the version and post it in the channel.
