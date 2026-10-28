@@ -23,6 +23,12 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | <a id="cx06"></a>[CX06](CX06-Rented-Acceptance-And-Releases.md) |  | — | rented acceptance legs, releases and CLI updates, as in the other adapters |
 | <a id="cx04"></a>[CX04](CX04-The-Repository-s-Agent-Works-In-A-Porelo-Task.md) |  | [PJ59](https://github.com/porelo-ai/porelo-project/blob/main/issues/README.md#pj59) | the repository's agent moves into its own Porelo task, wave 7b of the move |
 
+## Estimated
+
+| # | Size | Blocked by | What it covers |
+|---|---|---|---|
+| <a id="cx07"></a>[CX07](CX07-A-Repeated-Refused-Call-Ends-The-Wake-Scenario.md) | S | — | a real model repeating a refused tool call in a woken task ends the acceptance run early, the live case of porelo [B244](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b244); after 6i |
+
 ## Finished
 
 | # | Size | Blocked by | What it covers |
