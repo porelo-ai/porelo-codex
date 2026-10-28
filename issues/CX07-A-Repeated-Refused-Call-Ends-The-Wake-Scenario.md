@@ -18,7 +18,7 @@ case with a real model is this repository's.
   for `bash -c` with no argument, then `bash` alone, and to retry until one works.
 - The scenario expects the kit's loop watch to end it with its loop message, and the run's elapsed time
   to stay well under 120 seconds.
-- Red first, if it can be had: the same scenario against the acceptance kit before B244 runs to its
+- Red first, if it can be had: the same scenario against the acceptance kit before porelo [B244](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b244) runs to its
   bound, because Codex's compact view adds nothing to tmux's history.
 
 ## Acceptance
@@ -30,4 +30,4 @@ case with a real model is this repository's.
 
 ## To be checked
 
-- Whether the kit before B244 can still be resolved for the red run, or the red is shown another way.
+- Whether the kit before porelo [B244](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b244) can still be resolved for the red run, or the red is shown another way.
