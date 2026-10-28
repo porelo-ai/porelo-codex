@@ -20,13 +20,13 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers | Open questions |
 |---|---|---|---|---|
-| <a id="cx04"></a>[CX04](CX04-The-Repository-s-Agent-Works-In-A-Porelo-Task.md) | S | [CX08](#cx08), porelo-project [PJ59](https://github.com/porelo-ai/porelo-project/blob/main/issues/README.md#pj59), porelo [B298](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b298), the moves of wave 7a | the repository's agent moves into its own Porelo task, wave 7b of the move, after a dry run on this machine | 1 |
+| <a id="cx04"></a>[CX04](CX04-The-Repository-s-Agent-Works-In-A-Porelo-Task.md) | S | [CX08](#cx08), porelo-project [PJ59](https://github.com/porelo-ai/porelo-project/blob/main/issues/README.md#pj59), porelo [B298](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b298), the moves of wave 7a | the repository's agent moves into its own Porelo task, wave 7b of the move, after a dry run on this machine | 0 |
+| <a id="cx08"></a>[CX08](CX08-The-Build-Runs-On-The-Local-Forge-As-On-The-Central-One.md) | S | porelo [B306](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b306), porelo-buildtools [BT25](https://github.com/porelo-ai/porelo-buildtools/blob/main/issues/README.md#bt25) | the workflows run 1:1 on the local Forgejo and the central forge, before the move | 0 |
 
 ## Idea
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
-| <a id="cx08"></a>[CX08](CX08-The-Build-Runs-On-The-Local-Forge-As-On-The-Central-One.md) |  | — | the workflows run 1:1 on the local Forgejo and the central forge, before the move |
 | <a id="cx06"></a>[CX06](CX06-Rented-Acceptance-And-Releases.md) |  | — | rented acceptance legs, releases and CLI updates, as in the other adapters |
 
 ## Estimated
