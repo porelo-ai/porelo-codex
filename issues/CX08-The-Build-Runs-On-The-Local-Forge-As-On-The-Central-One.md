@@ -1,18 +1,15 @@
 # CX08 — The Build Runs On The Local Forge As On The Central One
 
-**Status:** Analyzed; blocked by porelo [B306](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b306),
-Porelo's snapshots in the forge's registry, and porelo-buildtools
-[BT25](https://github.com/porelo-ai/porelo-buildtools/blob/main/issues/README.md#bt25) for `check-providers`.
+**Status:** Analyzed; waits for Porelo's snapshots in the forge's registry, and for the build tools'
+`check-providers`.
 **Size:** S - `settings.xml`, the four workflows, the `pinned-jdk` action, the two workflow tests and one recorded
-decision, no legs and no contract another repository reads; about 2 hours of work once porelo-claude-code
-[CC38](https://github.com/porelo-ai/porelo-claude-code/blob/main/issues/README.md#cc38) has set the shape, plus the runs
+decision, no legs and no contract another repository reads; about 2 hours of work once porelo-claude-code has set the shape, plus the runs
 on the host's forge.
 
 **What must be true.** `porelo-codex`'s workflows run green on the local Forgejo and on the central forge on the same
 commit, with no edit between them: the registry and the place it publishes to are variables of the setup.
 
-From porelo-project [PJ60](https://github.com/porelo-ai/porelo-project/blob/main/issues/README.md#pj60), for the move's
-wave 7b, before [CX04](README.md#cx04).
+Before [CX04](README.md#cx04); the variables are those of porelo-host's `doc/local-forge.md`, *The local registry and publication settings*.
 
 ## Plan
 
@@ -35,7 +32,7 @@ the adapters' changes.
     `if` is exactly a push to `main`, `PublishStepsTest` runs *Not publishing*'s script, and `doc/decisions.md` says
     "The publish step alone receives a secret, the publish token."
 - **Where Porelo's snapshots come from on the local forge:** `porelo`'s Build on the host's forge deploys them into its
-  registry (porelo [B306](https://github.com/porelo-ai/porelo/blob/main/issues/base/README.md#b306)).
+  registry.
 - **Steps:**
   1. `settings.xml` gains the `forge` profile and the `porelo-forge` server as porelo-message-sluice has them, and
      `standard` stays off where `MAVEN_SNAPSHOTS_URL` is set. Every Maven call passes `MAVEN_SNAPSHOTS_URL` and

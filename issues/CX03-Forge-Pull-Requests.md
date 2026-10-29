@@ -9,8 +9,7 @@ repositories still require their authors' DCO sign-off; GitHub keeps its existin
 
 ## Plan
 
-- Carry the exact template from porelo-buildtools
-  [BT36](https://github.com/porelo-ai/porelo-buildtools/blob/main/issues/README.md#bt36) into
+- Carry the exact shared template, as porelo-buildtools has it, into
   `.github/workflows/shared-rules.yml`: bind `PR_SERVER` from `github.server_url` and clear
   `--outside` for a non-GitHub server only inside the same-repository condition.
 - Add `WorkflowPullRequestTest`, using the existing `WorkflowSteps` helper to run the actual
