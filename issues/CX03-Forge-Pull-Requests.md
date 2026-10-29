@@ -1,6 +1,6 @@
 # CX03 — Forge Pull Requests
 
-**Status:** Implementing; adapter part of the approved shared template change.
+**Status:** Review; adapter part of the approved shared template change, pushed and its Build green.
 **Size:** S - one workflow condition and an executable regression guard, with the full build checks.
 
 **What must be true.** A pull request from this repository's own branch on the host's forge is
