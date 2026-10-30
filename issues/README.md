@@ -18,6 +18,12 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | <a id="cx04"></a>[CX04](CX04-The-Repository-s-Agent-Works-In-A-Porelo-Task.md) | S | [CX08](#cx08) | the repository's agent moves into its own Porelo task, after a dry run on this machine | 0 |
 | <a id="cx08"></a>[CX08](CX08-The-Build-Runs-On-The-Local-Forge-As-On-The-Central-One.md) | S | — | the workflows run 1:1 on the local Forgejo and the central forge, before the move | 0 |
 
+## Accepted
+
+| # | Size | Blocked by | What it covers |
+|---|---|---|---|
+| <a id="cx10"></a>[CX10](CX10-The-Sign-In-Says-How-It-Is-Answered.md) | XS | — | the definition names its sign-in's flow, `device-code`, so the person is told to paste a code or confirm a device page; waits for Porelo's agent API with `login.flow` |
+
 ## Idea
 
 | # | Size | Blocked by | What it covers |
