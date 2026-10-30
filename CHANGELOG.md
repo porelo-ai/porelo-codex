@@ -4,6 +4,9 @@
 
 ### Added
 
+- The definition names how its sign-in is answered, `login.flow: device-code`, so a person signing
+  in on a host over SSH can be told to confirm the one-time code on OpenAI's page; Porelo 0.5.0,
+  which this builds against, ignores the key, and a later Porelo reads it.
 - A provider-independent Codex CLI adapter with task-local profiles, structured turn outcomes and
   pinned, verified CLI and code-mode host installation artifacts.
 - A draft task-build image declaration with pinned build tools and native package prerequisites.

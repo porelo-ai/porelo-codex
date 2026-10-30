@@ -5,6 +5,7 @@ binary: codex
 config_dir: "~/.codex"
 login:
     arguments: ["-c", 'cli_auth_credentials_store="file"', "login", "--device-auth"]
+    flow: device-code
     documentation: "https://learn.chatgpt.com/docs/auth"
 
 provider:
