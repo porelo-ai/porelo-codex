@@ -1,6 +1,6 @@
 # CX10 — The Sign-In Says How It Is Answered
 
-**Status:** Accepted.
+**Status:** Backlog; Estimated and Backlog (operator, 2026-10-30, sprint 6m).
 **Size:** XS - the key in `codex.yaml` and the Porelo version in `pom.xml`, under an hour.
 
 **What must be true.** A person signing in to Codex CLI from a host, at a terminal or in the GUI, is told to confirm the
@@ -13,7 +13,10 @@ one-time code on OpenAI's device page.
   a login on a host; the agent listing it gives the frontend names the flow.
 - **`src/main/resources/agent/codex.yaml`** gains `login.flow: device-code`.
   Its login runs `login --device-auth`, which shows a device page and a one-time code.
-- **`pom.xml`:** `porelo.version` moves to the Porelo version whose agent API takes the key.
+- **The key lands first:** Porelo 0.5.0's `AgentDefinitionReader` reads `login` key by key and ignores one it
+  does not know, so the key is added now and the unit suite stays green.
+- **`pom.xml`:** `porelo.version` then moves to the Porelo version whose agent API reads the key; that is when the
+  listing names it.
 - No test: a wrong value either shows the wrong hint, which only reads wrong, or, as `loopback`, is refused by name
   at once; neither does harm.
 
