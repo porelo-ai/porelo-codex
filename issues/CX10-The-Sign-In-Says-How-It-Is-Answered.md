@@ -1,10 +1,10 @@
 # CX10 — The Sign-In Says How It Is Answered
 
-**Status:** Accepted; waits for a Porelo release whose agent API takes `login.flow`.
-**Size:** XS - one key in `codex.yaml`, no contract another repository reads.
+**Status:** Accepted.
+**Size:** XS - the key in `codex.yaml` and the Porelo version in `pom.xml`, under an hour.
 
-**What must be true.** A person signing in to Codex CLI from a host is told whether to paste a code or to confirm a
-device page, because the agent definition names its sign-in's flow, `login.flow: device-code`.
+**What must be true.** A person signing in to Codex CLI from a host, at a terminal or in the GUI, is told to confirm the
+one-time code on OpenAI's device page.
 
 ## Plan
 
@@ -13,9 +13,11 @@ device page, because the agent definition names its sign-in's flow, `login.flow:
   a login on a host; the agent listing it gives the frontend names the flow.
 - **`src/main/resources/agent/codex.yaml`** gains `login.flow: device-code`.
   Its login runs `login --device-auth`, which shows a device page and a one-time code.
-- **`porelo.version`** moves to the release that has the key.
-- No test: a wrong flow only shows the wrong hint, which reads wrong and is fixed.
+- **`pom.xml`:** `porelo.version` moves to the Porelo version whose agent API takes the key.
+- No test: a wrong value either shows the wrong hint, which only reads wrong, or, as `loopback`, is refused by name
+  at once; neither does harm.
 
 ## Acceptance
 
-- The definition loads with the new Porelo release, and the agent listing names `device-code` for Codex CLI.
+- Seen to fail first: the agent listing for today's definition names no flow.
+- With the change, the definition loads and the agent listing names `device-code`.

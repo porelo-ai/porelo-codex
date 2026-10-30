@@ -22,14 +22,14 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
-| <a id="cx10"></a>[CX10](CX10-The-Sign-In-Says-How-It-Is-Answered.md) | XS | — | the definition names its sign-in's flow, `device-code`, so the person is told to paste a code or confirm a device page; waits for Porelo's agent API with `login.flow` |
+| <a id="cx10"></a>[CX10](CX10-The-Sign-In-Says-How-It-Is-Answered.md) | XS | — | a person signing in to Codex CLI from a host is told to confirm the one-time code on OpenAI's device page |
 
 ## Idea
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
-| <a id="cx09"></a>[CX09](CX09-A-Sign-In-Without-A-Browser-Is-Tested-On-Every-CLI-Update.md) |  | — | the sign-in at a terminal without a browser, checked on every CLI update so a release that drops it fails its pin bump |
 | <a id="cx06"></a>[CX06](CX06-Rented-Acceptance-And-Releases.md) |  | — | rented acceptance legs, releases and CLI updates, as in the other adapters |
+| <a id="cx09"></a>[CX09](CX09-A-Sign-In-Without-A-Browser-Is-Tested-On-Every-CLI-Update.md) |  | [CX06](#cx06) | the sign-in at a terminal without a browser, checked on every CLI update so a release that drops it fails its pin bump |
 
 ## Estimated
 
