@@ -23,7 +23,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
-| <a id="cx11"></a>[CX11](CX11-Subagents-Only-As-Many-As-The-Task-Allows.md) |  | — | no subagent in a task unless the task allows it, then at most as many and as deep as it says; read, not yet measured at the pin |
+| <a id="cx11"></a>[CX11](CX11-Subagents-Only-As-Many-As-The-Task-Allows.md) |  | — | no subagent in a task unless the task allows it, then at most as many as it says; at the pin only the count holds, a way to switch off is still to be found |
 
 ## Idea
 
