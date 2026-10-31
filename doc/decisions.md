@@ -145,3 +145,6 @@ The live fixtures therefore replace exactly its known initial base-image line in
 fixture, append the system-layer settings beneath that one mapping and re-follow the committed
 configuration through the public CLI. A missing ownership marker or an unexpected initial base
 fails before editing. This keeps the image pinned without adding custom glue or a second mapping.
+Among the system-layer settings is `model_reasoning_effort = "none"`, so the attended run on the
+local VM takes `PORELO_E2E_MODEL=gpt-5.4-nano`, a small model that accepts it; `gpt-5-nano` and
+`gpt-5-mini` refuse it.
