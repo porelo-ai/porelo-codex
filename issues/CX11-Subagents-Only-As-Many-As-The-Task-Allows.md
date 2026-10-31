@@ -1,17 +1,20 @@
 # CX11 — Subagents Only As Many As The Task Allows
 
 **Status:** Estimated (operator, 2026-10-31).
-**Size:** M - a security-relevant hook and its trust, and `config.toml` written for every task; about 90 minutes: the M median of 47, raised toward its 75th percentile of 93 by the setup now writing a file for every task, the scenario on the VM and three open points - whether the hook's trust can be written ahead, whether an inline hook command runs, and how `max_depth` counts.
+**Size:** M - a security-relevant hook and its trust, and `config.toml` written for every task; about 90
+minutes: the M median of 47, raised toward its 75th percentile of 93 by the setup now writing a file for every
+task, the scenario on the VM and three open points - whether the hook's trust can be written ahead, whether an
+inline hook command runs, and how `max_depth` counts.
 
-**What must be true.** Codex in a Porelo task starts no subagent unless the task allows it, and then no
-more at once and no deeper than the task says.
+**What must be true.** Codex in a Porelo task starts no subagent unless the task allows it, and then no more
+at once than the task says.
 
 ## Plan
 
-- **The contract built against:** Porelo's agent interface carries the number of subagents an agent may
-  start inside a task, 0 (none) by default; each agent definition declares what it can enforce - off, a
-  concurrent count, a depth - and Porelo refuses a value the definition cannot enforce instead of
-  enforcing less.
+- **The contract built against:** Porelo's agent interface carries one number, the most subagents an agent may
+  start inside a task, 0 (none) by default, and no depth; each agent definition declares what it can enforce
+  of it - off only, or a count - and Porelo refuses a value the definition cannot enforce with exit code 64
+  instead of enforcing less. Where a CLI needs a depth to make the count hold, the adapter sets it itself.
 - Measured headless at the pin 0.163.0 with its code-mode helper, on the VM with `gpt-6.1-sol`, counting
   one session file per agent thread: by default a subagent starts, and one it starts can start another.
   - **Concurrent count:** `-c agents.max_concurrent_threads_per_session=1` holds - of three asked at once,
@@ -68,5 +71,6 @@ more at once and no deeper than the task says.
   script path.
 - Whether the hook's trust can be written ahead instead of passing `--dangerously-bypass-hook-trust`,
   which would also run any hook the project brings.
-- Whether `max_depth` counts differently than read, or is ignored on the v2 path.
+- Whether `agents.max_concurrent_threads_per_session` counts a subagent's own subagents too, since no depth
+can be set to stop them; and whether `max_depth` counts differently than read, or is ignored on the v2 path.
 - The hook and the concurrent count attended, at a terminal.
