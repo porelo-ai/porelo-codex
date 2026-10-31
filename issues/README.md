@@ -18,7 +18,6 @@ Within a group, the order is the priority. The number is identity, not sequence.
 |---|---|---|---|---|
 | <a id="cx04"></a>[CX04](CX04-The-Repository-s-Agent-Works-In-A-Porelo-Task.md) | S | [CX08](#cx08) | the repository's agent moves into its own Porelo task, after a dry run on this machine | 0 |
 | <a id="cx08"></a>[CX08](CX08-The-Build-Runs-On-The-Local-Forge-As-On-The-Central-One.md) | S | — | the workflows run 1:1 on the local Forgejo and the central forge, before the move | 0 |
-| <a id="cx11"></a>[CX11](CX11-Subagents-Only-As-Many-As-The-Task-Allows.md) | M | — | no subagent in a task unless the task allows it, then at most as many as it says; off (a hook on spawn_agent) and count measured to hold at the pin, depth does not | 0 |
 
 ## Idea
 
@@ -32,6 +31,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
 | <a id="cx07"></a>[CX07](CX07-A-Repeated-Refused-Call-Ends-The-Wake-Scenario.md) | S | — | a real model repeating a refused tool call in a woken task ends the acceptance run early, the live case of the acceptance kit's loop watch |
+| <a id="cx11"></a>[CX11](CX11-Subagents-Only-As-Many-As-The-Task-Allows.md) | M | — | no subagent in a task unless the task allows it, then at most as many as it says; off (a hook on spawn_agent) and count measured to hold at the pin, depth does not |
 
 ## Finished
 

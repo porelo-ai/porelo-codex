@@ -1,7 +1,7 @@
 # CX11 — Subagents Only As Many As The Task Allows
 
-**Status:** Analyzed; Accepted (operator, 2026-10-31).
-**Size:** M - a security-relevant hook and its trust, and `config.toml` written for every task; about 90 minutes.
+**Status:** Estimated (operator, 2026-10-31).
+**Size:** M - a security-relevant hook and its trust, and `config.toml` written for every task; about 90 minutes: the M median of 47, raised toward its 75th percentile of 93 by the setup now writing a file for every task, the scenario on the VM and three open points - whether the hook's trust can be written ahead, whether an inline hook command runs, and how `max_depth` counts.
 
 **What must be true.** Codex in a Porelo task starts no subagent unless the task allows it, and then no
 more at once and no deeper than the task says.
