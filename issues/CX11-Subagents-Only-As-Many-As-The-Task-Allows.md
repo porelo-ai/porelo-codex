@@ -1,6 +1,6 @@
 # CX11 — Subagents Only As Many As The Task Allows
 
-**Status:** Estimated (operator, 2026-10-31).
+**Status:** Estimated.
 **Size:** M - a security-relevant hook and its trust, and `config.toml` written for every task; about 90
 minutes: the M median of 47, raised toward its 75th percentile of 93 by the setup now writing a file for every
 task, the scenario on the VM and three open points - whether the hook's trust can be written ahead, whether an
