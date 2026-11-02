@@ -91,7 +91,7 @@ set, its built versions, checked digests, download URLs and fetched-at-image-bui
 
 ## Profile
 
-The image sets `CODEX_HOME=/home/agent/.codex` for interactive and unattended invocations. Codex
+The image sets `CODEX_HOME` to `.codex` in the agent's home for interactive and unattended invocations. Codex
 puts its temporary helper aliases beneath the selected profile too; it does not need a second
 host directory. A CLI invocation without that variable uses the invoking account's default profile.
 

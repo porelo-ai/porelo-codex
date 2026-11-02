@@ -36,7 +36,7 @@ at once than the task says.
 - **`CodexContainerSetup.files`** today returns nothing when there is no broker endpoint; the subagent
   settings have to be written for every task, so the broker part becomes one section of a file that is
   always there.
-- At 0 it writes `/home/agent/.codex/hooks.json` with a `PreToolUse` hook matching
+- At 0 it writes `.codex/hooks.json` in the agent's home with a `PreToolUse` hook matching
   `collaborationspawn_agent` whose command prints the deny answer inline. Measured shape:
   `{"hooks":{"PreToolUse":[{"matcher":"collaborationspawn_agent","hooks":[{"type":"command","command":"<cmd>","timeout":10}]}]}}`,
   the command reading the call as JSON on standard input (`tool_name` among its keys) and printing

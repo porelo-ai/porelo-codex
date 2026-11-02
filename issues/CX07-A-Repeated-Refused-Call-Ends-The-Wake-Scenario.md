@@ -21,7 +21,7 @@ case with a real model is this repository's.
 
 ## Acceptance
 
-- On `codex@192.168.122.174`, with `OPEN_AI_API` and `PORELO_E2E_MODEL`, the scenario stops on the
+- On a VM, with `OPEN_AI_API` and `PORELO_E2E_MODEL`, the scenario stops on the
   repeated refused call, its message names the repeated call, and it ends well before 120 seconds.
 - The run makes at most 10 upstream model requests in all, with no retries and no hosted tools.
 - The task and the project the scenario made are removed afterwards, after a failure too.

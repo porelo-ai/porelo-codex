@@ -32,7 +32,7 @@ session continuation or wake delivery.
    that no other test uses the account and that its tasks are stopped. Use a version with the
    empty-vault startup correction, published in snapshot 320 and verified here against snapshot 323.
 2. **Run:** open a private terminal on that account, using an SSH connection with a terminal if remote.
-   Run `export PATH="$HOME/.local/bin:$PATH"`, then `porelo --version`, `porelo agents` and
+   Put `.local/bin` in your home first on `PATH`, then run `porelo --version`, `porelo agents` and
    `porelo providers`. Check the prepared versions,
    that `codex` is discovered, and that `chatgpt` is available. Stop if a version or definition
    differs from the prepared test. Do not record the terminal during sign-in.
@@ -109,7 +109,7 @@ The real-task build and retained GitHub package artifacts establish the build-im
 indexed adapter publication remains gated on provider acceptance by the
 [build boundary](decisions.md#build-boundary).
 
-Task profiles use `CODEX_HOME=/home/agent/.codex`. This includes Codex's temporary helper aliases,
+Task profiles set `CODEX_HOME` to `.codex` in the agent's home. This includes Codex's temporary helper aliases,
 so help and startup paths stay in the same task profile. Provider integration and any credential
 store selection remain separate from this task-local path.
 
