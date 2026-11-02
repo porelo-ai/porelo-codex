@@ -10,7 +10,6 @@ Within a group, the order is the priority. The number is identity, not sequence.
 |---|---|---|---|
 | <a id="cx05"></a>[CX05](CX05-Snapshot-Package.md) | M | — | every push to main publishes the snapshot package, so the ChatGPT sign-in can be tested from it; published as `0.1.0~snapshot.5` |
 | <a id="cx03"></a>[CX03](CX03-Forge-Pull-Requests.md) | S | — | Carry the approved forge pull-request rule and guard its DCO boundary |
-| <a id="cx10"></a>[CX10](CX10-The-Sign-In-Says-How-It-Is-Answered.md) | XS | — | a person signing in to Codex CLI from a host is told to confirm the one-time code on OpenAI's device page |
 
 ## Analyzed
 
@@ -37,5 +36,6 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
+| <a id="cx10"></a>CX10 — The Sign-In Says How It Is Answered | XS | — | `codex.yaml` declares `login.flow: device-code`, so a person signing in to Codex CLI from a host is told to confirm the one-time code on OpenAI's device page; tested in sprint 6m: passed. |
 | <a id="cx01"></a>CX01 — Agent Codex CLI | L | — | `porelo-agent-codex` ships Codex CLI as a packaged agent with its digest-verified CLI and code-mode host, brokering the ChatGPT sign-in (device-code login collected into the vault, renewed on the host) and the OpenAI API key with only a phantom token in the container; session, waiting and wake acceptance pass on snapshot 343 (finished 2026-10-27) |
 | <a id="cx02"></a>CX02 — Build in a Porelo task | M | — | A pinned build-image declaration and equivalent project configuration build and verify native packages inside a real Porelo task; GitHub retains the package artifacts |
