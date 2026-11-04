@@ -12,6 +12,12 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | <a id="cx05"></a>[CX05](CX05-Snapshot-Package.md) | M | — | every push to main publishes the snapshot package, so the ChatGPT sign-in can be tested from it; published as `0.1.0~snapshot.5` |
 | <a id="cx03"></a>[CX03](CX03-Forge-Pull-Requests.md) | S | — | Carry the approved forge pull-request rule and guard its DCO boundary |
 
+## Implementing
+
+| # | Size | Blocked by | What it covers |
+|---|---|---|---|
+| <a id="cx11"></a>[CX11](CX11-Subagents-Only-As-Many-As-The-Task-Allows.md) | M | — | no subagent in a task unless the task allows it, then at most as many as it says; off (a hook on spawn_agent) and count measured to hold at the pin, depth does not |
+
 ## Analyzed
 
 | # | Size | Blocked by | What it covers | Open questions |
@@ -37,7 +43,6 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
 | <a id="cx07"></a>[CX07](CX07-A-Repeated-Refused-Call-Ends-The-Wake-Scenario.md) | S | — | a real model repeating a refused tool call in a woken task ends the acceptance run early, the live case of the acceptance kit's loop watch |
-| <a id="cx11"></a>[CX11](CX11-Subagents-Only-As-Many-As-The-Task-Allows.md) | M | — | no subagent in a task unless the task allows it, then at most as many as it says; off (a hook on spawn_agent) and count measured to hold at the pin, depth does not |
 
 ## Finished
 
