@@ -130,8 +130,8 @@ CLI-specific login representation.
 CI checks the pins, builds the packages and, on a push to main, publishes them to the snapshot
 channel with `artifactory.sh`, the helper every adapter carries byte for byte; the package is
 believed only once the snapshot index lists its exact file. A release version on main is refused
-before the upload, and there is no tag release yet. The publish step alone receives a secret, the
-publish token. The session, waiting and wake acceptance runs attended on a local VM, not on a
+before the upload, and there is no tag release yet. The publish step alone receives the publish
+token; the steps that run Maven hold only the read-only package token, which reads a forge's snapshots. The session, waiting and wake acceptance runs attended on a local VM, not on a
 rented machine in CI; a rented acceptance leg, releases and automated CLI updates follow as their
 own issue. Shared release tooling remains the source of pin metadata and bill recording.
 

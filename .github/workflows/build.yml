@@ -9,7 +9,9 @@ on:
     workflow_dispatch:
 
 env:
+    # The same file runs on GitHub and on the local Forgejo; what differs is only the values it reads.
     MAVEN_ARGS: -U
+    MAVEN_SNAPSHOTS_URL: ${{ vars.MAVEN_SNAPSHOTS_URL }}
 permissions:
     contents: read
 concurrency:
@@ -26,11 +28,27 @@ jobs:
               with:
                   persist-credentials: false
                   fetch-depth: 0
+            # Publishing is switched by a variable present on both forges, true where the packages are published and
+            # false where they are not; one missing or misspelt would leave them unpublished without a word.
+            - name: Whether this forge publishes
+              env:
+                  PORELO_PUBLISH: ${{ vars.PORELO_PUBLISH }}
+              run: |
+                  case "$PORELO_PUBLISH" in
+                      true | false) echo "PORELO_PUBLISH=$PORELO_PUBLISH" ;;
+                      *) echo "::error::vars.PORELO_PUBLISH is '$PORELO_PUBLISH', neither true nor false"; exit 1 ;;
+                  esac
             - name: The pinned GraalVM
+              env:
+                  PORELO_PACKAGES_READ_TOKEN: ${{ secrets.PORELO_PACKAGES_READ_TOKEN }}
               uses: ./.github/actions/pinned-jdk
             - name: Unit tests and document guards
+              env:
+                  PORELO_PACKAGES_READ_TOKEN: ${{ secrets.PORELO_PACKAGES_READ_TOKEN }}
               run: ./mvnw -U -B -s settings.xml verify
             - name: Resolve the shared tooling
+              env:
+                  PORELO_PACKAGES_READ_TOKEN: ${{ secrets.PORELO_PACKAGES_READ_TOKEN }}
               run: ./mvnw -U -B -q -Pci-tools -s settings.xml dependency:build-classpath -Dmdep.outputFile=target/cp.txt
             # A direct push to main never meets the pull request's check, so the push's own range is read here, by the
             # rule this commit carries. A tag checks the commit it names. A new branch or a branch pushed over has no start
@@ -64,15 +82,40 @@ jobs:
                   java -cp "$(cat target/cp.txt)" org.fuin.porelo.release.Main check-readmes .
                   java -cp "$(cat target/cp.txt)" org.fuin.porelo.release.Main check-doc-site doc mkdocs.yml
                   java -cp "$(cat target/cp.txt)" org.fuin.porelo.release.Main check-actions
+                  java -cp "$(cat target/cp.txt)" org.fuin.porelo.release.Main check-providers .
+            # A forge's runner puts its own token into GITHUB_TOKEN for every step, and the check would hand it to GitHub.
             - name: Both publisher digests agree with the pin
+              env:
+                  GITHUB_TOKEN: ''
               run: |
                   set -eu
                   java -cp "$(cat target/cp.txt)" org.fuin.porelo.release.Main check-pin --pin codex --definition target/classes/agent/codex.yaml
                   java -cp "$(cat target/cp.txt)" org.fuin.porelo.release.Main check-pin --pin helper --definition target/classes/agent/codex.yaml
+            # What the native build and the package checks run, installed where the runner's image lacks it, from the
+            # distribution's signed archive: the local Forgejo's image carries no rpm.
+            - name: The tools the packages are built and read with
+              run: |
+                  set -euo pipefail
+                  missing=()
+                  for tool in gcc:gcc rpm:rpm dpkg-deb:dpkg; do
+                      command -v "${tool%%:*}" > /dev/null || missing+=("${tool#*:}")
+                  done
+                  dpkg-query -W -f='${Status}' zlib1g-dev 2> /dev/null | grep -q 'ok installed' || missing+=(zlib1g-dev)
+                  if [ ${#missing[@]} -gt 0 ]; then
+                      sudo=
+                      [ "$(id -u)" -eq 0 ] || sudo=sudo
+                      $sudo apt-get update -qq
+                      $sudo apt-get install -y -qq --no-install-recommends "${missing[@]}"
+                  fi
+
             - name: Native binary, protocol and packages
+              env:
+                  PORELO_PACKAGES_READ_TOKEN: ${{ secrets.PORELO_PACKAGES_READ_TOKEN }}
               run: |
                   ./mvnw -U -B -s settings.xml -Pnative,dist verify -Dagent.snapshot.run=${{ github.run_number }}
+            # The action refuses every server but GitHub's; on a forge that publishes nothing no job reads the artifact yet.
             - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+              if: vars.PORELO_PUBLISH == 'true'
               with:
                   name: packages
                   path: |
@@ -84,14 +127,14 @@ jobs:
             # Only a push to main publishes, to the snapshot channel; a run that publishes nothing says so rather than
             # skipping silently.
             - name: Not publishing
-              if: "!(github.event_name == 'push' && github.ref == 'refs/heads/main')"
+              if: "!(vars.PORELO_PUBLISH == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main')"
               env:
                   EVENT: ${{ github.event_name }}
                   REF: ${{ github.ref }}
               run: |
                   echo "Not publishing. This run is '$EVENT' on '$REF',"
-                  echo "and only a push to main publishes. The packages were built and tested here"
-                  echo "and are attached to this run as artifacts; nothing reached Artifactory, so"
+                  echo "and only a push to main publishes, on a forge whose PORELO_PUBLISH is true. The packages were built and tested here"
+                  echo "and attached to this run where the forge publishes; nothing reached Artifactory, so"
                   echo "'apt' will still offer whatever was published last."
 
             - name: Only a snapshot is published
@@ -106,7 +149,7 @@ jobs:
                   esac
 
             - name: Publish the packages
-              if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+              if: vars.PORELO_PUBLISH == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
               env:
                   JF_URL: ${{ vars.JF_URL }}
                   JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
@@ -127,7 +170,7 @@ jobs:
 
             # Uploaded is not installable: indexing is asynchronous, and silent when it fails.
             - name: The package is indexed, not merely stored
-              if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+              if: vars.PORELO_PUBLISH == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
               env:
                   JF_URL: ${{ vars.JF_URL }}
               run: |

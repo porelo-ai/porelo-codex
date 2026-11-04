@@ -40,8 +40,11 @@ class WorkflowRulesTest {
         }
     }
 
+    private static final String READ_TOKEN =
+            "PORELO_PACKAGES_READ_TOKEN: ${{ secrets.PORELO_PACKAGES_READ_TOKEN }}";
+
     @Test
-    void onlyThePublishStepOfAPushToMainReceivesTheOnlySecret() throws IOException {
+    void onlyThePublishStepOfAPushToMainReceivesThePublishToken() throws IOException {
         final List<String> secrets = new ArrayList<>();
         try (Stream<Path> paths =
                 Files.list(RepositoryDocuments.root().resolve(".github/workflows"))) {
@@ -54,8 +57,12 @@ class WorkflowRulesTest {
             }
         }
         assertThat(secrets)
-                .as("every line of every workflow that reads a secret")
+                .as("every line of every workflow that reads a secret other than the read-only one")
+                .filteredOn(line -> !line.endsWith(READ_TOKEN))
                 .containsExactly("build.yml: JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}");
+        assertThat(secrets)
+                .as("the read-only package token, on the steps that run Maven")
+                .anyMatch(line -> line.endsWith(READ_TOKEN));
 
         final Map<?, ?> workflow =
                 new Yaml()
@@ -73,7 +80,9 @@ class WorkflowRulesTest {
         assertThat(publish).as("the build job's publish step").hasSize(1);
         assertThat(publish.getFirst().get("if"))
                 .as("a branch or a pull request never gets the token nor publishes")
-                .isEqualTo("github.event_name == 'push' && github.ref == 'refs/heads/main'");
+                .isEqualTo(
+                        "vars.PORELO_PUBLISH == 'true' && github.event_name == 'push'"
+                                + " && github.ref == 'refs/heads/main'");
         assertThat(((Map<?, ?>) publish.getFirst().get("env")).get("JF_ACCESS_TOKEN"))
                 .as("the publish step is the one that reads the token")
                 .isEqualTo("${{ secrets.JF_ACCESS_TOKEN }}");
