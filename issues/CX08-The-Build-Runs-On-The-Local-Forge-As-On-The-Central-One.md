@@ -1,12 +1,13 @@
 # CX08 — The Build Runs On The Local Forge As On The Central One
 
 **Status:** Analyzed; waits for Porelo's snapshots in the forge's registry.
-**Size:** S - `settings.xml`, the four workflows, the `pinned-jdk` action, the two workflow tests and one recorded
-decision, no legs and no contract another repository reads; about 2 hours of work once porelo-claude-code has set the shape, plus the runs
+**Size:** S - `settings.xml`, the four workflows, the `pinned-jdk` action, the two workflow tests, `SnapshotTokenTest` and one
+recorded decision, no legs and no contract another repository reads; about 2 hours of work once porelo-claude-code has set the shape, plus the runs
 on the host's forge.
 
 **What must be true.** `porelo-codex`'s workflows run green on the local Forgejo and on the central forge on the same
-commit, with no edit between them: the registry and the place it publishes to are variables of the setup.
+commit, with no edit between them: the registry and the place it publishes to are variables of the setup. And a Build on a forge other than the central one whose `MAVEN_SNAPSHOTS_URL` is
+empty fails at its start and says so, instead of falling back to Central's snapshots.
 
 Before [CX04](README.md#cx04); the variables are those of porelo-host's `doc/local-forge.md`, *The local registry and publication settings*.
 
@@ -44,13 +45,22 @@ the adapters' changes.
      the decision in `doc/decisions.md` names both secrets.
   4. `porelo-release check-providers` joins the Build's checks; it finds nothing today, and keeps
      [CX06](README.md#cx06)'s legs asking by kind.
+  5. The `pinned-jdk` action, the first thing every job that runs Maven does, starts with *The forge names its
+     snapshot repository*, as in porelo-claude-code: outside `https://github.com` an empty, white-space-only or unset
+     `MAVEN_SNAPSHOTS_URL` stops the job and names the variable, since without it `settings.xml` falls back to
+     Central's snapshots without a word; on the central forge it changes nothing. It is the action's first step and
+     has no `if:`. `SnapshotTokenTest` comes along as that repository has it, self-contained, and holds this check
+     and that no step names the publisher's token.
 - **Red first:** today's `build.yml` on the host's Forgejo, which stops at the snapshot resolution or at Publish; and
-  the changed `WorkflowRulesTest` against today's workflows.
+  the changed `WorkflowRulesTest` against today's workflows;
+  and `SnapshotTokenTest` on today's tree, which has no check in the action and the read-only token in no workflow.
 
 ## Acceptance
 
 - Seen to fail first: today's `build.yml` on the local Forgejo.
 - The same commit's Build green on the local Forgejo (nothing published) and on GitHub (published as today).
+- A Build on the local forge with `MAVEN_SNAPSHOTS_URL` unset is seen to fail at its first step, naming the variable;
+  on GitHub the Build is unchanged.
 
 ## To be checked
 
