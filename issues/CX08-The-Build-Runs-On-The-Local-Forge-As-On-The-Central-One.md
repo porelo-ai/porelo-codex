@@ -1,6 +1,6 @@
 # CX08 — The Build Runs On The Local Forge As On The Central One
 
-**Status:** Analyzed; waits for Porelo's snapshots in the forge's registry.
+**Status:** Implementing; measured on a local Forgejo.
 **Size:** S - `settings.xml`, the four workflows, the `pinned-jdk` action, the two workflow tests, `SnapshotTokenTest` and one
 recorded decision, no legs and no contract another repository reads; about 2 hours of work once porelo-claude-code has set the shape, plus the runs
 on the host's forge.
