@@ -9,6 +9,9 @@ inline hook command runs, and how `max_depth` counts.
 **What must be true.** Codex in a Porelo task starts no subagent unless the task allows it, and then no more
 at once than the task says.
 
+**This does not hold today.** Porelo takes a task's default of 0 as none and reads `codex.yaml`, which declares nothing, as
+off, but this adapter switches nothing off, so Codex in such a task still starts a subagent, as measured below.
+
 ## Plan
 
 - **The contract built against:** Porelo's agent interface carries one number, the most subagents an agent may
@@ -53,8 +56,8 @@ at once than the task says.
   thread only.
 - **A soft switch:** the agent has a shell and can start another copy of its CLI; this issue governs only
   the built-in subagents. A hard bound is Porelo's own, outside this repository.
-- **Porelo's version:** `porelo.version` in `pom.xml` moves to the Porelo snapshot whose agent API
-  carries the value; until then nothing here compiles against it.
+- **Porelo's version:** `porelo.version` in `pom.xml` is already 0.5.1-SNAPSHOT, and the published snapshot's agent API
+  carries the value (`SubagentLimit`, `subagents` in `SetupContext`).
 
 ## Acceptance
 

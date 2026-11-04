@@ -1,7 +1,6 @@
 # CX08 — The Build Runs On The Local Forge As On The Central One
 
-**Status:** Analyzed; waits for Porelo's snapshots in the forge's registry, and for the build tools'
-`check-providers`.
+**Status:** Analyzed; waits for Porelo's snapshots in the forge's registry.
 **Size:** S - `settings.xml`, the four workflows, the `pinned-jdk` action, the two workflow tests and one recorded
 decision, no legs and no contract another repository reads; about 2 hours of work once porelo-claude-code has set the shape, plus the runs
 on the host's forge.
@@ -36,11 +35,11 @@ the adapters' changes.
 - **Steps:**
   1. `settings.xml` gains the `forge` profile and the `porelo-forge` server as porelo-message-sluice has them, and
      `standard` stays off where `MAVEN_SNAPSHOTS_URL` is set. Every Maven call passes `MAVEN_SNAPSHOTS_URL` and
-     `PORELO_PUBLISHER_TOKEN` through the step's `env`, the `pinned-jdk` action's too, in all four workflows.
+     `PORELO_PACKAGES_READ_TOKEN` through the step's `env`, the `pinned-jdk` action's too, in all four workflows.
   2. `vars.PORELO_PUBLISH`, checked at the start to be `true` or `false`, switches Publish and its index check; where
      it is `false`, *Not publishing* runs and says why, and the packages stay attached to the run. *Only a snapshot is
      published* stays on every push to `main`.
-  3. `WorkflowRulesTest` learns the second secret, `PORELO_PUBLISHER_TOKEN`, on the Maven steps, and the publish
+  3. `WorkflowRulesTest` learns the second secret, `PORELO_PACKAGES_READ_TOKEN`, on the Maven steps, and the publish
      step's `if` with `vars.PORELO_PUBLISH`; `PublishStepsTest` runs *Not publishing* with `PORELO_PUBLISH=false`;
      the decision in `doc/decisions.md` names both secrets.
   4. `porelo-release check-providers` joins the Build's checks; it finds nothing today, and keeps
