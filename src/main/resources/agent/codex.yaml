@@ -3,6 +3,10 @@ label: Codex CLI
 binary: codex
 
 config_dir: "~/.codex"
+
+# What this adapter can hold a task to: a count at the same time, which 0 switches off by a hook.
+# CodexContainerSetup turns the task's number into both. There is no depth: agents.max_depth does not hold.
+subagents: count
 login:
     arguments: ["-c", 'cli_auth_credentials_store="file"', "login", "--device-auth"]
     # --device-auth takes OpenAI's device page and a one-time code, not a callback on localhost.

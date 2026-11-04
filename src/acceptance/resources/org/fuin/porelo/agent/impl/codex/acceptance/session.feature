@@ -7,6 +7,28 @@ Feature: An unattended task continues its recorded conversation
         And the environment variable "PORELO_E2E_MODEL" is set
 
     @slow
+    Scenario: a task that allows no subagents has the start of one denied
+        Given a vault of this scenario's own, unlocked with the passphrase "scenario-vault-passphrase"
+        And the vault holds the value of "OPEN_AI_API" as "openai" of kind "api-key"
+        And a project called "alone" of class "guarded" with a file in it
+        When a script runs "timeout 300 porelo task start solo --project alone --repository alone --agent codex --provider openai --model ${PORELO_E2E_MODEL} --prompt 'Start a subagent now with spawn_agent and tell it to answer with one word of your choice. If that call is denied or fails, answer with the word MISSING and try nothing else; if it worked, answer with the word STARTED.'"
+        Then it exits zero
+        And its output contains "MISSING"
+        # What the agent says is not the proof: Codex writes one session file per agent thread.
+        When a script runs:
+            """
+            copy=$(mktemp -d)
+            podman cp porelo-alone-solo:/home/agent/.codex/sessions "$copy/sessions"
+            threads=$(find "$copy/sessions" -name '*.jsonl' | wc -l)
+            rm -rf "$copy"
+            echo "threads=$threads"
+            test "$threads" = 1
+            """
+        Then it exits zero
+        When a script runs "porelo project remove alone --force"
+        Then it exits zero
+
+    @slow
     Scenario: An unattended task remembers across a stop and restart
         Given a vault of this scenario's own, unlocked with the passphrase "scenario-vault-passphrase"
         And the vault holds the value of "OPEN_AI_API" as "openai" of kind "api-key"

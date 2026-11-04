@@ -9,6 +9,7 @@
 
 ### Added
 
+- A task's agent starts no subagent unless the task allows it, and then no more at once than it says.
 - The definition names how its sign-in is answered, `login.flow: device-code`, so a person signing
   in on a host over SSH can be told to confirm the one-time code on OpenAI's page; the Porelo it
   builds against reads the key, and its agent listing names the flow.

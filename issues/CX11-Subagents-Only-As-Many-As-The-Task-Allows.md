@@ -1,6 +1,6 @@
 # CX11 — Subagents Only As Many As The Task Allows
 
-**Status:** Implementing.
+**Status:** Review.
 **Size:** M - a security-relevant hook and its trust, and `config.toml` written for every task; about 90
 minutes: the M median of 47, raised toward its 75th percentile of 93 by the setup now writing a file for every
 task, the scenario on the VM and three open points - whether the hook's trust can be written ahead, whether an
@@ -69,12 +69,38 @@ off, but this adapter switches nothing off, so Codex in such a task still starts
 
 - None.
 
+## Measured
+
+On the VM at the pin 0.163.0 with `gpt-6.1-sol`, the adapter installed in the account, against a Porelo older than the
+one on `main`, so `project remove` in the new scenario's last step was run as `project unfollow`:
+
+- **Seen to fail first:** the new `session.feature` scenario against the adapter before the change: the agent
+  answered `STARTED`.
+- **With the change, headless:** the same scenario is green: the agent answers `MISSING`, and the container holds one
+  session file. At `--subagents 5`, one run, without the hook, it holds two, which the scenario's count refuses, since
+  what an agent says is not the proof. So the hook's trust can be
+  written ahead, and a hook command given inline runs, through a shell. `--dangerously-bypass-hook-trust` is not
+  passed, so nothing becomes a question for the operator. The form of the trust is read in 0.163.0's source,
+  `codex-rs/hooks/src/engine/discovery.rs`: `[hooks.state."<file>:pre_tool_use:0:0"] trusted_hash`, the SHA-256 of the
+  hook's normalized form.
+- **Attended, at a terminal, one run, not kept as a scenario:** the screen shows "Blocked by hook / this task allows
+  no subagents", and the agent says none started.
+- **At a count of 1, headless, one run, not kept as a scenario:** of three asked at once, two were refused with "agent
+  thread limit reached".
+
+The unit test ties the hash to the hook the file holds and to the hash seen accepted; it cannot show that Codex
+computes the same, which only the scenario does. Read by agy `gemini-4-argon-high`: both of these came from its
+findings, then weaker.
+
+A pin that changes the normalized form changes the hash, and Codex then does not run the hook, without an error. The
+scenario sees that, but **no workflow of this repository runs the acceptance suite**, so a pin bump does not run it:
+it has to be run by hand on the VM with a bump, until a workflow does.
+
+The hook is also written for a task with neither endpoint nor token, as the plan's "every task" says. The agent
+itself can write the settings file; as the plan says of its shell, this is a soft switch.
+
 ## To be checked
 
-- Whether a hook command given inline, not as a script path, runs through a shell; measured only with a
-  script path.
-- Whether the hook's trust can be written ahead instead of passing `--dangerously-bypass-hook-trust`,
-  which would also run any hook the project brings.
-- Whether `agents.max_concurrent_threads_per_session` counts a subagent's own subagents too, since no depth
-can be set to stop them; and whether `max_depth` counts differently than read, or is ignored on the v2 path.
-- The hook and the concurrent count attended, at a terminal.
+- Whether `agents.max_concurrent_threads_per_session` counts a subagent's own subagents too, since no depth can be
+  set to stop them; and whether `max_depth` counts differently than read, or is ignored on the v2 path.
+- The concurrent count attended, at a terminal.

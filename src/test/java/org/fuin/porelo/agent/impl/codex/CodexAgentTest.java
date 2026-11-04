@@ -130,4 +130,11 @@ class CodexAgentTest {
                 .as("each of the two archives is checked")
                 .isEqualTo(2);
     }
+
+    @Test
+    void declaresThatItHoldsATaskToACountOfSubagents() {
+
+        assertThat(new CodexAgent().definition().subagents())
+                .isEqualTo(org.fuin.porelo.agent.api.SubagentLimit.COUNT);
+    }
 }

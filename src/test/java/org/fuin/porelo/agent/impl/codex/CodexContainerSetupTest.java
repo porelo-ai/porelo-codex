@@ -4,9 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import java.util.Map;
 import org.fuin.porelo.agent.api.AgentException;
 import org.fuin.porelo.agent.api.ContainerFile;
 import org.fuin.porelo.agent.api.SetupContext;
+import org.fuin.porelo.wire.Json;
 import org.junit.jupiter.api.Test;
 
 /** Guards broker routing, credential containment and configuration injection. */
@@ -19,7 +21,7 @@ class CodexContainerSetupTest {
         final List<ContainerFile> files = files("phantom_credential-123", endpoint);
         assertThat(files)
                 .as("a brokered task must not fall back to upstream authentication")
-                .hasSize(1);
+                .hasSize(2);
         final ContainerFile config = files.getFirst();
         assertThat(config.path())
                 .as("provider settings belong in the explicit user profile")
@@ -39,10 +41,98 @@ class CodexContainerSetupTest {
     }
 
     @Test
-    void anUnbrokeredShellNeedsNoCredentialFile() {
-        assertThat(files("", ""))
+    void anUnbrokeredTaskIsWrittenNoLogin() {
+        final ContainerFile config = files("", "").getFirst();
+        assertThat(config.path()).isEqualTo(CodexContainerSetup.CONFIG);
+        assertThat(config.ownerOnly()).as("it holds no token").isFalse();
+        assertThat(config.content())
                 .as("a shell without a provider needs no fabricated login")
-                .isEmpty();
+                .doesNotContain("model_provider", "bearer");
+    }
+
+    @Test
+    void aTaskThatAllowsNoSubagentsDeniesTheToolWithATrustedHook() {
+        for (final List<ContainerFile> given :
+                List.of(files("", ""), files("phantom", "http://broker.example:1/v1"))) {
+            final ContainerFile hooks =
+                    given.stream()
+                            .filter(file -> file.path().equals(CodexContainerSetup.HOOKS))
+                            .findFirst()
+                            .orElseThrow();
+            final Map<?, ?> entry =
+                    (Map<?, ?>)
+                            ((List<?>)
+                                            ((Map<?, ?>)
+                                                            ((Map<?, ?>)
+                                                                            Json.parse(
+                                                                                    hooks
+                                                                                            .content()))
+                                                                    .get("hooks"))
+                                                    .get("PreToolUse"))
+                                    .getFirst();
+            // Measured on 0.163.0: the hook sees namespace and name joined.
+            assertThat(entry.get("matcher")).isEqualTo("collaborationspawn_agent");
+            final Map<?, ?> hook = (Map<?, ?>) ((List<?>) entry.get("hooks")).getFirst();
+            assertThat((String) hook.get("command")).contains("permissionDecision");
+
+            // Codex runs a hook only when this hash is the one it computes for the hook.
+            assertThat(given.getFirst().content())
+                    .contains(
+                            "[hooks.state.\"/home/agent/.codex/hooks.json:pre_tool_use:0:0\"]\n"
+                                    + "trusted_hash = \"sha256:");
+            assertThat(given.getFirst().content()).doesNotContain("max_concurrent_threads");
+        }
+    }
+
+    @Test
+    void aTaskThatAllowsSubagentsIsHeldToTheCountAndGetsNoHook() {
+        final List<ContainerFile> files =
+                new CodexContainerSetup()
+                        .files(new SetupContext("", "api-key", "/workspace", "", "openai", 2));
+        assertThat(files).hasSize(1);
+        assertThat(files.getFirst().content())
+                .contains("[agents]\nmax_concurrent_threads_per_session = 2\n")
+                .doesNotContain("hooks.state");
+    }
+
+    @Test
+    void trustsExactlyTheHookItWrites() throws Exception {
+        final List<ContainerFile> files = files("", "");
+        final Map<?, ?> entry =
+                (Map<?, ?>)
+                        ((List<?>)
+                                        ((Map<?, ?>)
+                                                        ((Map<?, ?>)
+                                                                        Json.parse(
+                                                                                files.get(1)
+                                                                                        .content()))
+                                                                .get("hooks"))
+                                                .get("PreToolUse"))
+                                .getFirst();
+        final Map<?, ?> hook = (Map<?, ?>) ((List<?>) entry.get("hooks")).getFirst();
+
+        // What Codex 0.163.0 hashes, read in its version_for_toml, here from the file it reads, so
+        // a hook and a hash that part ways fail. This cannot show that Codex computes the same:
+        // the literal below is the hash the scenario on the VM saw it accept and run.
+        final String identity =
+                "{\"event_name\":\"pre_tool_use\",\"hooks\":[{\"async\":false,\"command\":"
+                        + Json.write(hook.get("command"))
+                        + ",\"timeout\":"
+                        + ((Number) hook.get("timeout")).longValue()
+                        + ",\"type\":\"command\"}],\"matcher\":"
+                        + Json.write(entry.get("matcher"))
+                        + "}";
+        final String digest =
+                java.util.HexFormat.of()
+                        .formatHex(
+                                java.security.MessageDigest.getInstance("SHA-256")
+                                        .digest(
+                                                identity.getBytes(
+                                                        java.nio.charset.StandardCharsets.UTF_8)));
+
+        assertThat(digest)
+                .isEqualTo("8c865e67cea45239b854f325aa9fa6ca5ef12f5a1e2a32f2043cae94fd803511");
+        assertThat(files.getFirst().content()).contains("trusted_hash = \"sha256:" + digest + "\"");
     }
 
     @Test
