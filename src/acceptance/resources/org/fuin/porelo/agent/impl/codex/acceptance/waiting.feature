@@ -28,7 +28,7 @@ Feature: An observed selection is not mistaken for an idle composer
               'limits:' '  memory: 2g' '  cpus: "1.0"' '  pids: 2048' >> "$fixture/project.yml"
             env GIT_CONFIG_GLOBAL=/dev/null git -C "$fixture" add project.yml
             env GIT_CONFIG_GLOBAL=/dev/null git -C "$fixture" commit -m 'Configure the bounded model fixture'
-            porelo project unfollow select --force
+            porelo project remove select --force
             porelo project follow select "$fixture" --unverified
             """
         And a terminal on the machine
@@ -45,5 +45,5 @@ Feature: An observed selection is not mistaken for an idle composer
             porelo task status porelo-select-select | grep -Eq '^screen +reads as not waiting'
             """
         And porelo shows the "codex" agent in task "select" of "select" not waiting for a person
-        When a script runs "porelo project unfollow select --force"
+        When a script runs "porelo project remove select --force"
         Then it exits zero

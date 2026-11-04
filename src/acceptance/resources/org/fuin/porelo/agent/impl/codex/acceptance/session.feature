@@ -28,7 +28,7 @@ Feature: An unattended task continues its recorded conversation
               'limits:' '  memory: 2g' '  cpus: "1.0"' '  pids: 2048' >> "$fixture/project.yml"
             env GIT_CONFIG_GLOBAL=/dev/null git -C "$fixture" add project.yml
             env GIT_CONFIG_GLOBAL=/dev/null git -C "$fixture" commit -m 'Configure the bounded model fixture'
-            porelo project unfollow cont --force
+            porelo project remove cont --force
             porelo project follow cont "$fixture" --unverified
             """
         When a script runs "timeout 120 porelo task start talk --project cont --repository cont --agent codex --provider openai --model ${PORELO_E2E_MODEL} --prompt 'Remember the word PAPAYA. Reply with OK only.'"
@@ -39,5 +39,5 @@ Feature: An unattended task continues its recorded conversation
         Then it exits zero
         And its output contains "session   continuing"
         And its output contains "PAPAYA"
-        When a script runs "porelo project unfollow cont --force"
+        When a script runs "porelo project remove cont --force"
         Then it exits zero

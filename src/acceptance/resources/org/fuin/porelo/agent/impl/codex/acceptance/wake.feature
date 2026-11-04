@@ -29,7 +29,7 @@ Feature: A mailbox message wakes the composer without interrupting work
               'limits:' '  memory: 2g' '  cpus: "1.0"' '  pids: 2048' >> "$fixture/project.yml"
             env GIT_CONFIG_GLOBAL=/dev/null git -C "$fixture" add project.yml
             env GIT_CONFIG_GLOBAL=/dev/null git -C "$fixture" commit -m 'Configure the bounded model fixture'
-            porelo project unfollow wake --force
+            porelo project remove wake --force
             porelo project follow wake "$fixture" --unverified
             """
         And a terminal on the machine
@@ -46,7 +46,7 @@ Feature: A mailbox message wakes the composer without interrupting work
             podman exec porelo-wake-wake tmux capture-pane -p -S - -t porelo | grep -qE '5,?555'
             """
         When a script runs "porelo task remove porelo-wake-wake --force"
-        And a script runs "porelo project unfollow wake --force"
+        And a script runs "porelo project remove wake --force"
         Then it exits zero
 
     @slow
@@ -72,7 +72,7 @@ Feature: A mailbox message wakes the composer without interrupting work
               'limits:' '  memory: 2g' '  cpus: "1.0"' '  pids: 2048' >> "$fixture/project.yml"
             env GIT_CONFIG_GLOBAL=/dev/null git -C "$fixture" add project.yml
             env GIT_CONFIG_GLOBAL=/dev/null git -C "$fixture" commit -m 'Configure the bounded model fixture'
-            porelo project unfollow busy --force
+            porelo project remove busy --force
             porelo project follow busy "$fixture" --unverified
             """
         And a terminal on the machine
@@ -95,5 +95,5 @@ Feature: A mailbox message wakes the composer without interrupting work
             podman exec porelo-busy-busy tmux capture-pane -p -S - -t porelo | grep -qE '5,?555'
             """
         When a script runs "porelo task remove porelo-busy-busy --force"
-        And a script runs "porelo project unfollow busy --force"
+        And a script runs "porelo project remove busy --force"
         Then it exits zero
