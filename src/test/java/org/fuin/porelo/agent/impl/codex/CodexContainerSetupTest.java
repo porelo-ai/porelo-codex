@@ -41,6 +41,21 @@ class CodexContainerSetupTest {
     }
 
     @Test
+    void hidesItsSkillsFromATaskBrokeredOrNot() {
+        // Measured on 0.163.0: without this the agent lists the bundled skills and one in its
+        // home; with it, none. It hides them: a skill's file can still be read through the shell.
+        final List<ContainerFile> brokered =
+                files("phantom_credential-123", "https://broker.example.org/v1");
+        final List<ContainerFile> unbrokered = files("", "");
+
+        for (final List<ContainerFile> given : List.of(brokered, unbrokered)) {
+            assertThat(given.getFirst().content())
+                    .as("the list of skills is left out of the agent's instructions")
+                    .contains("[skills]\ninclude_instructions = false\n");
+        }
+    }
+
+    @Test
     void anUnbrokeredTaskIsWrittenNoLogin() {
         final ContainerFile config = files("", "").getFirst();
         assertThat(config.path()).isEqualTo(CodexContainerSetup.CONFIG);

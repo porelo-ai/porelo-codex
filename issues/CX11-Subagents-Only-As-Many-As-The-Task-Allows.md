@@ -59,6 +59,11 @@ off, but this adapter switches nothing off, so Codex in such a task still starts
 - **Porelo's version:** `porelo.version` in `pom.xml` is already 0.5.1-SNAPSHOT, and the published snapshot's agent API
   carries the value (`SubagentLimit`, `subagents` in `SetupContext`).
 
+- **Skills are hidden, a soft bound:** `[skills] include_instructions = false`, written by `CodexContainerSetup.files`
+  for every task, brokered or not, is the hardest setting measured. A skill's file stays readable through the shell, and
+  the agent can start another copy of its CLI there. A hard bound is Porelo's own, outside this repository. Red first:
+  `CodexContainerSetupTest` finds it in both configs.
+
 ## Acceptance
 
 - Seen to fail first: a task with the default asks Codex to start a subagent, and it does.
@@ -87,6 +92,15 @@ one on `main`, so `project remove` in the new scenario's last step was run as `p
   no subagents", and the agent says none started.
 - **At a count of 1, headless, one run, not kept as a scenario:** of three asked at once, two were refused with "agent
   thread limit reached".
+
+At the same pin, Codex alone with the adapter's hook and settings written by hand, not through Porelo, the hook run with
+`--dangerously-bypass-hook-trust`, one run each:
+
+- **Skills:** with the default the agent listed the four bundled skills and one in its home; with
+  `include_instructions = false` it answered that none is listed. That hides them: no setting measured here stops the
+  shell reading a skill's file. No scenario covers it, so a pin that renames the setting is not seen by the suite.
+- **No second way to a subagent:** the direct call was blocked by the hook, and from code mode, helper installed, the
+  runtime offered no such tool; one session file each.
 
 The unit test ties the hash to the hook the file holds and to the hash seen accepted; it cannot show that Codex
 computes the same, which only the scenario does. Read by agy `gemini-4-argon-high`: both of these came from its

@@ -28,6 +28,10 @@ import org.fuin.porelo.wire.Json;
  * {@code --dangerously-bypass-hook-trust}, which also runs any hook a project brings, is not
  * passed. If a pin changes the hash, the hook silently does not run; the scenario in {@code
  * session.feature} sees that.
+ *
+ * <p><strong>Skills are hidden, not off.</strong> Measured on 0.163.0: {@code include_instructions}
+ * false leaves them out of the agent's instructions; a skill's file can still be read through the
+ * shell.
  */
 public final class CodexContainerSetup implements ContainerSetup {
     private static final Pattern BEARER = Pattern.compile("[A-Za-z0-9._~+/-]+=*");
@@ -43,6 +47,8 @@ public final class CodexContainerSetup implements ContainerSetup {
             "cat >/dev/null; printf '%s' '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\","
                     + "\"permissionDecision\":\"deny\","
                     + "\"permissionDecisionReason\":\"this task allows no subagents\"}}'";
+
+    private static final String HIDDEN_SKILLS = "[skills]\ninclude_instructions = false\n\n";
 
     private static final long TIMEOUT_SECONDS = 10;
 
@@ -100,9 +106,9 @@ public final class CodexContainerSetup implements ContainerSetup {
     /** {@inheritDoc} */
     @Override
     public List<ContainerFile> files(SetupContext context) {
-        final String subagents = subagentSettings(context.subagents());
+        final String settings = HIDDEN_SKILLS + subagentSettings(context.subagents());
         if (context.endpoint().isEmpty() && context.token().isEmpty()) {
-            return withHook(context.subagents(), ContainerFile.of(CONFIG, subagents));
+            return withHook(context.subagents(), ContainerFile.of(CONFIG, settings));
         }
         validateEndpoint(context.endpoint());
         if (!BEARER.matcher(context.token()).matches()) {
@@ -127,7 +133,7 @@ public final class CodexContainerSetup implements ContainerSetup {
                 """
                                 .formatted(context.endpoint(), context.token(), workspace)
                         + "\n"
-                        + subagents;
+                        + settings;
         return withHook(context.subagents(), ContainerFile.secret(CONFIG, config));
     }
 
