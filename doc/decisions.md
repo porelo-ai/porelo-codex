@@ -11,6 +11,7 @@
 | Terminal state | Measured composer, busy and selection boundaries gate wake input | [Terminal state](#terminal-state) |
 | Artifact checks | Shared named-pin calls check and record both fetched components | [Artifact checks](#artifact-checks) |
 | Build boundary | A push to main publishes the snapshot package; CI uses no live credentials or rented machines | [Build boundary](#build-boundary) |
+| Snapshot repositories | The forge's token goes to the forge's registry alone; what it does not hold comes from an anonymous upstream | [Snapshot repositories](#snapshot-repositories) |
 
 ## Provider boundary
 
@@ -148,3 +149,22 @@ fails before editing. This keeps the image pinned without adding custom glue or 
 Among the system-layer settings is `model_reasoning_effort = "none"`, so the attended run on the
 local VM takes `PORELO_E2E_MODEL=gpt-5.4-nano`, a small model that accepts it; `gpt-5-nano` and
 `gpt-5-mini` refuse it.
+
+## Snapshot repositories
+
+`settings.xml` reads snapshots through one of three profiles, the same as in `porelo-claude-code`, `porelo-pi` and
+`porelo-omp`: `standard` (Central's snapshots) where no forge names its own, `forge` where `MAVEN_SNAPSHOTS_URL` does,
+read with the forge's read-only token under the server id `porelo-forge`, and `upstream` where
+`MAVEN_UPSTREAM_SNAPSHOTS_URL` names where the Porelo snapshots a forge's registry does not hold come from. The
+upstream repository's id has no `<server>`, so no token is sent there; `UpstreamSnapshotsTest` fails when any
+repository other than the forge's would get its credential. Nothing builds a tag here yet; `UpstreamSnapshotsTest`
+fails when any workflow would run on a tag, by a tag filter, a release or a push without a branch filter, so the guard
+the other adapters carry, a tag's `-P!standard,!forge,!upstream`, comes with this repository's first tag release.
+
+Measured from an empty local repository, with `MAVEN_SNAPSHOTS_URL` naming a repository without Porelo's snapshots:
+the build resolves them from `porelo-upstream-snapshots` with `MAVEN_UPSTREAM_SNAPSHOTS_URL` set, and fails without it
+and with `-P!standard,!forge,!upstream`.
+
+**Accepted risk:** for one snapshot version Maven takes the newest timestamp over every repository it reads, so where
+the forge and upstream hold the same version, upstream's can win. Nothing here builds against a snapshot it publishes
+itself; a forge that does would name only what it lacks upstream, or mirror upstream itself.

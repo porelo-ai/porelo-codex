@@ -12,6 +12,7 @@ env:
     # The same file runs on GitHub and on the local Forgejo; what differs is only the values it reads.
     MAVEN_ARGS: -U
     MAVEN_SNAPSHOTS_URL: ${{ vars.MAVEN_SNAPSHOTS_URL }}
+    MAVEN_UPSTREAM_SNAPSHOTS_URL: ${{ vars.MAVEN_UPSTREAM_SNAPSHOTS_URL }}
 permissions:
     contents: read
 concurrency:
