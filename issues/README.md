@@ -19,6 +19,12 @@ Within a group, the order is the priority. The number is identity, not sequence.
 |---|---|---|---|
 | <a id="cx04"></a>[CX04](CX04-The-Repository-s-Agent-Works-In-A-Porelo-Task.md) | S | [CX08](#cx08) | the repository's agent moves into its own Porelo task, after a dry run on this machine |
 
+## Analyzed
+
+| # | Size | Blocked by | What it covers |
+|---|---|---|---|
+| <a id="cx14"></a>[CX14](CX14-The-Acceptance-Runs-On-Every-Pin-Change.md) | M | [CX08](#cx08) | a pin change reaches `main` only after the acceptance suite passed on rented ubuntu and fedora machines against its packages, as in the other adapters; built after the move |
+
 ## Accepted
 
 | # | Size | Blocked by | What it covers |
