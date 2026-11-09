@@ -30,6 +30,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
+| <a id="cx16"></a>[CX16](CX16-The-Tests-Follow-The-Pyramid.md) | XS | — | the suites by level with measured times; the refused telemetry host held in the unit phase, and the timeout test waits 100 ms |
 | <a id="cx12"></a>[CX12](CX12-Mutation-Testing-With-PIT.md) |  | — | mutation testing by hand: a `pit` profile outside CI with no threshold, and a report sorting survivors into real gaps and harmless ones |
 
 ## Idea
