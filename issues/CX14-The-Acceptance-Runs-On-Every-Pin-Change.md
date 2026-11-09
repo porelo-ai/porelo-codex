@@ -22,8 +22,9 @@ run by hand, sees it ([CX11](README.md#cx11), *Measured*).
     `vars.PORELO_PUBLISH` is `true`.
   - Each leg runs `porelo-machines acceptance --os <os> --kind amd64 --cucumber .` with `PORELO_CI_LEG: acc-<os>`, and
     ends with *Delete what this run created* (`sweep --mine`).
-- **Legs proven once:** the `proof` job, with `porelo-release proven-legs`, as in
-  [porelo-claude-code's CC34](https://github.com/porelo-ai/porelo-claude-code/blob/main/issues/README.md#cc34). A push
+- **Legs proven once:** the `proof` job, with `porelo-release proven-legs`, as in the other adapters' Builds: given
+  the commit's tree and the legs' job names, it looks for an earlier run whose legs passed on that same tree, and the
+  legs are skipped when it finds one. A push
   that does not change the shipped tree takes legs that already proved it, so only a change to the tree, a pin change
   among them, rents.
 - **The credential scenarios:** `session.feature` and `waiting.feature` are `@credential` and read `OPEN_AI_API`.
