@@ -15,9 +15,9 @@
 
 ## Provider boundary
 
-The ChatGPT provider decision and accepted exposure belong to porelo-project's
-[provider issue](https://github.com/porelo-ai/porelo-project/blob/main/issues/README.md#pj54).
-The adapter defaults to ChatGPT and speaks the Responses dialect through a URL broker. API keys
+Porelo, not the adapter, decides on the ChatGPT provider and holds its accepted exposure: the provider serves a
+person's ChatGPT sign-in at the subscription's own backend, a route that is not a documented API and can change
+without notice. The adapter defaults to ChatGPT and speaks the Responses dialect through a URL broker. API keys
 use the explicit OpenAI provider. Task setup writes only the supplied endpoint and phantom token
 into owner-only user-profile TOML. Login collection is separate: a device-code login writes
 Codex's `auth.json`, and the extractor returns its access token, account ID and renewal metadata
