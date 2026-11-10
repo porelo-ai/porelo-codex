@@ -1,8 +1,23 @@
 # CX14 — The Acceptance Runs On Every Pin Change
 
-**Status:** Analyzed. Asked for by the operator on 2026-11-08: plan it now and build it after the move.
-**Size:** M - a new job copied from the other adapters, one repository secret, and one green run on GitHub. About 60
+```json
+{
+  "$schema": "issue-1.json",
+  "id": "CX14",
+  "title": "The Acceptance Runs On Every Pin Change",
+  "state": "Analyzed",
+  "size": "M",
+  "priority": "Medium",
+  "rank": 1,
+  "blockedBy": ["CX08"],
+  "covers": "a pin change reaches `main` only after the acceptance suite passed on rented ubuntu and fedora machines against its packages, as in the other adapters; built after the move"
+}
+```
+
+**Why this size.** a new job copied from the other adapters, one repository secret, and one green run on GitHub. About 60
 minutes, the M median.
+
+**How it stands.** Asked for by the operator on 2026-11-08: plan it now and build it after the move.
 
 **What must be true.** A change to `agent.cli.version` (Codex CLI's pin) is not on `main` until the acceptance suite has passed against the
 packages built from that change, on a rented ubuntu machine and a rented fedora machine, as in `porelo-claude-code`,

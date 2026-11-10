@@ -1,8 +1,23 @@
 # CX04 — The Repository's Agent Works In A Porelo Task
 
-**Status:** Backlog; blocked by [CX08](README.md#cx08); waits for its turn in the project's procedure for an agent's move.
-**Size:** S - no code here beyond `porelo.yml`, the move itself done by the procedure; about 2 hours of the agent's
+```json
+{
+  "$schema": "issue-1.json",
+  "id": "CX04",
+  "title": "The Repository's Agent Works In A Porelo Task",
+  "state": "Backlog",
+  "size": "S",
+  "priority": "Medium",
+  "rank": 1,
+  "blockedBy": ["CX08"],
+  "covers": "the repository's agent moves into its own Porelo task, after a dry run on this machine"
+}
+```
+
+**Why this size.** no code here beyond `porelo.yml`, the move itself done by the procedure; about 2 hours of the agent's
 work, plus the operator's attended start of the task.
+
+**How it stands.** Waits for its turn in the project's procedure for an agent's move.
 
 **What must be true.** `porelo-codex`'s agent works in a Porelo task of the project `porelo` on the move's host, reached
 in the project's room under the repository's name, and works this issue from start to Review inside that task with

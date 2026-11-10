@@ -1,7 +1,22 @@
 # CX05 — Snapshot Package
 
-**Status:** Review; published as `0.1.0~snapshot.5`.
-**Size:** M - one workflow change with its helper, three guards run against stubs, and a decision changed.
+```json
+{
+  "$schema": "issue-1.json",
+  "id": "CX05",
+  "title": "Snapshot Package",
+  "state": "Review",
+  "size": "M",
+  "priority": "Medium",
+  "rank": 4,
+  "blockedBy": [],
+  "covers": "every push to main publishes the snapshot package, so the ChatGPT sign-in can be tested from it; published as `0.1.0~snapshot.5`"
+}
+```
+
+**Why this size.** one workflow change with its helper, three guards run against stubs, and a decision changed.
+
+**How it stands.** Published as `0.1.0~snapshot.5`.
 
 **What must be true.** Every push to main publishes `porelo-agent-codex` to the snapshot channel, so a
 machine installs it with `apt` or `dnf` like the other agents, and an operator test of the ChatGPT

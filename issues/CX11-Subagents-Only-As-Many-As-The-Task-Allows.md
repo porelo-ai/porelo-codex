@@ -1,7 +1,20 @@
 # CX11 — Subagents Only As Many As The Task Allows
 
-**Status:** Review.
-**Size:** M - a security-relevant hook and its trust, and `config.toml` written for every task; about 90
+```json
+{
+  "$schema": "issue-1.json",
+  "id": "CX11",
+  "title": "Subagents Only As Many As The Task Allows",
+  "state": "Review",
+  "size": "M",
+  "priority": "Medium",
+  "rank": 2,
+  "blockedBy": [],
+  "covers": "no subagent in a task unless the task allows it, then at most as many as it says; off (a hook on spawn_agent) and count measured to hold at the pin, depth does not"
+}
+```
+
+**Why this size.** a security-relevant hook and its trust, and `config.toml` written for every task; about 90
 minutes: the M median of 47, raised toward its 75th percentile of 93 by the setup now writing a file for every
 task, the scenario on the VM and three open points - whether the hook's trust can be written ahead, whether an
 inline hook command runs, and how `max_depth` counts.

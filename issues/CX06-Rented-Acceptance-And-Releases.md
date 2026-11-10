@@ -1,6 +1,18 @@
 # CX06 — Rented Acceptance and Releases
 
-**Status:** Idea.
+```json
+{
+  "$schema": "issue-1.json",
+  "id": "CX06",
+  "title": "Rented Acceptance and Releases",
+  "state": "Idea",
+  "size": "-",
+  "priority": "Medium",
+  "rank": 1,
+  "blockedBy": [],
+  "covers": "rented acceptance legs, releases and CLI updates, as in the other adapters"
+}
+```
 
 **What must be true.** Like the other adapters, a push to main and a release tag run the
 acceptance on rented ubuntu and fedora machines against the published package, a tag publishes a

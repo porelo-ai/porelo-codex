@@ -1,7 +1,20 @@
 # CX07 — A Repeated Refused Call Ends The Wake Scenario
 
-**Status:** Estimated.
-**Size:** S - one acceptance scenario and one bounded live run on the local VM, no adapter code.
+```json
+{
+  "$schema": "issue-1.json",
+  "id": "CX07",
+  "title": "A Repeated Refused Call Ends The Wake Scenario",
+  "state": "Estimated",
+  "size": "S",
+  "priority": "Medium",
+  "rank": 1,
+  "blockedBy": [],
+  "covers": "a real model repeating a refused tool call in a woken task ends the acceptance run early, the live case of the acceptance kit's loop watch"
+}
+```
+
+**Why this size.** one acceptance scenario and one bounded live run on the local VM, no adapter code.
 
 **What must be true.** When a real Codex model repeats a refused tool call in a woken task, the
 acceptance run stops as soon as the call repeats, naming what repeated, well before the scenario's

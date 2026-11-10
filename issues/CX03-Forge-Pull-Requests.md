@@ -1,7 +1,22 @@
 # CX03 — Forge Pull Requests
 
-**Status:** Review; adapter part of the approved shared template change, pushed and its Build green.
-**Size:** S - one workflow condition and an executable regression guard, with the full build checks.
+```json
+{
+  "$schema": "issue-1.json",
+  "id": "CX03",
+  "title": "Forge Pull Requests",
+  "state": "Review",
+  "size": "S",
+  "priority": "Medium",
+  "rank": 5,
+  "blockedBy": [],
+  "covers": "Carry the approved forge pull-request rule and guard its DCO boundary"
+}
+```
+
+**Why this size.** one workflow condition and an executable regression guard, with the full build checks.
+
+**How it stands.** Adapter part of the approved shared template change, pushed and its Build green.
 
 **What must be true.** A pull request from this repository's own branch on the host's forge is
 checked as internal even when the forge supplies no author association. Contributions from other
