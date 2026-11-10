@@ -11,6 +11,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | <a id="cx06"></a>[CX06](CX06-Rented-Acceptance-And-Releases.md) | - | - | rented acceptance legs, releases and CLI updates, as in the other adapters |
 | <a id="cx09"></a>[CX09](CX09-A-Sign-In-Without-A-Browser-Is-Tested-On-Every-CLI-Update.md) | - | [CX06](README.md#cx06) | the sign-in at a terminal without a browser, checked on every CLI update so a release that drops it fails its pin bump |
 | <a id="cx13"></a>[CX13](CX13-Depend-On-The-Agent-Protocol-Porelo-Provides.md) | - | - | the agent contract named at install time |
+| <a id="cx17"></a>[CX17](CX17-Third-Party-Notices-Ship-With-The-Package.md) | - | - | the license and notice texts of what the executable compiles in - SnakeYAML, JSpecify, the agent API, the wire classes, the GraalVM runtime - in one THIRD-PARTY-NOTICES file, in the deb's doc directory and as `%license` in the rpm |
 
 ## Accepted
 
