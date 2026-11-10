@@ -24,6 +24,7 @@
   with account routing preserved and malformed credentials refused without echoing tokens.
   ChatGPT is the default provider; API keys continue through the explicit OpenAI provider.
 - The Debian and RPM packages are published to the snapshot channel on every push to main.
+- The package carries the full license texts of what its executable compiles in from outside Porelo - SnakeYAML, JSpecify and the GraalVM runtime - in `THIRD-PARTY-NOTICES`, in its doc directory and as an RPM license file, and its Debian copyright names them.
 
 ### Fixed
 
