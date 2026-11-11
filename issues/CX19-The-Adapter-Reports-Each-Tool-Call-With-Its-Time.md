@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CX19",
   "title": "The Adapter Reports Each Tool Call With Its Time",
-  "state": "Estimated",
+  "state": "Backlog",
   "size": "S",
   "priority": "High",
   "rank": 1,
