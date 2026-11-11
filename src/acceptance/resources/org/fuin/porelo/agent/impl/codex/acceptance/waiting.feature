@@ -42,7 +42,7 @@ Feature: An observed selection is not mistaken for an idle composer
         # Porelo's reading may still be the one taken before the key; wait for it to change first.
         Then within 30 seconds this script exits zero:
             """
-            porelo task status porelo-select-select | grep -Eq '^screen +reads as not waiting'
+            porelo task status select | grep -Eq '^screen +reads as not waiting'
             """
         And porelo shows the "codex" agent in task "select" of "select" not waiting for a person
         When a script runs "porelo project remove select --force"
