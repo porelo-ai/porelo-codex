@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CX19",
   "title": "The Adapter Reports Each Tool Call With Its Time",
-  "state": "Implementing",
+  "state": "Review",
   "size": "S",
   "priority": "High",
   "rank": 1,
@@ -70,7 +70,3 @@ its own time gets, the masking of a command line and where the entry is kept are
 - A task gives each issue a sub-agent of its own, named by the issue's id; an issue's time is its sub-agent's span.
 - Features are built only for agents run in the task. The adapter does not read codex's session files; a codex
   task's time is shared evenly among its issues.
-
-## To be checked
-
-- The agent API with `name`, `parent` and `durationMs` on `ToolEvent`, installed locally to build against.

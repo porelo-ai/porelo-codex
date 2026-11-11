@@ -9,6 +9,7 @@ import org.fuin.porelo.agent.api.ContainerSetup;
 import org.fuin.porelo.agent.api.CredentialExtractor;
 import org.fuin.porelo.agent.api.LogFormatter;
 import org.fuin.porelo.agent.api.RunRequest;
+import org.fuin.porelo.agent.api.ToolEvent;
 import org.fuin.porelo.agent.api.YamlAgent;
 import org.jspecify.annotations.Nullable;
 
@@ -68,6 +69,12 @@ public final class CodexAgent extends YamlAgent {
     @Override
     public @Nullable AgentEnd ended(String line) {
         return CodexJsonFormatter.ended(line);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<ToolEvent> toolEvents(String line) {
+        return CodexToolEvents.read(line);
     }
 
     /**

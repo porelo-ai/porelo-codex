@@ -9,6 +9,8 @@
 
 ### Added
 
+- Unattended Codex tool calls report their start and end by item ID, their kind, and shell
+  command lines for Porelo to mask and time, without copying tool output or file contents.
 - A task's agent starts no subagent unless the task allows it, and then no more at once than it says. Skills are hidden from it, not switched off: a skill's file can still be read through its shell.
 - The definition names how its sign-in is answered, `login.flow: device-code`, so a person signing
   in on a host over SSH can be told to confirm the one-time code on OpenAI's page; the Porelo it

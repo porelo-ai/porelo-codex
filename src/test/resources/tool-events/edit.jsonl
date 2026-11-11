@@ -1,0 +1,2 @@
+{"type":"item.started","item":{"id":"item_9","type":"file_change","changes":[{"path":"/workspace/README.md","kind":"update"}],"status":"in_progress"}}
+{"type":"item.completed","item":{"id":"item_9","type":"file_change","changes":[{"path":"/workspace/README.md","kind":"update"}],"status":"completed"}}

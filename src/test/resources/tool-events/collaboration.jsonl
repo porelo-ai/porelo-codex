@@ -1,0 +1,2 @@
+{"type":"item.started","item":{"id":"item_1","type":"collab_tool_call","tool":"wait","sender_thread_id":"01a1cb63-89f9-7842-9698-b460df52c28d","receiver_thread_ids":[],"prompt":null,"agents_states":{},"status":"in_progress"}}
+{"type":"item.completed","item":{"id":"item_1","type":"collab_tool_call","tool":"wait","sender_thread_id":"01a1cb63-89f9-7842-9698-b460df52c28d","receiver_thread_ids":[],"prompt":null,"agents_states":{},"status":"completed"}}
