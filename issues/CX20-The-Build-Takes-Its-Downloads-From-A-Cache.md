@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CX20",
   "title": "The Build Takes Its Downloads From A Cache",
-  "state": "Implementing",
+  "state": "Review",
   "size": "XS",
   "priority": "Medium",
   "rank": 2,

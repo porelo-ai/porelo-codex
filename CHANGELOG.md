@@ -4,6 +4,7 @@
 
 ### Changed
 
+- The Build takes the runner's distribution packages from the Actions cache, keyed by the package list's hash, each file checked against the hash apt names before it is installed, so an outage of a package mirror fails only a Build on a new list.
 - The package says that the `porelo-wire` classes in its executable are under Apache-2.0, in its
   Debian copyright and its RPM license, with the license's text beside the GPL's in the RPM.
 
