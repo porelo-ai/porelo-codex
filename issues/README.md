@@ -8,11 +8,8 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
-| <a id="cx06"></a>[CX06](CX06-Rented-Acceptance-And-Releases.md) | - | - | rented acceptance legs, releases and CLI updates, as in the other adapters |
 | <a id="cx16"></a>[CX16](CX16-The-Tests-Follow-The-Pyramid.md) | XS | - | the suites by level with measured times; the refused telemetry host held in the unit phase, and the timeout test waits 100 ms |
-| <a id="cx09"></a>[CX09](CX09-A-Sign-In-Without-A-Browser-Is-Tested-On-Every-CLI-Update.md) | - | [CX06](README.md#cx06) | the sign-in at a terminal without a browser, checked on every CLI update so a release that drops it fails its pin bump |
 | <a id="cx12"></a>[CX12](CX12-Mutation-Testing-With-PIT.md) | - | - | mutation testing by hand: a `pit` profile outside CI with no threshold, and a report sorting survivors into real gaps and harmless ones |
-| <a id="cx13"></a>[CX13](CX13-Depend-On-The-Agent-Protocol-Porelo-Provides.md) | - | - | the agent contract named at install time |
 
 ## Analyzed
 
@@ -25,7 +22,10 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | # | Size | Blocked by | What it covers | Open questions |
 |---|---|---|---|---|
 | <a id="cx19"></a>[CX19](CX19-The-Adapter-Reports-Each-Tool-Call-With-Its-Time.md) | S | - | the adapter reads each tool call from its agent's output and hands Porelo its tool, kind, start, end, a shell call's command line, whether it ran in the background, and a sub-agent's name and the calls made under it, in Porelo's common entry | 0 |
+| <a id="cx06"></a>[CX06](CX06-Rented-Acceptance-And-Releases.md) | XL | - | rented acceptance legs, releases and CLI updates, as in the other adapters | - |
 | <a id="cx07"></a>[CX07](CX07-A-Repeated-Refused-Call-Ends-The-Wake-Scenario.md) | S | - | a real model repeating a refused tool call in a woken task ends the acceptance run early, the live case of the acceptance kit's loop watch | - |
+| <a id="cx09"></a>[CX09](CX09-A-Sign-In-Without-A-Browser-Is-Tested-On-Every-CLI-Update.md) | M | [CX06](README.md#cx06) | the sign-in at a terminal without a browser, checked on every CLI update so a release that drops it fails its pin bump | 0 |
+| <a id="cx13"></a>[CX13](CX13-Depend-On-The-Agent-Protocol-Porelo-Provides.md) | S | - | the agent contract named at install time | 0 |
 
 ## Backlog
 
