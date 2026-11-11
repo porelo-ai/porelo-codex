@@ -21,16 +21,16 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 ## Analyzed
 
-| # | Size | Blocked by | What it covers | Open questions |
-|---|---|---|---|---|
-| <a id="cx19"></a>[CX19](CX19-The-Adapter-Reports-Each-Tool-Call-With-Its-Time.md) | S | - | the adapter reads each tool call from its agent's output and hands Porelo its tool, kind, start, end, a shell call's command line and whether it ran in the background, in Porelo's common entry | 0 |
-| <a id="cx14"></a>[CX14](CX14-The-Acceptance-Runs-On-Every-Pin-Change.md) | M | [CX08](README.md#cx08) | a pin change reaches `main` only after the acceptance suite passed on rented ubuntu and fedora machines against its packages, as in the other adapters; built after the move | - |
+| # | Size | Blocked by | What it covers |
+|---|---|---|---|
+| <a id="cx14"></a>[CX14](CX14-The-Acceptance-Runs-On-Every-Pin-Change.md) | M | [CX08](README.md#cx08) | a pin change reaches `main` only after the acceptance suite passed on rented ubuntu and fedora machines against its packages, as in the other adapters; built after the move |
 
 ## Estimated
 
-| # | Size | Blocked by | What it covers |
-|---|---|---|---|
-| <a id="cx07"></a>[CX07](CX07-A-Repeated-Refused-Call-Ends-The-Wake-Scenario.md) | S | - | a real model repeating a refused tool call in a woken task ends the acceptance run early, the live case of the acceptance kit's loop watch |
+| # | Size | Blocked by | What it covers | Open questions |
+|---|---|---|---|---|
+| <a id="cx19"></a>[CX19](CX19-The-Adapter-Reports-Each-Tool-Call-With-Its-Time.md) | S | - | the adapter reads each tool call from its agent's output and hands Porelo its tool, kind, start, end, a shell call's command line, whether it ran in the background, and a sub-agent's name and the calls made under it, in Porelo's common entry | 0 |
+| <a id="cx07"></a>[CX07](CX07-A-Repeated-Refused-Call-Ends-The-Wake-Scenario.md) | S | - | a real model repeating a refused tool call in a woken task ends the acceptance run early, the live case of the acceptance kit's loop watch | - |
 
 ## Backlog
 
