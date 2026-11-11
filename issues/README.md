@@ -31,6 +31,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
 | <a id="cx04"></a>[CX04](CX04-The-Repository-s-Agent-Works-In-A-Porelo-Task.md) | S | [CX08](README.md#cx08) | the repository's agent moves into its own Porelo task, after a dry run on this machine |
+| <a id="cx20"></a>[CX20](CX20-The-Build-Takes-Its-Downloads-From-A-Cache.md) | XS | - | the runner's packages come from the Actions cache, keyed by their package manifest, so an outage of the package mirrors no longer fails a Build that already ran once; the CI fetches no CLI archive, and what must stay live is named |
 
 ## Implementing
 
