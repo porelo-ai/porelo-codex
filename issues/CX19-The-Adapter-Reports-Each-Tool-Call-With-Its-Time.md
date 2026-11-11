@@ -58,8 +58,8 @@ its own time gets, the masking of a command line and where the entry is kept are
 
 ## What makes it uncertain
 
-- Whether codex's sub-agents are to be measured per issue: the operator's question below. If they are, the
-  source is codex's session files, a second source beside the stream, and this grows to M.
+- Whether a codex sub-agent still starts in a task: CC59 in porelo-claude-code saw one start there, ordered to;
+  the adapter maps only what the stream shows of it.
 
 ## Decisions
 
@@ -68,7 +68,9 @@ its own time gets, the masking of a command line and where the entry is kept are
 - A shell call keeps its whole command line, not only its program. Porelo masks it before it is stored; the adapter
   passes the line as the stream gives it.
 - A task gives each issue a sub-agent of its own, named by the issue's id; an issue's time is its sub-agent's span.
+- Features are built only for agents run in the task. The adapter does not read codex's session files; a codex
+  task's time is shared evenly among its issues.
 
 ## To be checked
 
-- The agent API with `name` and `parent` on `ToolEvent`, installed locally to build against.
+- The agent API with `name`, `parent` and `durationMs` on `ToolEvent`, installed locally to build against.
