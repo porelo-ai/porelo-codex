@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CX06",
   "title": "Rented Acceptance and Releases",
-  "state": "Idea",
+  "state": "Accepted",
   "size": "-",
   "priority": "Medium",
   "rank": 1,

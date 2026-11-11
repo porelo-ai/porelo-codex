@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CX09",
   "title": "A Sign-In Without A Browser Is Tested On Every CLI Update",
-  "state": "Idea",
+  "state": "Accepted",
   "size": "-",
   "priority": "Medium",
   "rank": 2,

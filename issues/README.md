@@ -4,20 +4,15 @@ What is open in this repository, grouped by state in the order of [workflow.yml]
 with nothing in it is left out. The index is generated from the issues' heads and never edited by hand.
 Within a group, the order is the priority. The number is identity, not sequence.
 
-## Idea
-
-| # | Size | Blocked by | What it covers |
-|---|---|---|---|
-| <a id="cx06"></a>[CX06](CX06-Rented-Acceptance-And-Releases.md) | - | - | rented acceptance legs, releases and CLI updates, as in the other adapters |
-| <a id="cx09"></a>[CX09](CX09-A-Sign-In-Without-A-Browser-Is-Tested-On-Every-CLI-Update.md) | - | [CX06](README.md#cx06) | the sign-in at a terminal without a browser, checked on every CLI update so a release that drops it fails its pin bump |
-| <a id="cx13"></a>[CX13](CX13-Depend-On-The-Agent-Protocol-Porelo-Provides.md) | - | - | the agent contract named at install time |
-
 ## Accepted
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
+| <a id="cx06"></a>[CX06](CX06-Rented-Acceptance-And-Releases.md) | - | - | rented acceptance legs, releases and CLI updates, as in the other adapters |
 | <a id="cx16"></a>[CX16](CX16-The-Tests-Follow-The-Pyramid.md) | XS | - | the suites by level with measured times; the refused telemetry host held in the unit phase, and the timeout test waits 100 ms |
+| <a id="cx09"></a>[CX09](CX09-A-Sign-In-Without-A-Browser-Is-Tested-On-Every-CLI-Update.md) | - | [CX06](README.md#cx06) | the sign-in at a terminal without a browser, checked on every CLI update so a release that drops it fails its pin bump |
 | <a id="cx12"></a>[CX12](CX12-Mutation-Testing-With-PIT.md) | - | - | mutation testing by hand: a `pit` profile outside CI with no threshold, and a report sorting survivors into real gaps and harmless ones |
+| <a id="cx13"></a>[CX13](CX13-Depend-On-The-Agent-Protocol-Porelo-Provides.md) | - | - | the agent contract named at install time |
 
 ## Analyzed
 
