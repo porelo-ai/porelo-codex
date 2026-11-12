@@ -4,6 +4,12 @@ What is open in this repository, grouped by state in the order of [workflow.yml]
 with nothing in it is left out. The index is generated from the issues' heads and never edited by hand.
 Within a group, the order is the priority. The number is identity, not sequence.
 
+## Idea
+
+| # | Size | Blocked by | What it covers |
+|---|---|---|---|
+| <a id="cx22"></a>[CX22](CX22-The-Agent-s-Own-Telemetry-Goes-To-Porelo.md) | - | - | the adapter declares Codex CLI's own OpenTelemetry export pointed at Porelo's local receiver in the task, with every switch that would carry content - prompts, tool arguments and output, responses - set explicitly off |
+
 ## Accepted
 
 | # | Size | Blocked by | What it covers |
