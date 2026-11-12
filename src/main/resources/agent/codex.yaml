@@ -36,6 +36,10 @@ headless:
 session:
     supports_resume: true
     resume_flag: resume
+    # How an attended session takes its opening text: last and positional. 'codex --help': "Usage: codex
+    # [OPTIONS] [PROMPT]", the interactive CLI when no subcommand is given. Measured on 0.163.0 in an attended
+    # task: it answers the text as its first turn, then rests at its prompt.
+    opening_flag: ""
     ready_marker: "? for shortcuts"
     # The composer remains visible during work, so its footer alone cannot permit wake input.
     at_rest:

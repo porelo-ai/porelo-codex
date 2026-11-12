@@ -38,18 +38,13 @@ Within a group, the order is the priority. The number is identity, not sequence.
 |---|---|---|---|
 | <a id="cx04"></a>[CX04](CX04-The-Repository-s-Agent-Works-In-A-Porelo-Task.md) | S | [CX08](README.md#cx08) | the repository's agent moves into its own Porelo task, after a dry run on this machine |
 
-## Implementing
-
-| # | Size | Blocked by | What it covers |
-|---|---|---|---|
-| <a id="cx21"></a>[CX21](CX21-An-Attended-Session-Takes-An-Opening-Text.md) | XS | - | an attended session of Codex CLI opens on the person's opening text as its first turn and then waits for the person, the form (positional) declared in the agent definition and measured in a task |
-
 ## Review
 
 | # | Size | Blocked by | What it covers | Open questions |
 |---|---|---|---|---|
 | <a id="cx18"></a>[CX18](CX18-The-Acceptance-Takes-A-Task-s-Container-Name-From-Porelo.md) | XS | - | the acceptance scenarios name a task by its own name in Porelo's commands and take its container's name from `porelo task status --json`, never built as `porelo-<project>-<task>` | - |
 | <a id="cx19"></a>[CX19](CX19-The-Adapter-Reports-Each-Tool-Call-With-Its-Time.md) | S | - | the adapter reads each tool call from its agent's output and hands Porelo its tool, kind, start, end, a shell call's command line, whether it ran in the background, and a sub-agent's name and the calls made under it, in Porelo's common entry | 0 |
+| <a id="cx21"></a>[CX21](CX21-An-Attended-Session-Takes-An-Opening-Text.md) | XS | - | an attended session of Codex CLI opens on the person's opening text as its first turn and then waits for the person, the form (positional) declared in the agent definition and measured in a task | - |
 | <a id="cx15"></a>[CX15](CX15-Snapshots-Not-Published-On-The-Forge-Come-From-Upstream.md) | S | - | on a forge whose registry holds only its organization's packages, the other Porelo snapshots come from the anonymous repository `MAVEN_UPSTREAM_SNAPSHOTS_URL` names, the forge's token sent to the forge alone | - |
 | <a id="cx11"></a>[CX11](CX11-Subagents-Only-As-Many-As-The-Task-Allows.md) | M | - | no subagent in a task unless the task allows it, then at most as many as it says; off (a hook on spawn_agent) and count measured to hold at the pin, depth does not | - |
 | <a id="cx20"></a>[CX20](CX20-The-Build-Takes-Its-Downloads-From-A-Cache.md) | XS | - | the runner's packages come from the Actions cache, keyed by their package manifest, so an outage of the package mirrors no longer fails a Build that already ran once; the CI fetches no CLI archive, and what must stay live is named | - |

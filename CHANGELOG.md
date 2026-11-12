@@ -10,6 +10,8 @@
 
 ### Added
 
+- The definition says how an attended session takes an opening text, `session.opening_flag: ""`, so Porelo
+  opens a discussion on Codex CLI with the person's text as its first turn, after which it waits for them.
 - Unattended Codex tool calls report their start and end by item ID, their kind, and shell
   command lines for Porelo to mask and time, without copying tool output or file contents.
 - A task's agent starts no subagent unless the task allows it, and then no more at once than it says. Skills are hidden from it, not switched off: a skill's file can still be read through its shell.
