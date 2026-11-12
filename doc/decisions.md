@@ -153,13 +153,18 @@ local VM takes `PORELO_E2E_MODEL=gpt-5.4-nano`, a small model that accepts it; `
 ## Snapshot repositories
 
 `settings.xml` reads snapshots through one of three profiles, the same as in `porelo-claude-code`, `porelo-pi` and
-`porelo-omp`: `standard` (Central's snapshots) where no forge names its own, `forge` where `MAVEN_SNAPSHOTS_URL` does,
-read with the forge's read-only token under the server id `porelo-forge`, and `upstream` where
-`MAVEN_UPSTREAM_SNAPSHOTS_URL` names where the Porelo snapshots a forge's registry does not hold come from. The
-upstream repository's id has no `<server>`, so no token is sent there; `UpstreamSnapshotsTest` fails when any
-repository other than the forge's would get its credential. Nothing builds a tag here yet; `UpstreamSnapshotsTest`
-fails when any workflow would run on a tag, by a tag filter, a release or a push without a branch filter, so the guard
-the other adapters carry, a tag's `-P!standard,!forge,!upstream`, comes with this repository's first tag release.
+`porelo-omp`: `standard` (Central's snapshots, under the id `central.sonatype.snapshots`, asked only for
+`org.fuin.porelo`) wherever the filter's switch in `.mvn/maven.config` and its file in `.mvn/rrf/` are, on a forge
+too, `forge` where `MAVEN_SNAPSHOTS_URL` does, read with the forge's read-only token under the server id
+`porelo-forge`, and `upstream` where `MAVEN_UPSTREAM_SNAPSHOTS_URL` names where the Porelo snapshots a forge's
+registry does not hold come from. On a forge Sonatype is so asked beside its registry: on the local Forgejo a newer
+snapshot of `main` on Sonatype can shadow one the forge published from a branch, and a forge that cannot reach
+Sonatype waits on it; on GitHub the forge's repository is Sonatype itself and unfiltered. Accepted with the filter, by
+the coordinator on 2026-11-12. The upstream repository's id has no `<server>`, so no token is sent there;
+`UpstreamSnapshotsTest` fails when any repository other than the forge's would get its credential. Nothing builds a
+tag here yet; `UpstreamSnapshotsTest` fails when any workflow would run on a tag, by a tag filter, a release or a push
+without a branch filter, so the guard the other adapters carry, a tag's `-P!standard,!forge,!upstream`, comes with
+this repository's first tag release.
 
 Measured from an empty local repository, with `MAVEN_SNAPSHOTS_URL` naming a repository without Porelo's snapshots:
 the build resolves them from `porelo-upstream-snapshots` with `MAVEN_UPSTREAM_SNAPSHOTS_URL` set, and fails without it
