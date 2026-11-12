@@ -37,6 +37,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
 | <a id="cx04"></a>[CX04](CX04-The-Repository-s-Agent-Works-In-A-Porelo-Task.md) | S | [CX08](README.md#cx08) | the repository's agent moves into its own Porelo task, after a dry run on this machine |
+| <a id="cx23"></a>[CX23](CX23-The-Issue-Heads-Are-Checked-Every-Day.md) | XS | - | a daily run checks this repository's issue heads and index with the released porelo-release, as buildtools' shared rules do |
 
 ## Review
 
