@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CX16",
   "title": "The Tests Follow The Pyramid",
-  "state": "Accepted",
+  "state": "Analyzed",
   "size": "XS",
   "priority": "Medium",
   "rank": 1,
@@ -70,3 +70,7 @@ rented legs that would are [CX06](README.md#cx06) and [CX14](README.md#cx14), an
 - The unit suite stays under a minute, and no flow of the adapter is reached only from an integration or an
   end-to-end run; it fails when the refused host leaves the definition.
 - `WorkflowStepsTest` takes under 0.5 s.
+
+## Open questions
+
+- None.
