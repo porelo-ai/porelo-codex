@@ -38,12 +38,6 @@ Within a group, the order is the priority. The number is identity, not sequence.
 |---|---|---|---|
 | <a id="cx04"></a>[CX04](CX04-The-Repository-s-Agent-Works-In-A-Porelo-Task.md) | S | [CX08](README.md#cx08) | the repository's agent moves into its own Porelo task, after a dry run on this machine |
 
-## Implementing
-
-| # | Size | Blocked by | What it covers |
-|---|---|---|---|
-| <a id="cx23"></a>[CX23](CX23-The-Issue-Heads-Are-Checked-Every-Day.md) | XS | - | a daily run checks this repository's issue heads and index with the released porelo-release, as buildtools' shared rules do |
-
 ## Review
 
 | # | Size | Blocked by | What it covers | Open questions |
@@ -58,6 +52,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | <a id="cx05"></a>[CX05](CX05-Snapshot-Package.md) | M | - | every push to main publishes the snapshot package, so the ChatGPT sign-in can be tested from it; published as `0.1.0~snapshot.5` | - |
 | <a id="cx17"></a>[CX17](CX17-Third-Party-Notices-Ship-With-The-Package.md) | S | - | the license texts of what the executable compiles in from outside Porelo - SnakeYAML, JSpecify, the GraalVM runtime - in one THIRD-PARTY-NOTICES file, in the deb's doc directory and as `%license` in the rpm | - |
 | <a id="cx03"></a>[CX03](CX03-Forge-Pull-Requests.md) | S | - | Carry the approved forge pull-request rule and guard its DCO boundary | - |
+| <a id="cx23"></a>[CX23](CX23-The-Issue-Heads-Are-Checked-Every-Day.md) | XS | - | a daily run checks this repository's issue heads and index with the released porelo-release, as buildtools' shared rules do | - |
 
 ## Finished
 

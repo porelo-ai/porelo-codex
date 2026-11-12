@@ -10,6 +10,7 @@
 
 ### Added
 
+- The daily shared rules check also holds every issue head to its schema and each index to its heads.
 - The definition says how an attended session takes an opening text, `session.opening_flag: ""`, so Porelo
   opens a discussion on Codex CLI with the person's text as its first turn, after which it waits for them.
 - Unattended Codex tool calls report their start and end by item ID, their kind, and shell
