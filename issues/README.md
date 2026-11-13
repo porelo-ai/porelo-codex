@@ -36,6 +36,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
+| <a id="cx24"></a>[CX24](CX24-Codex-Is-Installed-Root-Owned.md) | M | - | the codex binary a task starts and its code-mode helper are installed by root and owned by root, so the agent in a task cannot replace what Porelo starts as Codex next time; their version stays pinned by the definition and moves only through the update job, and a self-update inside a task fails |
 | <a id="cx04"></a>[CX04](CX04-The-Repository-s-Agent-Works-In-A-Porelo-Task.md) | S | [CX08](README.md#cx08) | the repository's agent moves into its own Porelo task, after a dry run on this machine |
 
 ## Review
