@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CX24",
   "title": "Codex Is Installed Root-Owned",
-  "state": "Backlog",
+  "state": "Implementing",
   "size": "M",
   "priority": "High",
   "rank": 1,
