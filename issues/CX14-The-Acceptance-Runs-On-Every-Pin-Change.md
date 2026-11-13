@@ -7,7 +7,7 @@
   "title": "The Acceptance Runs On Every Pin Change",
   "state": "Analyzed",
   "size": "M",
-  "priority": "Medium",
+  "priority": "Low",
   "rank": 1,
   "blockedBy": ["CX08"],
   "covers": "a pin change reaches `main` only after the acceptance suite passed on rented ubuntu and fedora machines against its packages, as in the other adapters; built after the move"

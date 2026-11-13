@@ -7,7 +7,7 @@
   "title": "A Repeated Refused Call Ends The Wake Scenario",
   "state": "Estimated",
   "size": "S",
-  "priority": "Medium",
+  "priority": "Low",
   "rank": 1,
   "blockedBy": [],
   "covers": "a real model repeating a refused tool call in a woken task ends the acceptance run early, the live case of the acceptance kit's loop watch"

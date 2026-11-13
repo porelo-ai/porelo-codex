@@ -7,7 +7,7 @@
   "title": "Rented Acceptance and Releases",
   "state": "Estimated",
   "size": "XL",
-  "priority": "Medium",
+  "priority": "Low",
   "rank": 1,
   "blockedBy": [],
   "covers": "rented acceptance legs, releases and CLI updates, as in the other adapters"
