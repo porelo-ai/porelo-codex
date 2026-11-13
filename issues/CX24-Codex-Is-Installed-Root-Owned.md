@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CX24",
   "title": "Codex Is Installed Root-Owned",
-  "state": "Implementing",
+  "state": "Review",
   "size": "M",
   "priority": "High",
   "rank": 1,
@@ -51,5 +51,4 @@ Porelo built into the image.
 
 ## To be checked
 
-- The contract change for a root-owned artifact, agreed with Porelo's agent in the channel.
 - How Codex finds `codex-code-mode-host` once both are outside the home, measured at the pin.

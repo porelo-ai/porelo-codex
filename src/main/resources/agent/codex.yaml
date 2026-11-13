@@ -66,29 +66,36 @@ session:
 
 install:
     version: "${agent.cli.version}"
+    # Root's, outside the home: fetched and unpacked in the root part of the image, so what the agent in
+    # a task writes never picks what the next start runs, and a self-update fails to write over it.
     artifacts:
         - url: https://github.com/openai/codex/releases/download/rust-v${agent.cli.version}/codex-x86_64-unknown-linux-musl.tar.gz
           sha256: "${agent.cli.sha256}"
           license: Apache-2.0
-          target: /home/agent/.cache/porelo/codex/cli.tar.gz
+          target: /var/cache/porelo/codex/cli.tar.gz
           mode: "0644"
+          owner: root
         - url: https://github.com/openai/codex/releases/download/rust-v${agent.cli.version}/codex-code-mode-host-x86_64-unknown-linux-musl.tar.gz
           sha256: "${agent.helper.sha256}"
           license: Apache-2.0
-          target: /home/agent/.cache/porelo/codex/helper.tar.gz
+          target: /var/cache/porelo/codex/helper.tar.gz
           mode: "0644"
+          owner: root
+    as_root:
+        - >-
+          RUN set -eux;
+          staging=$(mktemp -d);
+          trap 'rm -rf "$staging"' EXIT;
+          test "$(tar -tzf /var/cache/porelo/codex/cli.tar.gz)" = codex-x86_64-unknown-linux-musl;
+          test "$(tar -tzf /var/cache/porelo/codex/helper.tar.gz)" = codex-code-mode-host-x86_64-unknown-linux-musl;
+          tar -xzf /var/cache/porelo/codex/cli.tar.gz -C "$staging" --no-same-owner;
+          tar -xzf /var/cache/porelo/codex/helper.tar.gz -C "$staging" --no-same-owner;
+          install -D -o root -g root -m 0755 "$staging/codex-x86_64-unknown-linux-musl" /usr/local/bin/codex;
+          install -D -o root -g root -m 0755 "$staging/codex-code-mode-host-x86_64-unknown-linux-musl" /usr/local/bin/codex-code-mode-host;
+          rm -r /var/cache/porelo/codex
     as_agent:
         - ENV CODEX_HOME=/home/agent/.codex
         - >-
           RUN set -eux;
           mkdir -p /home/agent/.codex;
-          chmod 0700 /home/agent/.codex;
-          staging=$(mktemp -d);
-          trap 'rm -rf "$staging"' EXIT;
-          test "$(tar -tzf /home/agent/.cache/porelo/codex/cli.tar.gz)" = codex-x86_64-unknown-linux-musl;
-          test "$(tar -tzf /home/agent/.cache/porelo/codex/helper.tar.gz)" = codex-code-mode-host-x86_64-unknown-linux-musl;
-          tar -xzf /home/agent/.cache/porelo/codex/cli.tar.gz -C "$staging" --no-same-owner;
-          tar -xzf /home/agent/.cache/porelo/codex/helper.tar.gz -C "$staging" --no-same-owner;
-          install -D -m 0755 "$staging/codex-x86_64-unknown-linux-musl" /home/agent/.local/bin/codex;
-          install -D -m 0755 "$staging/codex-code-mode-host-x86_64-unknown-linux-musl" /home/agent/.local/bin/codex-code-mode-host;
-          rm /home/agent/.cache/porelo/codex/cli.tar.gz /home/agent/.cache/porelo/codex/helper.tar.gz
+          chmod 0700 /home/agent/.codex

@@ -125,10 +125,47 @@ class CodexAgentTest {
                                     .as("publisher digest")
                                     .matches("[a-f0-9]{64}");
                         });
-        final List<String> layer = agent.imageLayer().asAgent();
+        final List<String> layer = agent.imageLayer().asRoot();
         assertThat(layer.stream().filter(line -> line.contains("sha256sum -c -")).count())
-                .as("each of the two archives is checked")
+                .as("each of the two archives is checked, in the root part of the image")
                 .isEqualTo(2);
+    }
+
+    @Test
+    void bothBinariesAreRootsSoTheAgentCannotReplaceWhatTheNextStartRuns() {
+        assertThat(agent.definition().artifacts())
+                .as("both archives are fetched by root, outside the agent's home")
+                .allSatisfy(
+                        artifact -> {
+                            assertThat(artifact.rootOwned()).isTrue();
+                            assertThat(artifact.target()).doesNotStartWith("/home/agent");
+                        });
+        final List<String> root = agent.imageLayer().asRoot();
+        assertThat(root)
+                .as(
+                        "root installs both binaries, root's, into its own directory on the task's path")
+                .anyMatch(
+                        line ->
+                                line.contains(
+                                        "install -D -o root -g root -m 0755"
+                                                + " \"$staging/codex-x86_64-unknown-linux-musl\""
+                                                + " /usr/local/bin/codex;"))
+                .anyMatch(
+                        line ->
+                                line.contains(
+                                        "install -D -o root -g root -m 0755"
+                                                + " \"$staging/codex-code-mode-host-x86_64-unknown-linux-musl\""
+                                                + " /usr/local/bin/codex-code-mode-host;"));
+        assertThat(agent.imageLayer().asAgent())
+                .as("nothing of the binaries is fetched, unpacked or placed as the agent")
+                .noneMatch(
+                        line ->
+                                line.contains("curl ")
+                                        || line.contains("install ")
+                                        || line.contains("tar ")
+                                        || line.contains("codex-x86_64")
+                                        || line.contains(".local/bin")
+                                        || line.contains("/usr/local/"));
     }
 
     @Test
