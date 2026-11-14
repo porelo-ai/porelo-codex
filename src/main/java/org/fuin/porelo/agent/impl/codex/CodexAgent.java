@@ -7,6 +7,7 @@ import org.fuin.porelo.agent.api.AgentException;
 import org.fuin.porelo.agent.api.AgentMain;
 import org.fuin.porelo.agent.api.ContainerSetup;
 import org.fuin.porelo.agent.api.CredentialExtractor;
+import org.fuin.porelo.agent.api.Finder;
 import org.fuin.porelo.agent.api.LogFormatter;
 import org.fuin.porelo.agent.api.RunRequest;
 import org.fuin.porelo.agent.api.ToolEvent;
@@ -25,6 +26,16 @@ public final class CodexAgent extends YamlAgent {
     @Override
     public CredentialExtractor credentialExtractor() {
         return new CodexCredentialExtractor();
+    }
+
+    /**
+     * Returns what Codex CLI finds of itself.
+     *
+     * @return Finder reading Codex CLI's own files.
+     */
+    @Override
+    public Finder finder() {
+        return new CodexFindings();
     }
 
     /** {@inheritDoc} */

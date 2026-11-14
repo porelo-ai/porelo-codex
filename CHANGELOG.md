@@ -12,6 +12,7 @@
 
 ### Added
 
+- The adapter says which Codex sign-in it finds in its configuration directory - a ChatGPT sign-in, an OpenAI API key, or one kept in the system keyring - with its provider, kind, account and last change but never its value, and whether it can be carried to a host, which only the ChatGPT sign-in the import takes can.
 - The daily shared rules check also holds every issue head to its schema and each index to its heads.
 - The definition says how an attended session takes an opening text, `session.opening_flag: ""`, so Porelo
   opens a discussion on Codex CLI with the person's text as its first turn, after which it waits for them.

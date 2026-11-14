@@ -21,6 +21,9 @@ import org.fuin.porelo.wire.JsonException;
 
 /** Collects Codex's nested ChatGPT sign-in for host-side routing and renewal. */
 public final class CodexCredentialExtractor implements CredentialExtractor {
+    /** The file in Codex's configuration directory that holds its sign-in. */
+    static final String AUTH_FILE = "auth.json";
+
     private static final int MAX_BYTES = 1024 * 1024;
     private static final long MAX_EXPIRY_MILLIS = 999_999_999_999_999L;
     private static final Pattern BEARER = Pattern.compile("[A-Za-z0-9._~+/-]+=*");
@@ -31,7 +34,7 @@ public final class CodexCredentialExtractor implements CredentialExtractor {
     /** {@inheritDoc} */
     @Override
     public Optional<Credential> extract(Path configDirectory) {
-        final Path file = configDirectory.resolve("auth.json");
+        final Path file = configDirectory.resolve(AUTH_FILE);
         final byte[] bytes;
         try {
             final BasicFileAttributes attributes =

@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CX26",
   "title": "The Local Sign-In Goes To A Host",
-  "state": "Backlog",
+  "state": "Review",
   "size": "M",
   "priority": "High",
   "rank": 1,
@@ -31,7 +31,7 @@ the fields and the carrying by stdin or environment; Agent Frontend files the wi
 
 ## Plan
 
-- `auth.json` in the definition's `config_dir`: the ChatGPT sign-in, its account id, and its age and expiry where the file holds them; or an OpenAI API key; carriable.
+- `auth.json` in the definition's `config_dir`: the ChatGPT sign-in, its account id, and its age and expiry where the file holds them, carriable; or an OpenAI API key, which the extractor does not take, not carriable.
 - A sign-in Codex keeps in the system keyring rather than the file: found where its configuration says so, not carriable.
 - The finder fills the fields Porelo's half adds to a finding; the extractor is the one an import already uses.
 - Tests: one fixture per route, each finding's fields asserted, and a test that no finding's text holds any value
@@ -42,6 +42,22 @@ the fields and the carrying by stdin or environment; Agent Frontend files the wi
 - Each route above is found and said as listed, with its carriable answer, by a test.
 - No finding holds a value of its fixture.
 - With Porelo's half in, a sign-in found on the person's machine is in the host's vault and a task there runs on it.
+
+## What was built
+
+- `CodexFindings`, the agent's finder, reads only `auth.json` and `config.toml` in the definition's `config_dir`; it runs
+  no command, reaches no network and reads no environment.
+- A ChatGPT sign-in is signed in, provider `chatgpt`, kind subscription; it is carriable exactly when
+  `CodexCredentialExtractor` takes it, which the finder asks of the extractor itself.
+- An OpenAI API key is signed in, provider `openai`, kind API key, and not carriable, since the extractor takes no key.
+- A file Codex cannot sign in with is not signed in; one that cannot be read, a link or an oversized file cannot say.
+- `cli_auth_credentials_store` set to `keyring` or `auto` at the top of `config.toml` is a sign-in that cannot say and is
+  not carriable, said before the file.
+- `CodexSignInFacts` gives each sign-in in the file its account (`tokens.account_id`), its last change (the file's
+  time) and no expiry: the file holds one only inside the access token, which is the value and is not opened for a fact.
+- Tests: `CodexFindingsTest` and `CodexSignInFactsTest`, one fixture per route, each finding's fields asserted, and no
+  finding's or fact's text holds a value of its fixture.
+- Porelo's fields (account, age, expiry, carriable) are still to be mapped once Porelo's wire shape for them is posted.
 
 ## To be checked
 
