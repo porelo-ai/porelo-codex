@@ -18,6 +18,7 @@ import org.fuin.porelo.agent.api.Credential;
 import org.fuin.porelo.agent.api.CredentialExtractor;
 import org.fuin.porelo.wire.Json;
 import org.fuin.porelo.wire.JsonException;
+import org.jspecify.annotations.Nullable;
 
 /** Collects Codex's nested ChatGPT sign-in for host-side routing and renewal. */
 public final class CodexCredentialExtractor implements CredentialExtractor {
@@ -30,6 +31,23 @@ public final class CodexCredentialExtractor implements CredentialExtractor {
     private static final Pattern ACCOUNT = Pattern.compile("[\\x21-\\x7e]{1,256}");
     private static final String TOKEN_URL = "https://auth.openai.com/oauth/token";
     private static final String CLIENT_ID = "app_EMoamEEZ73f0CkXaXp7hrann";
+
+    /**
+     * Reads the sign-in for one provider: the one sign-in this file holds is {@code chatgpt}'s, and
+     * named so, since Porelo asks per provider and refuses an answer that names none; any other
+     * provider is answered with nothing. Asked for none, it answers as {@link #extract(Path)}.
+     */
+    @Override
+    public Optional<Credential> extract(
+            final Path configDirectory, final @Nullable String provider) {
+        if (provider == null) {
+            return extract(configDirectory);
+        }
+        return CodexFindings.SUBSCRIPTION_PROVIDER.equals(provider)
+                ? extract(configDirectory)
+                        .map(found -> found.forProvider(CodexFindings.SUBSCRIPTION_PROVIDER))
+                : Optional.empty();
+    }
 
     /** {@inheritDoc} */
     @Override

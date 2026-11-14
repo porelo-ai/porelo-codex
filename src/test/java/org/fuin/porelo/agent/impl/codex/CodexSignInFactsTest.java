@@ -143,4 +143,23 @@ class CodexSignInFactsTest {
                 .as("no value in any field")
                 .doesNotContain(SECRET, CodexCredentialExtractorTest.accessToken("1800000000"));
     }
+
+    // Prevents offering a sign-in Porelo's listing of what can be carried would not hold: it asks
+    // the extractor per provider and keeps only an answer that names that provider.
+    @Test
+    void eachSignInWithFactsIsOneTheExtractorAnswersForItsProvider() throws IOException {
+        subscription(ACCOUNT);
+
+        final List<CodexSignInFacts> facts = facts();
+
+        assertThat(facts).as("the fixture holds a sign-in to carry").isNotEmpty();
+        assertThat(facts)
+                .allSatisfy(
+                        fact ->
+                                assertThat(
+                                                new CodexCredentialExtractor()
+                                                        .extract(config, fact.finding().provider()))
+                                        .map(found -> found.provider())
+                                        .contains(fact.finding().provider()));
+    }
 }

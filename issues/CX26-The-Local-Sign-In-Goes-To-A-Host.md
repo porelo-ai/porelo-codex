@@ -62,7 +62,9 @@ the fields and the carrying by stdin or environment; Agent Frontend files the wi
   key the import does not take, and tests that passed with the size check or the facts' filters gone; all fixed.
   Noted, not fixed: an `OPENAI_API_KEY` beside a broken ChatGPT sign-in reads as signed in by key, and the guard
   against a value in the text has no API-key fixture.
-- Porelo's fields (account, age, expiry, carriable) are still to be mapped once Porelo's wire shape for them is posted.
+- Mapped onto Porelo's listing of what can be carried, which asks the extractor per provider and refuses an answer
+  that names none: the extractor now answers `chatgpt` with the sign-in, named, and `openai` with nothing, by a test
+  seen red first; each sign-in with facts is one it answers for its provider.
 
 ## Open questions
 
@@ -72,7 +74,8 @@ the fields and the carrying by stdin or environment; Agent Frontend files the wi
 
 ## To be checked
 
-- **Porelo's half.** Porelo seals the value it takes through this adapter's extractor, as an import does; the
-  listing that shows these facts is still to come from Porelo, and the facts are mapped onto it then.
+- **The facts on the wire.** Porelo's listing of what can be carried names agent, provider and kind, asked of this
+  adapter's extractor per provider; it carries no account, expiry or last change, so the facts stay in the adapter
+  until a listing takes them, and the third acceptance point is Porelo's walk.
 - **The keyring's values.** Only `file` is named in this repository; `keyring` and `auto` are taken from Codex's
   configuration as read, not measured on the pinned CLI.

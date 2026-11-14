@@ -33,6 +33,24 @@ class CodexCredentialExtractorTest {
                 .isEmpty();
     }
 
+    // Prevents Porelo's listing of what can be carried from missing the ChatGPT sign-in: it asks
+    // per provider and refuses an answer that names none.
+    @Test
+    void askedForChatgptTheSignInNamesIt() throws IOException {
+        write(login(accessToken("42"), REFRESH, "account-one"));
+
+        assertThat(extractor.extract(directory, "chatgpt"))
+                .map(Credential::provider)
+                .contains("chatgpt");
+        assertThat(extractor.extract(directory, "openai"))
+                .as("the import takes no key, so OpenAI is answered with nothing")
+                .isEmpty();
+        assertThat(extractor.extract(directory, null))
+                .as("asked for none, as before")
+                .map(Credential::provider)
+                .isEmpty();
+    }
+
     @Test
     void aChatgptLoginRetainsEverythingTheHostNeedsToRouteAndRenewIt() throws IOException {
         final String access = accessToken("42");
