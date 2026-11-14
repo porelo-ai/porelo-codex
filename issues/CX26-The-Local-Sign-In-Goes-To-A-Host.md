@@ -11,7 +11,7 @@
   "rank": 1,
   "blockedBy": [],
   "covers": "on the person's machine the adapter lists each Codex sign-in it finds - provider, kind, account where known, age and expiry where known, and whether it can be carried, never its value - and hands a chosen one to Porelo, which carries it into a rented host's vault",
-  "openQuestions": 2
+  "openQuestions": 1
 }
 ```
 
@@ -50,19 +50,29 @@ the fields and the carrying by stdin or environment; Agent Frontend files the wi
 - A ChatGPT sign-in is signed in, provider `chatgpt`, kind subscription; it is carriable exactly when
   `CodexCredentialExtractor` takes it, which the finder asks of the extractor itself.
 - An OpenAI API key is signed in, provider `openai`, kind API key, and not carriable, since the extractor takes no key.
-- A file Codex cannot sign in with is not signed in; one that cannot be read, a link or an oversized file cannot say.
+- A file Codex cannot sign in with is not signed in; an `auth.json` or `config.toml` that cannot be read, is a link,
+  dangling or not, or is past 1 MiB cannot say.
 - `cli_auth_credentials_store` set to `keyring` or `auto` at the top of `config.toml` is a sign-in that cannot say and is
   not carriable, said before the file.
-- `CodexSignInFacts` gives each sign-in in the file its account (`tokens.account_id`), its last change (the file's
+- `CodexSignInFacts` gives each sign-in in the file the import takes its account (`tokens.account_id`), its last change (the file's
   time) and no expiry: the file holds one only inside the access token, which is the value and is not opened for a fact.
 - Tests: `CodexFindingsTest` and `CodexSignInFactsTest`, one fixture per route, each finding's fields asserted, and no
   finding's or fact's text holds a value of its fixture.
+- The reading by another model found `config.toml` read through a link and without a bound, facts given to an API
+  key the import does not take, and tests that passed with the size check or the facts' filters gone; all fixed.
+  Noted, not fixed: an `OPENAI_API_KEY` beside a broken ChatGPT sign-in reads as signed in by key, and the guard
+  against a value in the text has no API-key fixture.
 - Porelo's fields (account, age, expiry, carriable) are still to be mapped once Porelo's wire shape for them is posted.
 
-## To be checked
+## Open questions
 
-- **Porelo's half.** The fields (account, age, expiry, carriable) and the carrying are Agent Core's issue; it goes in
-  `blockedBy` once filed.
 - **Two machines on one sign-in.** An OAuth sign-in whose refresh token is replaced at each renewal works on one
   machine at a time: the first to renew signs the other out. Whether a carried sign-in is said to sign the person's
   machine out, or is carried only as a kind that does not rotate, is the operator's call.
+
+## To be checked
+
+- **Porelo's half.** Porelo seals the value it takes through this adapter's extractor, as an import does; the
+  listing that shows these facts is still to come from Porelo, and the facts are mapped onto it then.
+- **The keyring's values.** Only `file` is named in this repository; `keyring` and `auto` are taken from Codex's
+  configuration as read, not measured on the pinned CLI.

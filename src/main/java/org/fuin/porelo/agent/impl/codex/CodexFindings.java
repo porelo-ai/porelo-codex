@@ -68,16 +68,19 @@ final class CodexFindings implements Finder {
     }
 
     private static void findKeyring(final Path config, final List<Finding> findings) {
-        final List<String> lines;
-        try {
-            lines = Files.readAllLines(config, StandardCharsets.UTF_8);
-        } catch (NoSuchFileException ex) {
-            return;
-        } catch (IOException ex) {
-            findings.add(cannotSay(config));
-            return;
+        final Bounded file = Bounded.read(config);
+        switch (file.state()) {
+            case ABSENT -> {
+                return;
+            }
+            case UNREADABLE -> {
+                findings.add(cannotSay(config));
+                return;
+            }
+            case READ -> {}
         }
-        for (final String line : lines) {
+        for (final String line :
+                new String(file.bytes(), StandardCharsets.UTF_8).lines().toList()) {
             if (line.strip().startsWith("[")) {
                 return;
             }
@@ -159,32 +162,59 @@ final class CodexFindings implements Finder {
 
         /** A link or an oversized file is not read, as the extractor reads neither. */
         static AuthFile read(final Path path) {
-            final byte[] bytes;
-            try {
-                if (!Files.readAttributes(
-                                path, BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS)
-                        .isRegularFile()) {
+            final Bounded file = Bounded.read(path);
+            switch (file.state()) {
+                case ABSENT -> {
+                    return new AuthFile(path, State.ABSENT, Map.of());
+                }
+                case UNREADABLE -> {
                     return new AuthFile(path, State.UNREADABLE, Map.of());
                 }
-                try (InputStream input = Files.newInputStream(path, LinkOption.NOFOLLOW_LINKS)) {
-                    bytes = input.readNBytes(MAX_BYTES + 1);
-                }
-            } catch (NoSuchFileException ex) {
-                return new AuthFile(path, State.ABSENT, Map.of());
-            } catch (IOException ex) {
-                return new AuthFile(path, State.UNREADABLE, Map.of());
-            }
-            if (bytes.length > MAX_BYTES) {
-                return new AuthFile(path, State.UNREADABLE, Map.of());
+                case READ -> {}
             }
             try {
-                return Json.parse(new String(bytes, StandardCharsets.UTF_8))
+                return Json.parse(new String(file.bytes(), StandardCharsets.UTF_8))
                                 instanceof Map<?, ?> map
                         ? new AuthFile(path, State.OBJECT, map)
                         : new AuthFile(path, State.BROKEN, Map.of());
             } catch (JsonException ex) {
                 return new AuthFile(path, State.BROKEN, Map.of());
             }
+        }
+    }
+
+    /**
+     * A file of this directory, read only where it is itself a regular file of at most {@code
+     * MAX_BYTES}: a link, dangling or not, and anything larger cannot be read, as the extractor
+     * reads neither.
+     */
+    private record Bounded(State state, byte[] bytes) {
+
+        enum State {
+            ABSENT,
+            UNREADABLE,
+            READ
+        }
+
+        static Bounded read(final Path path) {
+            final byte[] bytes;
+            try {
+                if (!Files.readAttributes(
+                                path, BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS)
+                        .isRegularFile()) {
+                    return new Bounded(State.UNREADABLE, new byte[0]);
+                }
+                try (InputStream input = Files.newInputStream(path, LinkOption.NOFOLLOW_LINKS)) {
+                    bytes = input.readNBytes(MAX_BYTES + 1);
+                }
+            } catch (NoSuchFileException ex) {
+                return new Bounded(State.ABSENT, new byte[0]);
+            } catch (IOException ex) {
+                return new Bounded(State.UNREADABLE, new byte[0]);
+            }
+            return bytes.length > MAX_BYTES
+                    ? new Bounded(State.UNREADABLE, new byte[0])
+                    : new Bounded(State.READ, bytes);
         }
     }
 }

@@ -8,7 +8,10 @@ import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.time.Instant;
 import java.util.List;
+import org.fuin.porelo.agent.api.Finding;
 import org.fuin.porelo.agent.api.Finding.Kind;
+import org.fuin.porelo.agent.api.Finding.SignedIn;
+import org.fuin.porelo.agent.api.Finding.What;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -63,28 +66,13 @@ class CodexSignInFactsTest {
                         });
     }
 
-    // Prevents an API key from claiming an account the file does not name for it.
+    // Prevents something that is not an account identifier from reaching the person's dialog: the
+    // import refuses such a sign-in, so it is not offered at all.
     @Test
-    void anApiKeySaysItsLastChangeAndNoAccount() throws IOException {
-        auth("{\"auth_mode\":\"apikey\",\"OPENAI_API_KEY\":\"" + SECRET + "\"}");
-
-        assertThat(facts())
-                .singleElement()
-                .satisfies(
-                        facts -> {
-                            assertThat(facts.finding().kind()).isEqualTo(Kind.API_KEY);
-                            assertThat(facts.account()).isNull();
-                            assertThat(facts.expires()).isNull();
-                            assertThat(facts.changed()).isEqualTo(CHANGED);
-                        });
-    }
-
-    // Prevents something that is not an account identifier from reaching the person's dialog.
-    @Test
-    void anAccountWithAControlCharacterIsNoAccount() throws IOException {
+    void anAccountWithAControlCharacterIsNotOffered() throws IOException {
         subscription("account\u001b[2J");
 
-        assertThat(facts()).singleElement().extracting(CodexSignInFacts::account).isNull();
+        assertThat(facts()).isEmpty();
     }
 
     // Prevents a file Codex cannot use from being described as a sign-in.
@@ -102,6 +90,45 @@ class CodexSignInFactsTest {
                 config.resolve("config.toml"), "cli_auth_credentials_store = \"keyring\"");
 
         assertThat(facts()).isEmpty();
+    }
+
+    // Prevents an API key, which the import does not take, from being offered with the facts.
+    @Test
+    void anApiKeyHasNoFacts() throws IOException {
+        auth("{\"auth_mode\":\"apikey\",\"OPENAI_API_KEY\":\"" + SECRET + "\"}");
+
+        assertThat(facts()).isEmpty();
+    }
+
+    // Prevents the file's facts being given to a sign-in found elsewhere, or to one without a path.
+    @Test
+    void aSignInNotInTheAuthFileHasNoFacts() throws IOException {
+        subscription(ACCOUNT);
+        final List<Finding> elsewhere =
+                List.of(
+                        new Finding(
+                                What.SIGN_IN,
+                                home.resolve("other.json").toString(),
+                                SignedIn.SIGNED_IN,
+                                true,
+                                CodexFindings.SUBSCRIPTION_PROVIDER,
+                                Kind.SUBSCRIPTION),
+                        new Finding(
+                                What.SIGN_IN,
+                                null,
+                                SignedIn.SIGNED_IN,
+                                true,
+                                CodexFindings.SUBSCRIPTION_PROVIDER,
+                                Kind.SUBSCRIPTION),
+                        new Finding(
+                                What.CONFIGURATION,
+                                config.resolve("auth.json").toAbsolutePath().toString(),
+                                SignedIn.SIGNED_IN,
+                                true,
+                                null,
+                                null));
+
+        assertThat(CodexSignInFacts.of(elsewhere, config)).isEmpty();
     }
 
     // Prevents a credential's value leaving the adapter in what is shown to the person.

@@ -39,8 +39,8 @@ record CodexSignInFacts(
     private static final Pattern ACCOUNT = Pattern.compile("[\\x21-\\x7e]{1,256}");
 
     /**
-     * Returns the facts of each finding that is a sign-in in Codex CLI's {@code auth.json}, in the
-     * findings' order.
+     * Returns the facts of each sign-in in Codex CLI's {@code auth.json} that the import takes, in
+     * the findings' order; an API key, which it does not take, has none.
      *
      * @param findings What {@link CodexFindings} found in the directory.
      * @param configDirectory Codex CLI's configuration directory.
@@ -55,6 +55,7 @@ record CodexSignInFacts(
         return findings.stream()
                 .filter(finding -> finding.what() == What.SIGN_IN)
                 .filter(finding -> finding.signedIn() == SignedIn.SIGNED_IN)
+                .filter(finding -> Boolean.TRUE.equals(finding.importable()))
                 .filter(finding -> finding.path() != null)
                 .filter(finding -> Path.of(finding.path()).normalize().equals(auth))
                 .map(

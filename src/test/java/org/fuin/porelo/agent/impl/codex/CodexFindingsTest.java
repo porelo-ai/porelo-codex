@@ -182,6 +182,37 @@ class CodexFindingsTest {
         assertThat(signIns()).isEmpty();
     }
 
+    // Prevents an endless file from being read whole: the extractor refuses it, so it cannot say.
+    @Test
+    void anOversizedAuthFileCannotSay() throws IOException {
+        auth("{\"auth_mode\":\"apikey\",\"OPENAI_API_KEY\":\"x\"}" + " ".repeat(1024 * 1024));
+
+        assertThat(signIns()).containsExactly(cannotSay(path("auth.json")));
+    }
+
+    // Prevents a linked configuration from being followed to a file elsewhere, or a dangling one
+    // from passing for none.
+    @Test
+    void aConfigurationThatIsALinkCannotSay() throws IOException {
+        final Path other =
+                Files.writeString(
+                        home.resolve("other.toml"), "cli_auth_credentials_store = \"file\"\n");
+        Files.createSymbolicLink(config.resolve("config.toml"), other);
+
+        assertThat(signIns()).containsExactly(cannotSay(path("config.toml")));
+
+        Files.delete(other);
+        assertThat(signIns()).as("dangling").containsExactly(cannotSay(path("config.toml")));
+    }
+
+    // Prevents an endless configuration from being read whole.
+    @Test
+    void anOversizedConfigurationCannotSay() throws IOException {
+        configToml("# " + "x".repeat(1024 * 1024) + "\n");
+
+        assertThat(signIns()).containsExactly(cannotSay(path("config.toml")));
+    }
+
     // Prevents a keyring sign-in from being missed because the configuration could not be read.
     @Test
     void aConfigurationThatCannotBeReadCannotSay() throws IOException {
