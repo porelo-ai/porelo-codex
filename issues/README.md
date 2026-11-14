@@ -34,9 +34,10 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 ## Backlog
 
-| # | Size | Blocked by | What it covers |
-|---|---|---|---|
-| <a id="cx04"></a>[CX04](CX04-The-Repository-s-Agent-Works-In-A-Porelo-Task.md) | S | [CX08](README.md#cx08) | the repository's agent moves into its own Porelo task, after a dry run on this machine |
+| # | Size | Blocked by | What it covers | Open questions |
+|---|---|---|---|---|
+| <a id="cx26"></a>[CX26](CX26-The-Local-Sign-In-Goes-To-A-Host.md) | M | - | on the person's machine the adapter lists each Codex sign-in it finds - provider, kind, account where known, age and expiry where known, and whether it can be carried, never its value - and hands a chosen one to Porelo, which carries it into a rented host's vault | 2 |
+| <a id="cx04"></a>[CX04](CX04-The-Repository-s-Agent-Works-In-A-Porelo-Task.md) | S | [CX08](README.md#cx08) | the repository's agent moves into its own Porelo task, after a dry run on this machine | - |
 
 ## Review
 
