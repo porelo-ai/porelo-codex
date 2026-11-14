@@ -41,8 +41,10 @@ of `porelo-codex` names is one the code on `main` has.
 
 ## What the reading found
 
-- 62 claims checked, 1 confirmed, 1 fixed, 0 filed as bugs.
+- 62 claims checked, 2 confirmed, 2 fixed, 0 filed as bugs.
 - `doc/index.md` named `exec:java@check-codex-artifacts`, an execution the build has never had: the check of the
   fetched artifacts, `FetchedArtifactsCheck`, runs in `-Pnative,dist verify`. The page now says so.
 - Not checkable here, left as they stand: what Porelo answers in the attended login walk and the measured task
   limits, which are Porelo's.
+- `README.md`: the adapter depends on Porelo's agent API and its wire artifacts, not the API
+  alone, as the pom shows.
