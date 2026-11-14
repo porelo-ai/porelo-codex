@@ -24,9 +24,9 @@ packages built from that change, on a rented ubuntu machine and a rented fedora 
 `porelo-pi` and `porelo-omp`.
 
 **This does not hold today.** No workflow here runs the acceptance suite. `build.yml` builds and publishes the packages,
-and `update.yml` checks only the publishers' digests against the pin. [CX11](README.md#cx11)'s hook trust is a SHA-256 of the hook's
+and `update.yml` checks only the publishers' digests against the pin. The subagent hook's trust is a SHA-256 of the hook's
 normalized form, so a pin that changes that form switches the hook off without an error, and only the suite on the VM,
-run by hand, sees it ([CX11](README.md#cx11), *Measured*).
+run by hand, sees it.
 
 ## Plan
 
@@ -48,7 +48,7 @@ run by hand, sees it ([CX11](README.md#cx11), *Measured*).
     so a missing secret fails loud and never skips them quietly.
 - **`build.yml`'s `paths-ignore`** keeps `.github/**`, so changing the workflow alone runs nothing. A pin change edits
   `pom.xml`, which is not ignored.
-- **Red first:** the first run is at the pin as it stands with [CX11](README.md#cx11)'s trust hash deliberately wrong, and the
+- **Red first:** the first run is at the pin as it stands with the subagent hook's trust hash deliberately wrong, and the
   subagent scenario must fail on a leg. Then the hash is put back.
 - **Not in this issue:** an update job that proposes a new Codex CLI version behind the legs, and releases, stay with
   [CX06](README.md#cx06).

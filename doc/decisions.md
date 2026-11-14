@@ -12,6 +12,7 @@
 | Artifact checks | Shared named-pin calls check and record both fetched components | [Artifact checks](#artifact-checks) |
 | Build boundary | A push to main publishes the snapshot package; CI uses no live credentials or rented machines | [Build boundary](#build-boundary) |
 | Snapshot repositories | The forge's token goes to the forge's registry alone; what it does not hold comes from an anonymous upstream | [Snapshot repositories](#snapshot-repositories) |
+| Subagent bound | The CLI holds it, and its shell can start another copy; a hard bound is Porelo's | [Accepted risk: a task's subagent bound is the agent's own](#accepted-risk-a-tasks-subagent-bound-is-the-agents-own) |
 
 ## Provider boundary
 
@@ -173,3 +174,18 @@ and with `-P!standard,!forge,!upstream`.
 **Accepted risk:** for one snapshot version Maven takes the newest timestamp over every repository it reads, so where
 the forge and upstream hold the same version, upstream's can win. Nothing here builds against a snapshot it publishes
 itself; a forge that does would name only what it lacks upstream, or mirror upstream itself.
+
+## Accepted risk: a task's subagent bound is the agent's own
+
+At 0, `CodexContainerSetup` writes a `PreToolUse` hook that denies `collaborationspawn_agent`, together with its
+trust. Above 0 it writes `agents.max_concurrent_threads_per_session`. No depth is set, since `agents.max_depth` did
+not hold. Skills are hidden from the agent's instructions with `include_instructions = false`.
+
+**The exposure:** the agent has a shell and can start another copy of the CLI, and it can read a skill's file. The
+hook's trust is the SHA-256 of the hook's normalized form, so a pin that changes that form switches the hook off without
+an error, and only the acceptance suite sees it. Whether the count includes a subagent's own subagents was not measured.
+
+**Why it stays:** the container, not the CLI, is the boundary of a task, and a bound the agent cannot leave is Porelo's own to set, outside this repository.
+
+**What would change it:** a depth setting that holds, a skills switch that turns them off, or a bound Porelo enforces
+from outside the agent.
