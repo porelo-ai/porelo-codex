@@ -42,6 +42,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers | Open questions |
 |---|---|---|---|---|
+| <a id="cx25"></a>[CX25](CX25-The-Docs-Say-What-The-Code-Does.md) | S | - | every sentence of the user-facing documentation checked against the code on main, and each one the code does not bear out fixed | - |
 | <a id="cx19"></a>[CX19](CX19-The-Adapter-Reports-Each-Tool-Call-With-Its-Time.md) | S | - | the adapter reads each tool call from its agent's output and hands Porelo its tool, kind, start, end, a shell call's command line, whether it ran in the background, and a sub-agent's name and the calls made under it, in Porelo's common entry | 0 |
 | <a id="cx21"></a>[CX21](CX21-An-Attended-Session-Takes-An-Opening-Text.md) | XS | - | an attended session of Codex CLI opens on the person's opening text as its first turn and then waits for the person, the form (positional) declared in the agent definition and measured in a task | - |
 | <a id="cx24"></a>[CX24](CX24-Codex-Is-Installed-Root-Owned.md) | M | - | the codex binary a task starts and its code-mode helper are installed by root and owned by root, so the agent in a task cannot replace what Porelo starts as Codex next time; their version stays pinned by the definition and moves only through the update job, and a self-update inside a task fails | - |
