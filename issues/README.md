@@ -38,8 +38,9 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
+| <a id="cx31"></a>[CX31](CX31-The-Running-View-Says-What-Each-Tool-Did.md) | S | - | the running view of an unattended Codex task says every tool Codex used - a file change by its paths, an MCP call by its server and tool, a web search by its query - besides a command, whose line is cut to its first line, with its failure |
 | <a id="cx04"></a>[CX04](CX04-The-Repository-s-Agent-Works-In-A-Porelo-Task.md) | S | [CX08](README.md#cx08) | the repository's agent moves into its own Porelo task, after a dry run on this machine |
-| <a id="cx30"></a>[CX30](CX30-The-Unattended-View-s-Remaining-Gaps.md) | S | - | what [CX29](README.md#cx29) left open in the unattended view: a failed command's error text, a file change said as [edit] <path>, the item types of a run with a file change, and line breaks in worded lines |
+| <a id="cx30"></a>[CX30](CX30-The-Unattended-View-s-Remaining-Gaps.md) | S | - | what [CX29](README.md#cx29) left open in the unattended view: the item types 0.163.0 writes, and line breaks in worded lines; a failed command's reason and a file change went to [CX31](README.md#cx31) |
 
 ## Review
 

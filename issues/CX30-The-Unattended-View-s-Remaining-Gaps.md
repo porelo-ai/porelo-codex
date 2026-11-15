@@ -10,7 +10,7 @@
   "priority": "Medium",
   "rank": 1,
   "blockedBy": [],
-  "covers": "what [CX29](README.md#cx29) left open in the unattended view: a failed command's error text, a file change said as [edit] <path>, the item types of a run with a file change, and line breaks in worded lines"
+  "covers": "what [CX29](README.md#cx29) left open in the unattended view: the item types 0.163.0 writes, and line breaks in worded lines; a failed command's reason and a file change went to [CX31](README.md#cx31)"
 }
 ```
 
@@ -30,10 +30,7 @@ recording did not answer.
 
 ## Plan
 
-- **A failed command's reason.** A command item that ends `failed` with an `error` shows only `[command] ... (exit
-  null)`; its error text is lost. Show it on the same line.
-- **A file change.** [CX29](README.md#cx29)'s plan said `[edit] <path>` for a `file_change` item; it is left out today. The 0.163.0
-  recording held no file change, so its fields are to be read from a run with one on the test VM before it is worded.
+- **A failed command's reason and a file change** went to [CX31](README.md#cx31), with the recording they need.
 - **The item types of 0.163.0.** Beyond `agent_message`, `command_execution` and `error`, which item types an unattended
   `codex exec --json` writes (reasoning, todo list, MCP call, web search), read from that run.
 - **Line breaks.** An agent message, a command's line and the turn's `-- error:` keep their line breaks, so they can
