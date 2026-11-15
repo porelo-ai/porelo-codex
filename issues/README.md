@@ -41,6 +41,12 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | <a id="cx04"></a>[CX04](CX04-The-Repository-s-Agent-Works-In-A-Porelo-Task.md) | S | [CX08](README.md#cx08) | the repository's agent moves into its own Porelo task, after a dry run on this machine |
 | <a id="cx30"></a>[CX30](CX30-The-Unattended-View-s-Remaining-Gaps.md) | S | - | what [CX29](README.md#cx29) left open in the unattended view: the item types 0.163.0 writes, and line breaks in worded lines; a failed command's reason and a file change went to [CX31](README.md#cx31) |
 
+## Implementing
+
+| # | Size | Blocked by | What it covers |
+|---|---|---|---|
+| <a id="cx32"></a>[CX32](CX32-Start-Work-Offers-Codex-s-Efforts.md) | XS | - | the definition declares the reasoning efforts Codex takes and how one is passed (`-c model_reasoning_effort={effort}`), so Start work offers them to pick instead of typing and an absent effort passes nothing |
+
 ## Review
 
 | # | Size | Blocked by | What it covers | Open questions |
