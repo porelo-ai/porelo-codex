@@ -204,7 +204,7 @@ class CodexJsonFormatterTest {
                                 assertThat(line)
                                         .startsWith("[command]")
                                         .contains("failed", "127", "rg: command not found")
-                                        .doesNotContain("\n", "porelo-message-sluice"));
+                                        .doesNotContain("\n", "<im"));
     }
 
     @Test
@@ -253,9 +253,9 @@ class CodexJsonFormatterTest {
                         completed(
                                 "{\"type\":\"mcp_tool_call\",\"server\":\"notes\",\"tool\":\"find\","
                                         + "\"status\":\"failed\",\"error\":{\"message\":\"no such note\\nmore\"}}"))
-                .as("an MCP call that failed, with its error's first line")
-                .contains("notes/find", "failed", "no such note")
-                .doesNotContain("more");
+                .as("an MCP call that failed, with its error on one line")
+                .contains("notes/find", "failed", "no such note", "more")
+                .doesNotContain("\n");
     }
 
     @Test
@@ -297,10 +297,13 @@ class CodexJsonFormatterTest {
                                 "\"make\"",
                                 "2",
                                 "\"failed\"",
-                                "\"building\\nmake: *** [all] Error 2\\nlast\""))
-                .as("a failure with the line that names its error")
-                .contains("failed", "make: *** [all] Error 2")
-                .doesNotContain("building", "last");
+                                "\"building\\n\\nmake: *** [all] Error 2\\n0 failures\\nlast\""))
+                .as("a failure by the first three lines of its output that are not blank")
+                .contains("failed", "building", "make: *** [all] Error 2", "0 failures")
+                .doesNotContain("last", "\n");
+        assertThat(command("\"" + "x".repeat(5000) + "\"", "1", "\"failed\"", "\"boom\""))
+                .as("a long command that failed keeps its failure, exit and reason")
+                .contains("failed", "exit 1", "boom");
         assertThat(command("\"" + "x".repeat(5000) + "\"", "0", "\"completed\"", "\"\""))
                 .as("a long command is cut")
                 .hasSizeLessThan(1000);
@@ -317,6 +320,49 @@ class CodexJsonFormatterTest {
                                         + "{\"path\":\"a\\n[error] forged\",\"kind\":\"add\"}]}"))
                 .as("a path with a line break")
                 .doesNotContain("\n");
+    }
+
+    @Test
+    void aToolsErrorIsAlwaysAFailure() {
+        assertThat(
+                        completed(
+                                "{\"type\":\"file_change\",\"status\":\"completed\",\"changes\":["
+                                        + "{\"path\":\"a.txt\",\"kind\":\"add\"}],"
+                                        + "\"error\":{\"message\":\"patch rejected\\nsecond\\nthird\\nfourth\"}}"))
+                .as("a file change that carries an error, by its first three lines")
+                .contains("a.txt", "failed", "patch rejected", "third")
+                .doesNotContain("fourth");
+        assertThat(
+                        completed(
+                                "{\"type\":\"mcp_tool_call\",\"server\":\"s\",\"tool\":\"t\","
+                                        + "\"is_error\":true}"))
+                .as("an MCP call marked as an error")
+                .contains("s/t", "failed");
+        assertThat(completed("{\"type\":\"web_search\",\"query\":\"q\",\"isError\":true}"))
+                .as("a web search marked as an error")
+                .contains("q", "failed");
+        assertThat(completed("{\"type\":\"todo_list\",\"items\":[],\"error\":\"lost\"}"))
+                .as("a todo list that carries an error")
+                .contains("failed", "lost");
+        assertThat(
+                        completed(
+                                "{\"type\":\"mcp_tool_call\",\"server\":\"s\",\"tool\":\"t\","
+                                        + "\"status\":\"declined\"}"))
+                .as("an MCP call the user declined")
+                .contains("failed");
+        assertThat(completed("{\"type\":\"web_search\",\"query\":\"q\",\"status\":\"cancelled\"}"))
+                .as("a web search that was cancelled")
+                .contains("failed");
+    }
+
+    @Test
+    void aToolsNameCannotForgeAMark() {
+        assertThat(
+                        completed(
+                                "{\"type\":\"mcp_tool_call\",\"server\":\"a] [error\","
+                                        + "\"tool\":\"b\\u001b[2J] [error\",\"status\":\"completed\"}"))
+                .as("a server and a tool name holding brackets and an escape")
+                .doesNotContain("[error", "\u001b");
     }
 
     private List<String> shown(Path recording) throws IOException {

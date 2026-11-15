@@ -63,10 +63,10 @@ public final class CodexJsonFormatter implements LogFormatter {
                     case "file_change" -> "[edit] " + paths(item.get("changes"));
                     case "mcp_tool_call" ->
                             "[mcp] "
-                                    + oneLine(text(item, "server", "?"))
+                                    + label(text(item, "server", "?"))
                                     + "/"
-                                    + oneLine(text(item, "tool", "?"));
-                    case "web_search" -> "[search] " + oneLine(text(item, "query", ""));
+                                    + label(text(item, "tool", "?"));
+                    case "web_search" -> "[search] " + cut(oneLine(text(item, "query", "")));
                     case "todo_list" ->
                             item.get("items") instanceof java.util.List<?> items
                                     ? "[todo] " + count(items.size(), "item")
@@ -77,10 +77,10 @@ public final class CodexJsonFormatter implements LogFormatter {
             return null;
         }
         if (!failed(item)) {
-            return printable(used);
+            return visible(used);
         }
         final String reason = reason(item);
-        return printable(used + " failed" + (reason == null ? "" : ": " + oneLine(reason)));
+        return visible(used + " failed" + (reason == null ? "" : ": " + reason));
     }
 
     /** A command by its first line, a sign that it has more, and its exit code when it has one. */
@@ -88,7 +88,7 @@ public final class CodexJsonFormatter implements LogFormatter {
         final String command = text(item, "command", "");
         final String first = firstLine(command);
         return "[command] "
-                + oneLine(first)
+                + cut(oneLine(first))
                 + (command.strip().lines().count() > 1 ? " …" : "")
                 + (item.get("exit_code") instanceof Number exit
                         ? " (exit " + number(exit) + ")"
@@ -109,46 +109,67 @@ public final class CodexJsonFormatter implements LogFormatter {
         if (paths.isEmpty()) {
             return "a file";
         }
-        return oneLine(paths.getFirst())
+        return cut(oneLine(paths.getFirst()))
                 + (paths.size() > 1 ? " and " + (paths.size() - 1) + " more" : "");
     }
 
-    /** Whether a tool's item says it failed: a status of failure, or a command's non-zero exit. */
+    /**
+     * Whether a tool's item says it failed: a status of failure, a command's non-zero exit, an
+     * error mark, or an error it carries.
+     */
     private static boolean failed(Map<?, ?> item) {
         return failure(item.get("status"))
-                || item.get("exit_code") instanceof Number exit && exit.doubleValue() != 0;
+                || item.get("exit_code") instanceof Number exit && exit.doubleValue() != 0
+                || marked(item.get("is_error"))
+                || marked(item.get("isError"))
+                || carries(item.get("error"));
     }
 
+    /** How many lines that are not blank a failure's reason shows, so its cause is among them. */
+    private static final int REASON_LINES = 3;
+
     /**
-     * Why a tool failed, by the first line of its error, or of a command's output the first line
-     * that names an error and else its last; {@code null} when it gives none.
+     * Why a tool failed: the first lines of its error, else of a command's output, joined on one
+     * line and cut; {@code null} when it gives none.
      */
     private static @Nullable String reason(Map<?, ?> item) {
         final Object error = item.get("error");
+        final String said;
         if (nonBlank(error) instanceof String own) {
-            return firstLine(own);
-        }
-        if (error instanceof Map<?, ?> nested
+            said = own;
+        } else if (error instanceof Map<?, ?> nested
                 && nonBlank(nested.get("message")) instanceof String message) {
-            return firstLine(message);
-        }
-        if (!(nonBlank(item.get("aggregated_output")) instanceof String output)) {
+            said = message;
+        } else if (nonBlank(item.get("aggregated_output")) instanceof String output) {
+            said = output;
+        } else {
             return null;
         }
-        final java.util.List<String> lines =
-                output.lines().filter(line -> !line.isBlank()).toList();
-        return lines.stream()
-                .filter(line -> ERROR_LINE.matcher(line).find())
-                .findFirst()
-                .orElse(lines.getLast())
-                .strip();
+        return cut(
+                oneLine(
+                        String.join(
+                                " | ",
+                                said.lines()
+                                        .filter(line -> !line.isBlank())
+                                        .limit(REASON_LINES)
+                                        .map(String::strip)
+                                        .toList())));
     }
 
-    /** The words by which a line of a command's output says what went wrong. */
-    private static final Pattern ERROR_LINE =
-            Pattern.compile(
-                    "(?i)error|fatal|fail|not found|no such|denied|cannot|can't|refused|"
-                            + "exception|abort|invalid|unknown");
+    /**
+     * A name between a mark's brackets, on one line, cut, and without brackets of its own, so it
+     * cannot close the mark and open another.
+     */
+    private static String label(String name) {
+        return cut(oneLine(name.replaceAll("[\\[\\]]", " ")));
+    }
+
+    /** Cuts a part of a line on a code point, so what follows it is never cut away with it. */
+    private static String cut(String text) {
+        return text.codePointCount(0, text.length()) > MAX_CODE_POINTS
+                ? text.substring(0, text.offsetByCodePoints(0, MAX_CODE_POINTS)) + "…"
+                : text;
+    }
 
     /** The first line of a text that is not blank; the text itself when it has none. */
     private static String firstLine(String text) {
@@ -168,7 +189,16 @@ public final class CodexJsonFormatter implements LogFormatter {
     /** The words a status uses for a step that went wrong. */
     private static final java.util.Set<String> FAILED =
             java.util.Set.of(
-                    "failed", "failure", "error", "killed", "rejected", "denied", "aborted");
+                    "failed",
+                    "failure",
+                    "error",
+                    "killed",
+                    "rejected",
+                    "denied",
+                    "aborted",
+                    "declined",
+                    "cancelled",
+                    "canceled");
 
     /**
      * Words for a reported error or warning, or {@code null}, so an event that says nothing stays
@@ -313,6 +343,15 @@ public final class CodexJsonFormatter implements LogFormatter {
 
     private static String text(Map<?, ?> map, String key, String fallback) {
         return map.get(key) instanceof String value && !value.isBlank() ? value : fallback;
+    }
+
+    /** Drops the control characters but the line break and the tab, cutting nothing. */
+    private static String visible(String text) {
+        final StringBuilder clean = new StringBuilder();
+        text.codePoints()
+                .filter(value -> !Character.isISOControl(value) || value == '\n' || value == '\t')
+                .forEach(clean::appendCodePoint);
+        return clean.toString();
     }
 
     private static String printable(String text) {

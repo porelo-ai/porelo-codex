@@ -22,11 +22,8 @@
 
 ## Why
 
-Part of ST369, *Findings of the second live test on a rented host* (High). In the operator's live test (porelo
-snapshot.553, porelo-agent-claude snapshot.186, the build with the raw-lines fix) the running view of an unattended Claude Code task
-showed almost nothing of the work: its lines were only `[Bash]`, `> [tool_result]`, `[thinking]` and once `[git] push`,
-over and over. The operator asked whether it is normal to see nothing of the tools. It is not: a reader must see what
-each tool did, in short.
+Part of ST369, *Findings of the second live test on a rented host* (High). The live test found that the running view
+of an unattended task can show almost nothing of the work, and that a reader must see what each tool did, in short.
 
 Checked in this repository for the same gap: `CodexJsonFormatter` words a command as `[command] <command> (exit N)`, so
 commands are seen, but a `file_change`, an `mcp_tool_call`, a `web_search` and a todo list are left out since
@@ -54,9 +51,9 @@ change said as `[edit] <path>` and the recording it needs.
   output or what it wrote: `[edit] <first path>` with `and N more` for the other paths, `[mcp] <server>/<tool>`
   without its arguments, `[search] <query>`, `[todo] <n> items`, and `[command] <first line>` with `…` when the
   command has more lines and `(exit N)` when it has an exit code (no more `(exit null)`).
-- A tool item that failed - a status of failure, or a command's non-zero exit - says `failed`, with the first line of
-  its error, or for a command the first line of its output that names an error (error, fatal, fail, not found, no
-  such, denied, cannot, refused, exception, abort, invalid, unknown) and else its last line.
+- A tool item that failed says `failed` and why. It failed when its status is one of failure (declined and
+  cancelled included), a command exits non-zero, it is marked `is_error`/`isError`, or it carries an error. The reason
+  is the first three non-blank lines of its error, else of a command's output, joined with ` | `, folded and cut.
 - The error rule is unchanged: an error item, and an error or warning in any other event or in a started or updated
   item, is shown as `[error]` or `[warning]` as before.
 - The shape built against is `changes: [{path, kind}]` and `status` for a file change, `server`, `tool`, `status`
@@ -72,3 +69,10 @@ change said as `[edit] <path>` and the recording it needs.
   `aCommandShowsItsFirstLineAndItsFailure` and `aToolsFieldCannotOpenALineOfItsOwn`.
 - Open: the plan's recording of a run with a file change, an MCP call and a web search through the coordinator's VM
   slot is not done here.
+- The reading by another model found four faults, all fixed with a test seen red first and again under a deliberate
+  break. The cut of the whole line could drop a failure, its reason and its exit, so each part is now cut before they
+  are added. A tool item with an error field, an error mark, or a status of declined or cancelled had lost its error,
+  so it now counts as failed and gives that error as its reason. A command's reason was one line picked by a pattern
+  that matched too much, and is now its first three lines. A server or tool name holding `]` could forge a mark, so
+  brackets are now taken out of both. The Why no longer quotes another agent's lines. Nothing of the reading is left
+  open.
