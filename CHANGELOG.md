@@ -4,6 +4,7 @@
 
 ### Changed
 
+- An unattended task's log says every tool Codex used on one line with what it was used on - a file change by its path, an MCP call by its server and tool, a web search by its query, a todo list by its number of items - and a command by its first line only; a tool that failed says so, with its error's line.
 - An unattended task's log shows what Codex says and does and no event as raw JSON: an event it does not word is left out, and one that reports an error - an error item, a failed status, an error it carries - is always shown as such, on one line.
 - Codex and its code-mode helper are installed by root in `/usr/local/bin`, so the agent in a task cannot replace what the next start runs, and a self-update fails to write over them.
 - Central's snapshots (`central.sonatype.snapshots`) are asked only for `org.fuin.porelo`, the group listed in `.mvn/rrf/`, through the switch in the now committed `.mvn/maven.config`, on a forge too, where they are read beside its registry and the newest wins; the forge's own repository stays unfiltered. The daily shared rules check refuses a filter that would let another name out.

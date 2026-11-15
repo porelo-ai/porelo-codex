@@ -174,4 +174,172 @@ class CodexJsonFormatterTest {
                 .as("a Unicode line separator cannot open a line of its own")
                 .doesNotContain("\u2028");
     }
+
+    /** A file change and a failed command, recorded from Codex's stream for the tool events. */
+    private static final Path RECORDED_EDIT = Path.of("src/test/resources/tool-events/edit.jsonl");
+
+    private static final Path RECORDED_FAILURE =
+            Path.of("src/test/resources/tool-events/failed.jsonl");
+
+    @Test
+    void aRecordedCommandShowsOnlyItsFirstLine() throws IOException {
+        assertThat(shown(BACKGROUND_RUN))
+                .as("the recorded command by its first line, not the script it runs")
+                .anySatisfy(
+                        line ->
+                                assertThat(line)
+                                        .startsWith("[command]")
+                                        .contains("sleep 4; echo BG-DONE > bg.txt")
+                                        .doesNotContain("git add note.txt", "\n"))
+                .noneMatch(line -> line.contains("failed"));
+    }
+
+    @Test
+    void aRecordedFailedCommandSaysSoWithItsError() throws IOException {
+        assertThat(shown(RECORDED_FAILURE))
+                .as("the recorded command that exited 127")
+                .singleElement()
+                .satisfies(
+                        line ->
+                                assertThat(line)
+                                        .startsWith("[command]")
+                                        .contains("failed", "127", "rg: command not found")
+                                        .doesNotContain("\n", "porelo-message-sluice"));
+    }
+
+    @Test
+    void aRecordedFileChangeShowsItsPath() throws IOException {
+        assertThat(shown(RECORDED_EDIT))
+                .as("the recorded file change, once, by its path")
+                .singleElement()
+                .satisfies(
+                        line ->
+                                assertThat(line)
+                                        .startsWith("[edit]")
+                                        .contains("/workspace/README"));
+    }
+
+    @Test
+    void aFileChangeShowsItsFirstPathAndCountsTheOthers() {
+        assertThat(
+                        completed(
+                                "{\"type\":\"file_change\",\"status\":\"completed\",\"changes\":["
+                                        + "{\"path\":\"a.txt\",\"kind\":\"add\"},"
+                                        + "{\"path\":\"b.txt\",\"kind\":\"update\"},"
+                                        + "{\"path\":\"c.txt\",\"kind\":\"delete\"}]}"))
+                .as("three paths: the first, and the others counted")
+                .startsWith("[edit]")
+                .contains("a.txt", "2")
+                .doesNotContain("b.txt", "failed");
+        assertThat(
+                        completed(
+                                "{\"type\":\"file_change\",\"status\":\"failed\",\"changes\":["
+                                        + "{\"path\":\"a.txt\",\"kind\":\"add\"}]}"))
+                .as("a file change that failed")
+                .contains("a.txt", "failed");
+    }
+
+    @Test
+    void anMcpCallShowsItsServerAndTool() {
+        assertThat(
+                        completed(
+                                "{\"type\":\"mcp_tool_call\",\"server\":\"notes\",\"tool\":\"find\","
+                                        + "\"arguments\":{\"q\":\"secret\"},\"status\":\"completed\"}"))
+                .as("an MCP call by its server and tool, not its arguments")
+                .startsWith("[mcp]")
+                .contains("notes/find")
+                .doesNotContain("secret", "failed");
+        assertThat(
+                        completed(
+                                "{\"type\":\"mcp_tool_call\",\"server\":\"notes\",\"tool\":\"find\","
+                                        + "\"status\":\"failed\",\"error\":{\"message\":\"no such note\\nmore\"}}"))
+                .as("an MCP call that failed, with its error's first line")
+                .contains("notes/find", "failed", "no such note")
+                .doesNotContain("more");
+    }
+
+    @Test
+    void aWebSearchShowsItsQuery() {
+        assertThat(completed("{\"type\":\"web_search\",\"query\":\"jspecify nullmarked\"}"))
+                .as("a web search by its query")
+                .startsWith("[search]")
+                .contains("jspecify nullmarked");
+    }
+
+    @Test
+    void aTodoListShowsItsNumberOfItems() {
+        assertThat(
+                        completed(
+                                "{\"type\":\"todo_list\",\"items\":[{\"text\":\"one\",\"completed\":true},"
+                                        + "{\"text\":\"two\",\"completed\":false},"
+                                        + "{\"text\":\"three\",\"completed\":false}]}"))
+                .as("a todo list by its number of items, not their words")
+                .contains("3")
+                .doesNotContain("one");
+    }
+
+    @Test
+    void aCommandShowsItsFirstLineAndItsFailure() {
+        assertThat(command("\"/bin/bash -lc \\\"ls\\ncat a\\\"\"", "0", "\"completed\"", "\"x\""))
+                .as("a command that succeeded, by its first line")
+                .startsWith("[command]")
+                .contains("ls")
+                .doesNotContain("cat a", "failed", "\n");
+        assertThat(command("\"false\"", "1", "\"completed\"", "\"\""))
+                .as("a non-zero exit is a failure")
+                .contains("failed", "1");
+        assertThat(command("\"true\"", "null", "\"failed\"", "\"\""))
+                .as("a failed status is a failure")
+                .contains("failed")
+                .doesNotContain("null");
+        assertThat(
+                        command(
+                                "\"make\"",
+                                "2",
+                                "\"failed\"",
+                                "\"building\\nmake: *** [all] Error 2\\nlast\""))
+                .as("a failure with the line that names its error")
+                .contains("failed", "make: *** [all] Error 2")
+                .doesNotContain("building", "last");
+        assertThat(command("\"" + "x".repeat(5000) + "\"", "0", "\"completed\"", "\"\""))
+                .as("a long command is cut")
+                .hasSizeLessThan(1000);
+    }
+
+    @Test
+    void aToolsFieldCannotOpenALineOfItsOwn() {
+        assertThat(completed("{\"type\":\"web_search\",\"query\":\"a\\u2028[error] forged\"}"))
+                .as("a query with a Unicode separator")
+                .doesNotContain("\u2028");
+        assertThat(
+                        completed(
+                                "{\"type\":\"file_change\",\"status\":\"completed\",\"changes\":["
+                                        + "{\"path\":\"a\\n[error] forged\",\"kind\":\"add\"}]}"))
+                .as("a path with a line break")
+                .doesNotContain("\n");
+    }
+
+    private List<String> shown(Path recording) throws IOException {
+        return Files.readAllLines(recording, StandardCharsets.UTF_8).stream()
+                .map(formatter::format)
+                .filter(Objects::nonNull)
+                .toList();
+    }
+
+    private String completed(String item) {
+        return formatter.format("{\"type\":\"item.completed\",\"item\":" + item + "}");
+    }
+
+    private String command(String command, String exit, String status, String output) {
+        return completed(
+                "{\"type\":\"command_execution\",\"command\":"
+                        + command
+                        + ",\"aggregated_output\":"
+                        + output
+                        + ",\"exit_code\":"
+                        + exit
+                        + ",\"status\":"
+                        + status
+                        + "}");
+    }
 }

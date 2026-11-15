@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CX31",
   "title": "The Running View Says What Each Tool Did",
-  "state": "Implementing",
+  "state": "Review",
   "size": "S",
   "priority": "High",
   "rank": 1,
@@ -47,3 +47,28 @@ change said as `[edit] <path>` and the recording it needs.
 - Rendered through the formatter, a recorded run with a file change, an MCP call or a web search shows each on one line
   with what it was used on.
 - A command shows only its first line, and a failed one says so.
+
+## What was built
+
+- `CodexJsonFormatter` words a completed tool item on one line with what it was used on, folded and cut, never its
+  output or what it wrote: `[edit] <first path>` with `and N more` for the other paths, `[mcp] <server>/<tool>`
+  without its arguments, `[search] <query>`, `[todo] <n> items`, and `[command] <first line>` with `…` when the
+  command has more lines and `(exit N)` when it has an exit code (no more `(exit null)`).
+- A tool item that failed - a status of failure, or a command's non-zero exit - says `failed`, with the first line of
+  its error, or for a command the first line of its output that names an error (error, fatal, fail, not found, no
+  such, denied, cannot, refused, exception, abort, invalid, unknown) and else its last line.
+- The error rule is unchanged: an error item, and an error or warning in any other event or in a started or updated
+  item, is shown as `[error]` or `[warning]` as before.
+- The shape built against is `changes: [{path, kind}]` and `status` for a file change, `server`, `tool`, `status`
+  and `error.message` for an MCP call, `query` for a web search and `items` for a todo list. Of these, only a file
+  change is measured on a recorded run: `src/test/resources/tool-events/edit.jsonl`, recorded for the tool events,
+  holds one, and `failed.jsonl` beside it a command that exited 127; both are rendered in the tests. An MCP call, a
+  web search and a todo list are not measured on a recorded run and are shown by single lines.
+- Tests, each seen red before the code and again when its rule was broken on purpose (the failure mark, the non-zero
+  exit, the first line, the error's line, the count of paths, the MCP case, the fold of a query, the count of items):
+  `aRecordedCommandShowsOnlyItsFirstLine`, `aRecordedFailedCommandSaysSoWithItsError`,
+  `aRecordedFileChangeShowsItsPath`, `aFileChangeShowsItsFirstPathAndCountsTheOthers`,
+  `anMcpCallShowsItsServerAndTool`, `aWebSearchShowsItsQuery`, `aTodoListShowsItsNumberOfItems`,
+  `aCommandShowsItsFirstLineAndItsFailure` and `aToolsFieldCannotOpenALineOfItsOwn`.
+- Open: the plan's recording of a run with a file change, an MCP call and a web search through the coordinator's VM
+  slot is not done here.

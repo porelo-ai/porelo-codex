@@ -38,13 +38,9 @@ public final class CodexJsonFormatter implements LogFormatter {
                     && item.get("text") instanceof String text) {
                 return printable(text);
             }
-            if ("command_execution".equals(item.get("type"))) {
-                return printable(
-                        "[command] "
-                                + text(item, "command", "")
-                                + " (exit "
-                                + item.get("exit_code")
-                                + ")");
+            final String tool = tool(item);
+            if (tool != null) {
+                return tool;
             }
         }
         if (event.get("item") instanceof Map<?, ?> item) {
@@ -54,6 +50,119 @@ public final class CodexJsonFormatter implements LogFormatter {
             }
         }
         return trouble(event);
+    }
+
+    /**
+     * A tool Codex used, on one line with what it was used on and whether it failed, or {@code
+     * null} for an item that is no tool this class words. Never its output or what it wrote.
+     */
+    private static @Nullable String tool(Map<?, ?> item) {
+        final String used =
+                switch (String.valueOf(item.get("type"))) {
+                    case "command_execution" -> command(item);
+                    case "file_change" -> "[edit] " + paths(item.get("changes"));
+                    case "mcp_tool_call" ->
+                            "[mcp] "
+                                    + oneLine(text(item, "server", "?"))
+                                    + "/"
+                                    + oneLine(text(item, "tool", "?"));
+                    case "web_search" -> "[search] " + oneLine(text(item, "query", ""));
+                    case "todo_list" ->
+                            item.get("items") instanceof java.util.List<?> items
+                                    ? "[todo] " + count(items.size(), "item")
+                                    : null;
+                    default -> null;
+                };
+        if (used == null) {
+            return null;
+        }
+        if (!failed(item)) {
+            return printable(used);
+        }
+        final String reason = reason(item);
+        return printable(used + " failed" + (reason == null ? "" : ": " + oneLine(reason)));
+    }
+
+    /** A command by its first line, a sign that it has more, and its exit code when it has one. */
+    private static String command(Map<?, ?> item) {
+        final String command = text(item, "command", "");
+        final String first = firstLine(command);
+        return "[command] "
+                + oneLine(first)
+                + (command.strip().lines().count() > 1 ? " …" : "")
+                + (item.get("exit_code") instanceof Number exit
+                        ? " (exit " + number(exit) + ")"
+                        : "");
+    }
+
+    /** The first path a file change names, and how many more it names. */
+    private static String paths(@Nullable Object changes) {
+        final java.util.List<String> paths = new java.util.ArrayList<>();
+        if (changes instanceof java.util.List<?> list) {
+            for (final Object change : list) {
+                if (change instanceof Map<?, ?> map
+                        && nonBlank(map.get("path")) instanceof String p) {
+                    paths.add(p);
+                }
+            }
+        }
+        if (paths.isEmpty()) {
+            return "a file";
+        }
+        return oneLine(paths.getFirst())
+                + (paths.size() > 1 ? " and " + (paths.size() - 1) + " more" : "");
+    }
+
+    /** Whether a tool's item says it failed: a status of failure, or a command's non-zero exit. */
+    private static boolean failed(Map<?, ?> item) {
+        return failure(item.get("status"))
+                || item.get("exit_code") instanceof Number exit && exit.doubleValue() != 0;
+    }
+
+    /**
+     * Why a tool failed, by the first line of its error, or of a command's output the first line
+     * that names an error and else its last; {@code null} when it gives none.
+     */
+    private static @Nullable String reason(Map<?, ?> item) {
+        final Object error = item.get("error");
+        if (nonBlank(error) instanceof String own) {
+            return firstLine(own);
+        }
+        if (error instanceof Map<?, ?> nested
+                && nonBlank(nested.get("message")) instanceof String message) {
+            return firstLine(message);
+        }
+        if (!(nonBlank(item.get("aggregated_output")) instanceof String output)) {
+            return null;
+        }
+        final java.util.List<String> lines =
+                output.lines().filter(line -> !line.isBlank()).toList();
+        return lines.stream()
+                .filter(line -> ERROR_LINE.matcher(line).find())
+                .findFirst()
+                .orElse(lines.getLast())
+                .strip();
+    }
+
+    /** The words by which a line of a command's output says what went wrong. */
+    private static final Pattern ERROR_LINE =
+            Pattern.compile(
+                    "(?i)error|fatal|fail|not found|no such|denied|cannot|can't|refused|"
+                            + "exception|abort|invalid|unknown");
+
+    /** The first line of a text that is not blank; the text itself when it has none. */
+    private static String firstLine(String text) {
+        return text.lines().filter(line -> !line.isBlank()).findFirst().orElse(text).strip();
+    }
+
+    private static String count(long n, String thing) {
+        return n + " " + thing + (n == 1 ? "" : "s");
+    }
+
+    private static String number(Number value) {
+        return value.doubleValue() == Math.floor(value.doubleValue())
+                ? String.valueOf(value.longValue())
+                : String.valueOf(value);
     }
 
     /** The words a status uses for a step that went wrong. */
