@@ -6,10 +6,11 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 ## Idea
 
-| # | Size | Blocked by | What it covers |
-|---|---|---|---|
-| <a id="cx22"></a>[CX22](CX22-The-Agent-s-Own-Telemetry-Goes-To-Porelo.md) | - | - | the adapter declares Codex CLI's own OpenTelemetry export pointed at Porelo's local receiver in the task, with every switch that would carry content - prompts, tool arguments and output, responses - set explicitly off |
-| <a id="cx27"></a>[CX27](CX27-The-Sign-In-Facts-Smaller-Findings.md) | - | - | the smaller gaps left in how the adapter finds and describes a local Codex sign-in for carrying to a host, each fixed or measured |
+| # | Size | Blocked by | What it covers | Open questions |
+|---|---|---|---|---|
+| <a id="cx28"></a>[CX28](CX28-A-Rotating-Sign-In-Is-Made-On-The-Host.md) | M | - | which of Codex's sign-ins rotate their refresh token, measured on the pinned CLI and declared per provider and kind, and how Codex signs in on a headless host instead of having a rotating sign-in carried there | 1 |
+| <a id="cx22"></a>[CX22](CX22-The-Agent-s-Own-Telemetry-Goes-To-Porelo.md) | - | - | the adapter declares Codex CLI's own OpenTelemetry export pointed at Porelo's local receiver in the task, with every switch that would carry content - prompts, tool arguments and output, responses - set explicitly off | - |
+| <a id="cx27"></a>[CX27](CX27-The-Sign-In-Facts-Smaller-Findings.md) | - | - | the smaller gaps left in how the adapter finds and describes a local Codex sign-in for carrying to a host, each fixed or measured | - |
 
 ## Accepted
 
