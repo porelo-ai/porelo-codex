@@ -4,6 +4,7 @@
 
 ### Changed
 
+- An unattended task's log shows what Codex says and does and no event as raw JSON: an event it does not word is left out, and one that reports an error - an error item, a failed status, an error it carries - is always shown as such, on one line.
 - Codex and its code-mode helper are installed by root in `/usr/local/bin`, so the agent in a task cannot replace what the next start runs, and a self-update fails to write over them.
 - Central's snapshots (`central.sonatype.snapshots`) are asked only for `org.fuin.porelo`, the group listed in `.mvn/rrf/`, through the switch in the now committed `.mvn/maven.config`, on a forge too, where they are read beside its registry and the newest wins; the forge's own repository stays unfiltered. The daily shared rules check refuses a filter that would let another name out.
 - The Build takes the runner's distribution packages from the Actions cache, keyed by the package list's hash, each file checked against the hash apt names before it is installed, so an outage of a package mirror fails only a Build on a new list.

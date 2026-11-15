@@ -8,7 +8,12 @@ import org.fuin.porelo.agent.api.LogFormatter;
 import org.fuin.porelo.wire.Json;
 import org.jspecify.annotations.Nullable;
 
-/** Reads Codex's JSONL output without treating a failed turn as an answered prompt. */
+/**
+ * Reads Codex's JSONL output without treating a failed turn as an answered prompt. A person reads
+ * what the agent says and does: an event that reports an error is always shown, as such; any other
+ * event this class does not word is left out rather than shown as it came; a line that is not JSON
+ * still shows as it came.
+ */
 public final class CodexJsonFormatter implements LogFormatter {
     private static final int MAX_CODE_POINTS = 300;
     private static final Pattern STATUS = Pattern.compile("^unexpected status ([45][0-9]{2})\\b");
@@ -41,8 +46,60 @@ public final class CodexJsonFormatter implements LogFormatter {
                                 + item.get("exit_code")
                                 + ")");
             }
+            final String trouble = trouble(item);
+            if (trouble != null) {
+                return trouble;
+            }
         }
-        return printable(line);
+        return trouble(event);
+    }
+
+    /** Words for a reported failure, or {@code null}, so an event that says nothing stays out. */
+    private static @Nullable String trouble(Map<?, ?> event) {
+        if (!reportsTrouble(event)) {
+            return null;
+        }
+        return printable("[error] " + oneLine(troubleText(event)));
+    }
+
+    /** Whether an event reports an error by its kind, its status or an error it carries. */
+    private static boolean reportsTrouble(Map<?, ?> event) {
+        return names(event.get("type"), "error")
+                || names(event.get("status"), "failed")
+                || Boolean.TRUE.equals(event.get("is_error"))
+                || Boolean.TRUE.equals(event.get("isError"))
+                || nonBlank(event.get("error")) != null
+                || event.get("error") instanceof Map<?, ?>;
+    }
+
+    private static boolean names(@Nullable Object value, String word) {
+        return value instanceof String text
+                && text.toLowerCase(java.util.Locale.ROOT).contains(word);
+    }
+
+    /** What an error says: its own text, its message, or what the event is. */
+    private static String troubleText(Map<?, ?> event) {
+        final String error = nonBlank(event.get("error"));
+        if (error != null) {
+            return error;
+        }
+        if (event.get("error") instanceof Map<?, ?> nested) {
+            final String message = nonBlank(nested.get("message"));
+            if (message != null) {
+                return message;
+            }
+        }
+        final String message = nonBlank(event.get("message"));
+        return message != null ? message : String.valueOf(event.get("type"));
+    }
+
+    private static @Nullable String nonBlank(@Nullable Object value) {
+        return value instanceof String text && !text.isBlank() ? text.strip() : null;
+    }
+
+    /** Folds a message onto one line, so a line it holds cannot pass for a line of its own. */
+    private static String oneLine(String text) {
+        return text.replaceAll("\\s+", " ");
     }
 
     static @Nullable AgentEnd ended(String line) {
