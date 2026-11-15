@@ -39,6 +39,11 @@ Within a group, the order is the priority. The number is identity, not sequence.
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
 | <a id="cx04"></a>[CX04](CX04-The-Repository-s-Agent-Works-In-A-Porelo-Task.md) | S | [CX08](README.md#cx08) | the repository's agent moves into its own Porelo task, after a dry run on this machine |
+
+## Implementing
+
+| # | Size | Blocked by | What it covers |
+|---|---|---|---|
 | <a id="cx29"></a>[CX29](CX29-The-Unattended-View-Shows-No-Raw-Event-Lines.md) | S | - | the unattended view of a Codex task shows what the agent says and does, never a raw JSON event line: an unknown event dropped unless it names an error, read in the code beside the same finding for Claude Code |
 
 ## Review
