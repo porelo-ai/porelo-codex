@@ -42,7 +42,6 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers | Open questions |
 |---|---|---|---|---|
-| <a id="cx25"></a>[CX25](CX25-The-Docs-Say-What-The-Code-Does.md) | S | - | every sentence of the user-facing documentation checked against the code on main, and each one the code does not bear out fixed | - |
 | <a id="cx19"></a>[CX19](CX19-The-Adapter-Reports-Each-Tool-Call-With-Its-Time.md) | S | - | the adapter reads each tool call from its agent's output and hands Porelo its tool, kind, start, end, a shell call's command line, whether it ran in the background, and a sub-agent's name and the calls made under it, in Porelo's common entry | 0 |
 | <a id="cx21"></a>[CX21](CX21-An-Attended-Session-Takes-An-Opening-Text.md) | XS | - | an attended session of Codex CLI opens on the person's opening text as its first turn and then waits for the person, the form (positional) declared in the agent definition and measured in a task | - |
 | <a id="cx24"></a>[CX24](CX24-Codex-Is-Installed-Root-Owned.md) | M | - | the codex binary a task starts and its code-mode helper are installed by root and owned by root, so the agent in a task cannot replace what Porelo starts as Codex next time; their version stays pinned by the definition and moves only through the update job, and a self-update inside a task fails | - |
@@ -53,6 +52,7 @@ Within a group, the order is the priority. The number is identity, not sequence.
 
 | # | Size | Blocked by | What it covers |
 |---|---|---|---|
+| <a id="cx25"></a>CX25 — The Docs Say What The Code Does | S | — | The user-facing documentation was read sentence by sentence against the code on main: of 62 claims, the 2 it did not bear out were fixed in the README and `doc/index.md`, and none was a fault of the code. |
 | <a id="cx11"></a>CX11 — Subagents Only As Many As The Task Allows | M | — | Codex CLI in a task starts no subagent unless the task allows it: at 0 a trusted `PreToolUse` hook denies `spawn_agent`, above 0 the concurrent agent threads are capped at the task's number, and skills are left out of its instructions. |
 | <a id="cx20"></a>CX20 — The Build Takes Its Downloads From A Cache | XS | — | A Build, an update run and the workflow check take the runner's packages from the Actions cache, each `.deb` checked against the hash its signed apt metadata names before it is installed; an entry of an old package list goes by itself. |
 | <a id="cx17"></a>CX17 — Third-Party Notices Ship With The Package | S | — | `porelo-agent-codex` carries the license texts of every component compiled into its executable from outside Porelo - SnakeYAML, JSpecify and the GraalVM runtime - in one `THIRD-PARTY-NOTICES` file, named in `copyright` and marked `%license` in the RPM, and `PackageNoticesCheck` refuses a package without it. |
