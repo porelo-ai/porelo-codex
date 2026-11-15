@@ -27,7 +27,7 @@ public final class CodexJsonFormatter implements LogFormatter {
         }
         final Object type = event.get("type");
         if ("thread.started".equals(type) || "turn.started".equals(type)) {
-            return null;
+            return trouble(event);
         }
         final AgentEnd end = ended(line);
         if (end != null) {
@@ -46,6 +46,8 @@ public final class CodexJsonFormatter implements LogFormatter {
                                 + item.get("exit_code")
                                 + ")");
             }
+        }
+        if (event.get("item") instanceof Map<?, ?> item) {
             final String trouble = trouble(item);
             if (trouble != null) {
                 return trouble;
@@ -54,52 +56,100 @@ public final class CodexJsonFormatter implements LogFormatter {
         return trouble(event);
     }
 
-    /** Words for a reported failure, or {@code null}, so an event that says nothing stays out. */
+    /** The words a status uses for a step that went wrong. */
+    private static final java.util.Set<String> FAILED =
+            java.util.Set.of(
+                    "failed", "failure", "error", "killed", "rejected", "denied", "aborted");
+
+    /**
+     * Words for a reported error or warning, or {@code null}, so an event that says nothing stays
+     * out. An error is named by the event's type, its level, a status of failure, an error mark, or
+     * an error it carries; a warning by its type or level.
+     */
     private static @Nullable String trouble(Map<?, ?> event) {
-        if (!reportsTrouble(event)) {
+        final boolean error =
+                names(event.get("type"), "error", "fail", "fatal", "exception")
+                        || names(event.get("level"), "error", "fatal")
+                        || failure(event.get("status"))
+                        || marked(event.get("is_error"))
+                        || marked(event.get("isError"))
+                        || carries(event.get("error"));
+        final boolean warning =
+                names(event.get("type"), "warn") || names(event.get("level"), "warn");
+        if (!error && !warning) {
             return null;
         }
-        return printable("[error] " + oneLine(troubleText(event)));
+        return printable((error ? "[error] " : "[warning] ") + oneLine(troubleText(event)));
     }
 
-    /** Whether an event reports an error by its kind, its status or an error it carries. */
-    private static boolean reportsTrouble(Map<?, ?> event) {
-        return names(event.get("type"), "error")
-                || names(event.get("status"), "failed")
-                || Boolean.TRUE.equals(event.get("is_error"))
-                || Boolean.TRUE.equals(event.get("isError"))
-                || nonBlank(event.get("error")) != null
-                || event.get("error") instanceof Map<?, ?>;
-    }
-
-    private static boolean names(@Nullable Object value, String word) {
-        return value instanceof String text
-                && text.toLowerCase(java.util.Locale.ROOT).contains(word);
-    }
-
-    /** What an error says: its own text, its message, or what the event is. */
-    private static String troubleText(Map<?, ?> event) {
-        final String error = nonBlank(event.get("error"));
-        if (error != null) {
-            return error;
+    private static boolean names(@Nullable Object value, String... words) {
+        if (!(value instanceof String text)) {
+            return false;
         }
-        if (event.get("error") instanceof Map<?, ?> nested) {
-            final String message = nonBlank(nested.get("message"));
-            if (message != null) {
-                return message;
+        final String lower = text.toLowerCase(java.util.Locale.ROOT);
+        for (final String word : words) {
+            if (lower.contains(word)) {
+                return true;
             }
         }
+        return false;
+    }
+
+    private static boolean failure(@Nullable Object status) {
+        return status instanceof String text
+                && FAILED.contains(text.strip().toLowerCase(java.util.Locale.ROOT));
+    }
+
+    private static boolean marked(@Nullable Object value) {
+        return Boolean.TRUE.equals(value) || "true".equals(value);
+    }
+
+    /**
+     * Whether a field holds an error: any text, a flag that is set, a number, a list or an object.
+     */
+    private static boolean carries(@Nullable Object error) {
+        return nonBlank(error) != null
+                || Boolean.TRUE.equals(error)
+                || error instanceof Number
+                || error instanceof java.util.List<?> list && !list.isEmpty()
+                || error instanceof Map<?, ?> map && !map.isEmpty();
+    }
+
+    /**
+     * What an error says: its own text or message, the event's message, the error, or what it is.
+     */
+    private static String troubleText(Map<?, ?> event) {
+        final Object error = event.get("error");
+        final String own = nonBlank(error);
+        if (own != null) {
+            return own;
+        }
+        if (error instanceof Map<?, ?> nested
+                && nonBlank(nested.get("message")) instanceof String m) {
+            return m;
+        }
         final String message = nonBlank(event.get("message"));
-        return message != null ? message : String.valueOf(event.get("type"));
+        if (message != null) {
+            return message;
+        }
+        if (error != null && !Boolean.TRUE.equals(error)) {
+            return String.valueOf(error);
+        }
+        return String.valueOf(event.get("type"));
     }
 
     private static @Nullable String nonBlank(@Nullable Object value) {
         return value instanceof String text && !text.isBlank() ? text.strip() : null;
     }
 
-    /** Folds a message onto one line, so a line it holds cannot pass for a line of its own. */
+    /**
+     * Folds a message onto one line, so a line break in it - a Unicode separator included - cannot
+     * pass for a line of the log, and drops the invisible marks that turn text around.
+     */
     private static String oneLine(String text) {
-        return text.replaceAll("\\s+", " ");
+        return text.replaceAll("\\p{Cf}", "")
+                .replaceAll("[\\s\\u0085\\u2028\\u2029]+", " ")
+                .strip();
     }
 
     static @Nullable AgentEnd ended(String line) {

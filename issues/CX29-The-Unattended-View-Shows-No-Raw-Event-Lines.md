@@ -5,7 +5,7 @@
   "$schema": "issue-1.json",
   "id": "CX29",
   "title": "The Unattended View Shows No Raw Event Lines",
-  "state": "Implementing",
+  "state": "Review",
   "size": "S",
   "priority": "Medium",
   "rank": 1,
@@ -32,6 +32,20 @@
 - A recorded unattended run of the pinned CLI, with a command and a file change, rendered through the formatter, holds no line that begins with `{`.
 - An error event of an unknown type still shows, and its test fails when the error rule is taken out.
 
-## To be checked
+## What was built
 
-- **The events 0.163.0 writes.** Which types and item types an unattended `codex exec --json` run writes, read from a run on a VM, values replaced, before the rule names them.
+- `CodexJsonFormatter` keeps its words for an agent message, a finished command and the turn's end; every other event,
+  `item.started` and items it does not word among them, is left out instead of shown as it came.
+- An event or an item of any phase that reports an error or a warning is always shown, as `[error]` or `[warning]` with
+  its message on one line: by its type (error, fail, fatal, exception, warn), its level, a status of failure (failed,
+  error, killed, rejected, denied, aborted, in any case), `is_error` or `isError`, or any error it carries; a lifecycle
+  event that carries one too. A line break, a Unicode separator or an invisible format mark in it is folded away.
+- Fixture: an unattended run recorded with the pinned 0.163.0 in a task on a VM, which holds the `error` item 0.163.0
+  writes for a model it does not know, `src/test/resources/streams/unattended-background-run-0.163.0.jsonl`.
+- Tests in `CodexJsonFormatterTest`, each seen red first; the error rule, the status rule and the fold each broken on
+  purpose and seen red.
+- The reading by another model found errors still dropped - in `turn.started`, in an `item.started` or `item.updated`,
+  by a status or flag of another spelling, by a type such as `stream_failure` - and a line break in an error; all fixed.
+  Noted, not fixed: an agent message, a command's line and the turn's error keep their line breaks, a failed command
+  shows its exit but not its error text, and a file change is not worded as `[edit] <path>` (no file change was
+  recorded here) - all as before.

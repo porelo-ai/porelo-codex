@@ -34,7 +34,8 @@ class CodexJsonFormatterTest {
         assertThat(lines.stream().map(formatter::format).filter(Objects::nonNull))
                 .as("every line shown is words, never an event as it came")
                 .isNotEmpty()
-                .noneMatch(shown -> shown.stripLeading().startsWith("{"));
+                .noneMatch(shown -> shown.stripLeading().startsWith("{"))
+                .anyMatch(shown -> shown.startsWith("[error] Model metadata"));
     }
 
     @Test
@@ -139,5 +140,38 @@ class CodexJsonFormatterTest {
         assertThat(end).as("the measured JSON-encoded provider refusal").isNotNull();
         assertThat(end.source()).as("provider response provenance").isEqualTo(AgentEnd.PROVIDER);
         assertThat(end.status()).as("HTTP status in the structured response").isEqualTo(400);
+    }
+
+    @Test
+    void anErrorIsShownWhereverItStands() {
+        assertThat(
+                        List.of(
+                                        "{\"type\":\"turn.started\",\"error\":\"quota exceeded\"}",
+                                        "{\"type\":\"item.started\",\"item\":{\"type\":\"error\",\"message\":\"quota exceeded\"}}",
+                                        "{\"type\":\"item.updated\",\"item\":{\"type\":\"file_change\",\"status\":\"failed\","
+                                                + "\"error\":\"quota exceeded\"}}",
+                                        "{\"type\":\"something_new\",\"status\":\"Error\",\"message\":\"quota exceeded\"}",
+                                        "{\"type\":\"something_new\",\"error\":true,\"message\":\"quota exceeded\"}",
+                                        "{\"type\":\"stream_failure\",\"message\":\"quota exceeded\"}")
+                                .stream()
+                                .map(formatter::format)
+                                .toList())
+                .as(
+                        "an error in a lifecycle event, in an item of any phase, by a status in any case,"
+                                + " a flag or its type")
+                .allSatisfy(
+                        shown ->
+                                assertThat(shown).startsWith("[error]").contains("quota exceeded"));
+        assertThat(
+                        formatter.format(
+                                "{\"type\":\"something_new\",\"level\":\"warning\",\"message\":\"slow\"}"))
+                .as("a warning")
+                .startsWith("[warning]")
+                .contains("slow");
+        assertThat(
+                        formatter.format(
+                                "{\"type\":\"error\",\"message\":\"first\\u2028[error] forged\"}"))
+                .as("a Unicode line separator cannot open a line of its own")
+                .doesNotContain("\u2028");
     }
 }
