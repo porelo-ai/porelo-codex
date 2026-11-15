@@ -28,6 +28,16 @@ git_identity:
     name: Codex
     email: codex@users.noreply.github.com
 
+# How Codex takes a reasoning effort, for a Start that names one; none named passes nothing and the
+# model's own default stands. Codex reads it as a config line, '-c model_reasoning_effort=<level>',
+# its value parsed as TOML with a fallback to a plain string. The levels are those the pinned
+# 0.163.0's catalog ('codex debug models', read offline on the test VM on 2026-11-15) gives its
+# models - low to ultra, each model taking some of them - and none, which the acceptance suite
+# already sets. Read by a Porelo that knows the section, skipped by an older one.
+effort:
+    arguments: ["-c", "model_reasoning_effort={effort}"]
+    values: [none, low, medium, high, xhigh, max, ultra]
+
 headless:
     prompt_flag: ""
     model_flag: "--model"
