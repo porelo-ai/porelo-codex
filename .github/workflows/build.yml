@@ -40,6 +40,7 @@ jobs:
                       *) echo "::error::vars.PORELO_PUBLISH is '$PORELO_PUBLISH', neither true nor false"; exit 1 ;;
                   esac
             - name: The pinned GraalVM
+              id: pinned-jdk
               env:
                   PORELO_PACKAGES_READ_TOKEN: ${{ secrets.PORELO_PACKAGES_READ_TOKEN }}
               uses: ./.github/actions/pinned-jdk
@@ -199,3 +200,9 @@ jobs:
                       echo "::error::$PACKAGES does not list $DEB after $tries reads"
                   fi
                   exit 1
+
+            # Even after a failure, so what the job fetched is not asked of Central again.
+            - if: always()
+              uses: ./.github/actions/maven-cache-save
+              with:
+                  key: ${{ steps.pinned-jdk.outputs.maven-cache-key }}
