@@ -10,7 +10,7 @@ with your credential kept on the machine and its work waiting for your review.
 It is an adapter, not Porelo: it depends on Porelo's published agent API and wire artifacts alone, never on Porelo's
 implementation. Session, waiting and wake acceptance pass with an OpenAI API key, and a ChatGPT
 sign-in is brokered and renewed on the host. See [the documentation](doc/index.md), [decisions](doc/decisions.md)
-and [issues/](issues/README.md).
+and [the issues](https://github.com/porelo-ai/porelo-codex/issues).
 
 ## More
 

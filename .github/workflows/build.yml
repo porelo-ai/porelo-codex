@@ -3,9 +3,9 @@ name: Build
 on:
     push:
         branches: [main]
-        paths-ignore: ['**/*.md', 'mkdocs.yml', 'doc/**', 'issues/**', '.github/**']
+        paths-ignore: ['**/*.md', 'mkdocs.yml', 'doc/**', '.github/**']
     pull_request:
-        paths-ignore: ['**/*.md', 'mkdocs.yml', 'doc/**', 'issues/**', '.github/**']
+        paths-ignore: ['**/*.md', 'mkdocs.yml', 'doc/**', '.github/**']
     workflow_dispatch:
 
 env:
