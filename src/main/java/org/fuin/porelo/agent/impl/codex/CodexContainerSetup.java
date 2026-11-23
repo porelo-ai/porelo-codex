@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
 import java.util.HexFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.fuin.porelo.agent.api.ContainerFile;
 import org.fuin.porelo.agent.api.ContainerSetup;
 import org.fuin.porelo.agent.api.SetupContext;
 import org.fuin.porelo.wire.Json;
+import org.fuin.porelo.wire.LimitFactors;
 
 /**
  * Points Codex's task-local Responses provider at the broker using only its task token, and holds
@@ -50,18 +52,36 @@ public final class CodexContainerSetup implements ContainerSetup {
 
     private static final String HIDDEN_SKILLS = "[skills]\ninclude_instructions = false\n\n";
 
-    private static final long TIMEOUT_SECONDS = 10;
+    /** How long the deny hook may take on a machine of ordinary speed. */
+    private static final Duration HOOK_TIMEOUT = Duration.ofSeconds(10);
+
+    private final long timeoutSeconds;
+
+    /** Creates a container setup with every time limit at its default. */
+    public CodexContainerSetup() {
+        this(LimitFactors.DEFAULT);
+    }
+
+    /**
+     * Creates a container setup whose time limits follow the factors Porelo gave.
+     *
+     * @param limits The factors; the deny hook's timeout follows {@code machines}.
+     */
+    public CodexContainerSetup(LimitFactors limits) {
+        // The hook file takes whole seconds; rounded up, so a factor never shortens the default.
+        timeoutSeconds = Math.ceilDiv(limits.machines(HOOK_TIMEOUT).toMillis(), 1000L);
+    }
 
     /**
      * Returns the normalized form of the hook that Codex hashes: sorted keys, no spaces.
      *
      * @return The text its hash is taken of.
      */
-    static String hookIdentity() {
+    private String hookIdentity() {
         final Map<String, Object> handler = new LinkedHashMap<>();
         handler.put("async", Boolean.FALSE);
         handler.put("command", DENY);
-        handler.put("timeout", Long.valueOf(TIMEOUT_SECONDS));
+        handler.put("timeout", Long.valueOf(timeoutSeconds));
         handler.put("type", "command");
         final Map<String, Object> identity = new LinkedHashMap<>();
         identity.put("event_name", "pre_tool_use");
@@ -70,18 +90,18 @@ public final class CodexContainerSetup implements ContainerSetup {
         return Json.write(identity);
     }
 
-    private static String hooksFile() {
+    private String hooksFile() {
         final Map<String, Object> handler = new LinkedHashMap<>();
         handler.put("type", "command");
         handler.put("command", DENY);
-        handler.put("timeout", Long.valueOf(TIMEOUT_SECONDS));
+        handler.put("timeout", Long.valueOf(timeoutSeconds));
         final Map<String, Object> group = new LinkedHashMap<>();
         group.put("matcher", MATCHER);
         group.put("hooks", List.of(handler));
         return Json.write(Map.of("hooks", Map.of("PreToolUse", List.of(group))));
     }
 
-    private static String subagentSettings(int subagents) {
+    private String subagentSettings(int subagents) {
         if (subagents > 0) {
             return "[agents]\nmax_concurrent_threads_per_session = " + subagents + "\n";
         }
@@ -97,7 +117,7 @@ public final class CodexContainerSetup implements ContainerSetup {
                 .formatted(HOOKS, HexFormat.of().formatHex(digest));
     }
 
-    private static List<ContainerFile> withHook(int subagents, ContainerFile config) {
+    private List<ContainerFile> withHook(int subagents, ContainerFile config) {
         return subagents > 0
                 ? List.of(config)
                 : List.of(config, ContainerFile.of(HOOKS, hooksFile()));

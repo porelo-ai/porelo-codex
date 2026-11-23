@@ -4,6 +4,7 @@
 
 ### Changed
 
+- The hook that keeps a task's subagents from starting is given its 10 seconds times the `machines` factor of the limits Porelo passes with `--limits`, rounded up to whole seconds, and the hash Codex trusts it by is taken of that hook, so a slow machine neither cuts it off nor leaves it untrusted.
 - The definition says how Codex takes a reasoning effort - `-c model_reasoning_effort={effort}` with none, low, medium, high, xhigh, max, ultra - for a Porelo that offers it at a start; an older Porelo skips it.
 - An unattended task's log says every tool Codex used on one line with what it was used on - a file change by its path, an MCP call by its server and tool, a web search by its query, a todo list by its number of items - and a command by its first line only; a tool that failed - by its status, its exit, an error mark or an error it carries - says so with the first three lines of its error or output.
 - An unattended task's log shows what Codex says and does and no event as raw JSON: an event it does not word is left out, and one that reports an error - an error item, a failed status, an error it carries - is always shown as such, on one line.

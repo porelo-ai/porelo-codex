@@ -12,14 +12,28 @@ import org.fuin.porelo.agent.api.LogFormatter;
 import org.fuin.porelo.agent.api.RunRequest;
 import org.fuin.porelo.agent.api.ToolEvent;
 import org.fuin.porelo.agent.api.YamlAgent;
+import org.fuin.porelo.wire.LimitFactors;
 import org.jspecify.annotations.Nullable;
 
 /** Codex CLI's definition and agent protocol entry point. */
 public final class CodexAgent extends YamlAgent {
 
-    /** Loads the packaged Codex definition. */
+    private final LimitFactors limits;
+
+    /** Loads the packaged Codex definition, every time limit at its default. */
     public CodexAgent() {
+        this(LimitFactors.DEFAULT);
+    }
+
+    private CodexAgent(LimitFactors limits) {
         super("codex");
+        this.limits = limits;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public CodexAgent withLimits(LimitFactors limits) {
+        return new CodexAgent(limits);
     }
 
     /** {@inheritDoc} */
@@ -41,7 +55,7 @@ public final class CodexAgent extends YamlAgent {
     /** {@inheritDoc} */
     @Override
     public ContainerSetup containerSetup() {
-        return new CodexContainerSetup();
+        return new CodexContainerSetup(limits);
     }
 
     /** {@inheritDoc} */

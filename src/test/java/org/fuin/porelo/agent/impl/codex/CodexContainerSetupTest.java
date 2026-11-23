@@ -3,12 +3,17 @@ package org.fuin.porelo.agent.impl.codex;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
+import org.fuin.porelo.agent.api.Agent;
 import org.fuin.porelo.agent.api.AgentException;
 import org.fuin.porelo.agent.api.ContainerFile;
 import org.fuin.porelo.agent.api.SetupContext;
 import org.fuin.porelo.wire.Json;
+import org.fuin.porelo.wire.LimitFactors;
 import org.junit.jupiter.api.Test;
 
 /** Guards broker routing, credential containment and configuration injection. */
@@ -111,24 +116,51 @@ class CodexContainerSetupTest {
     }
 
     @Test
-    void trustsExactlyTheHookItWrites() throws Exception {
-        final List<ContainerFile> files = files("", "");
-        final Map<?, ?> entry =
-                (Map<?, ?>)
-                        ((List<?>)
-                                        ((Map<?, ?>)
-                                                        ((Map<?, ?>)
-                                                                        Json.parse(
-                                                                                files.get(1)
-                                                                                        .content()))
-                                                                .get("hooks"))
-                                                .get("PreToolUse"))
-                                .getFirst();
-        final Map<?, ?> hook = (Map<?, ?>) ((List<?>) entry.get("hooks")).getFirst();
+    void theDenyHookIsGivenItsTenSecondsTimesTheMachinesFactorAndStaysTrusted() throws Exception {
+        // On a slow machine a hook cut off before it answers must not let a subagent through, and
+        // a hook whose hash no longer matches would not run at all.
+        assertThat(hookTimeout(agent)).as("all four factors 1.0").isEqualTo(10L);
+        final Agent slow = agent.withLimits(LimitFactors.parse("machines=2.5"));
+        assertThat(hookTimeout(slow)).as("ten seconds times 2.5").isEqualTo(25L);
+        assertThat(hookTimeout(agent.withLimits(LimitFactors.parse("machines=0.15"))))
+                .as("1.5 seconds, rounded up to whole seconds as the hook file takes them")
+                .isEqualTo(2L);
+        assertThat(hookTimeout(agent.withLimits(LimitFactors.parse("services=9,polling=9"))))
+                .as("only the machines factor applies")
+                .isEqualTo(10L);
 
-        // What Codex 0.163.0 hashes, read in its version_for_toml, here from the file it reads, so
-        // a hook and a hash that part ways fail. This cannot show that Codex computes the same:
-        // the literal below is the hash the scenario on the VM saw it accept and run.
+        final List<ContainerFile> files =
+                slow.containerSetup().files(new SetupContext("", "", "", "", ""));
+        assertThat(files.getFirst().content())
+                .as("the trusted hash is the one of the hook with 25 seconds")
+                .contains("trusted_hash = \"sha256:" + identityHash(files) + "\"");
+    }
+
+    private static long hookTimeout(final Agent given) {
+        return ((Number)
+                        hook(given.containerSetup().files(new SetupContext("", "", "", "", "")))
+                                .get("timeout"))
+                .longValue();
+    }
+
+    private static Map<?, ?> hookEntry(final List<ContainerFile> files) {
+        final ContainerFile hooks =
+                files.stream()
+                        .filter(file -> file.path().equals(CodexContainerSetup.HOOKS))
+                        .findFirst()
+                        .orElseThrow();
+        final Map<?, ?> root = (Map<?, ?>) Json.parse(hooks.content());
+        return (Map<?, ?>) ((List<?>) ((Map<?, ?>) root.get("hooks")).get("PreToolUse")).getFirst();
+    }
+
+    private static Map<?, ?> hook(final List<ContainerFile> files) {
+        return (Map<?, ?>) ((List<?>) hookEntry(files).get("hooks")).getFirst();
+    }
+
+    /** What Codex hashes of the hook, read from the file it reads. */
+    private static String identityHash(final List<ContainerFile> files) throws Exception {
+        final Map<?, ?> entry = hookEntry(files);
+        final Map<?, ?> hook = hook(files);
         final String identity =
                 "{\"event_name\":\"pre_tool_use\",\"hooks\":[{\"async\":false,\"command\":"
                         + Json.write(hook.get("command"))
@@ -137,13 +169,20 @@ class CodexContainerSetupTest {
                         + ",\"type\":\"command\"}],\"matcher\":"
                         + Json.write(entry.get("matcher"))
                         + "}";
-        final String digest =
-                java.util.HexFormat.of()
-                        .formatHex(
-                                java.security.MessageDigest.getInstance("SHA-256")
-                                        .digest(
-                                                identity.getBytes(
-                                                        java.nio.charset.StandardCharsets.UTF_8)));
+        return HexFormat.of()
+                .formatHex(
+                        MessageDigest.getInstance("SHA-256")
+                                .digest(identity.getBytes(StandardCharsets.UTF_8)));
+    }
+
+    @Test
+    void trustsExactlyTheHookItWrites() throws Exception {
+        final List<ContainerFile> files = files("", "");
+
+        // What Codex 0.163.0 hashes, read in its version_for_toml, here from the file it reads, so
+        // a hook and a hash that part ways fail. This cannot show that Codex computes the same:
+        // the literal below is the hash the scenario on the VM saw it accept and run.
+        final String digest = identityHash(files);
 
         assertThat(digest)
                 .isEqualTo("8c865e67cea45239b854f325aa9fa6ca5ef12f5a1e2a32f2043cae94fd803511");
