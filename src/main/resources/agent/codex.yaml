@@ -103,9 +103,15 @@ install:
           install -D -o root -g root -m 0755 "$staging/codex-x86_64-unknown-linux-musl" /usr/local/bin/codex;
           install -D -o root -g root -m 0755 "$staging/codex-code-mode-host-x86_64-unknown-linux-musl" /usr/local/bin/codex-code-mode-host;
           rm -r /var/cache/porelo/codex
+    # Porelo's guide reaches Codex as CODEX_HOME's AGENTS.md, which Codex adds to its own instructions when a
+    # session starts: measured in a task on 0.163.0, where Codex asked without a tool names its mailbox only with
+    # the link. There is no 'instructions' section: of Codex's switches, model_instructions_file replaces Codex's
+    # own instructions and developer_instructions takes text, not a file - read with 'codex debug prompt-input' on
+    # 0.164.0, where a link that points nowhere, as where no guide is mounted, leaves Codex starting without it.
     as_agent:
         - ENV CODEX_HOME=/home/agent/.codex
         - >-
           RUN set -eux;
           mkdir -p /home/agent/.codex;
-          chmod 0700 /home/agent/.codex
+          chmod 0700 /home/agent/.codex;
+          ln -s /run/porelo/guide/README.md /home/agent/.codex/AGENTS.md

@@ -17,6 +17,7 @@
 
 ### Added
 
+- A Codex agent in a task is given Porelo's guide - its mailbox, `/porelo/files`, the builds of its pushes, which task it is - through the `AGENTS.md` in Codex's home folder (`CODEX_HOME`), a link the image makes to the guide Porelo mounts, which Codex adds to its own instructions when a session starts.
 - The adapter says which Codex sign-in it finds in its configuration directory - a ChatGPT sign-in, an OpenAI API key, or one kept in the system keyring - with its provider and kind, and for the sign-in the import takes its account and last change, but never its value, and whether it can be carried to a host, which only the ChatGPT sign-in the import takes can.
 - Asked for the provider `chatgpt`, the adapter answers the ChatGPT sign-in named so, as Porelo's listing of what can be carried to a host asks, and asked for any other provider it answers nothing.
 - The definition says how an attended session takes an opening text, `session.opening_flag: ""`, so Porelo

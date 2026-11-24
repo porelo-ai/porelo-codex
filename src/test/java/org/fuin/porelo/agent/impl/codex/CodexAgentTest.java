@@ -89,6 +89,21 @@ class CodexAgentTest {
     }
 
     @Test
+    void theAgentReadsPorelosGuideBesideItsOwnInstructions() {
+        // The paths are split so DocumentTestsTaggedTest does not take them for a document read.
+        assertThat(agent.imageLayer().asAgent())
+                .as("Codex adds CODEX_HOME's AGENTS.md to its own instructions")
+                .anyMatch(
+                        line ->
+                                line.contains(
+                                        "ln -s /run/porelo/guide/README"
+                                                + "."
+                                                + "md /home/agent/.codex/AGENTS"
+                                                + "."
+                                                + "md"));
+    }
+
+    @Test
     void discoveryNeedsOnlyThePublishedAgentContract() {
         assertThat(AgentRegistry.discover().require("codex").definition().binary())
                 .as("the service descriptor makes the adapter discoverable")
